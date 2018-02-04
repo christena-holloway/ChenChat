@@ -64,6 +64,19 @@ function processV1Request (request, response) {
         };
         sendResponse(responseToUser);
       }
+    },
+    // Handler for action to switch modes 
+    'switch.mode': () => {
+
+      let user_action = 'switch';
+      // sending all parameters to webapp, which can use them to form the message as needed.
+      // Successfully posted the message request to be on it's way via the web app
+      if (sendMessageToApp(parameters, user_action)) {
+        sendResponse('Your message is being delivered!');
+      }   
+      else {
+        sendResponse('I was unable to send your message. Please try again.');
+      }
     }
   };
   // If undefined or unknown action use the default handler
@@ -115,6 +128,35 @@ function processV1Request (request, response) {
       console.log('Response to Dialogflow: ' + JSON.stringify(responseJson));
       response.json(responseJson); // Send response to Dialogflow
     }
+  }
+  // Function to send POST request to ChenChat web application
+  // Receives a well-formed message to send to the webapp based on the action
+  // message must be in json format
+  function sendMessageToApp (message_in_json, action) {
+
+    var request = require('request');
+    url_path = 'https://www.chenchat.com/actions/' + action;
+    var options = {
+      url: url_path,
+      method: 'POST',
+      json: true,
+      body: message_in_json,
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Charset': 'utf-8',
+        // "Authorization": 
+      }
+    };
+
+    // Send POST request
+    request.post(options, function (error, response, body) {
+      if (error) {
+        console.error('Failed to send message to url: %s and error: %d', url_path, error);
+        return false;
+      }
+      console.log('Successfully sent the message! Server responded with:', body);
+      return true;
+    })
   }
 }
 // Construct rich response for Google Assistant (v1 requests only)
