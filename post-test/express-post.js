@@ -9,9 +9,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Route that receives a POST request to /post
-app.post('/post', function (req, res) {
+app.post('/', function (req, res) {
   const body = req.body
   res.set('Content-Type', 'application/json')
+  res.render('index');
   console.log(body)
 })
 

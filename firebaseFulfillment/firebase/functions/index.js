@@ -135,9 +135,10 @@ function processV1Request (request, response) {
   function sendMessageToApp (message_in_json, action) {
 
     var request = require('request');
-    url_path = 'https://www.chenchat.com/actions/' + action;
+    // url_path = 'https://www.chenchat.com/actions/' + action;
+    // url_path = 'http://c1f22e86.ngrok.io';
     var options = {
-      url: url_path,
+      uri: 'http://c1f22e86.ngrok.io/',
       method: 'POST',
       json: true,
       body: message_in_json,
@@ -151,7 +152,7 @@ function processV1Request (request, response) {
     // Send POST request
     request.post(options, function (error, response, body) {
       if (error) {
-        console.error('Failed to send message to url: %s and error: %d', url_path, error);
+        console.error('Failed to send message. error:', error);
         return false;
       }
       console.log('Successfully sent the message! Server responded with:', body);
