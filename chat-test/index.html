@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>Socket.IO chat</title>
@@ -30,8 +30,8 @@
   </script>
   <body>
     <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+    <form method="post" action="/" enctype="application/json">
+      <input id="m" name="message" autocomplete="off" /><button>Send</button>
     </form>
   </body>
 </html>
