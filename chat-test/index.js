@@ -7,6 +7,20 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+//var myJSONObject = { "test":"message" };
+//request({
+//    url: "http://localhost:3001/post",
+//    method: "POST",
+//    headers: {
+//        "content-type": "application/json",
+//        },
+//    json: true,   // <--Very important!!!
+//    body: myJSONObject
+//}, function (error, response, body){
+//    console.log(response);
+//});
+
+
 io.on('connection', function(socket){
   console.log('a user connected');
   socket.on('disconnect', function(){
