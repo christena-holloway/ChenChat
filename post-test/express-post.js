@@ -8,20 +8,21 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// Tell our app to listen on port 3001
+var server = app.listen(5000, function (err) {
+  if (err) {
+    throw err
+  }
+  console.log('Server started on port 5000')
+})
+
 // Route that receives a POST request to /post
-app.post('/', function (req, res) {
+app.post('/hook', function (req, res) {
   const body = req.body
   res.set('Content-Type', 'application/json')
-  res.render('index');
+  // res.render('index');
   console.log(body)
 })
 
 
-// Tell our app to listen on port 3001
-app.listen(3001, function (err) {
-  if (err) {
-    throw err
-  }
 
-  console.log('Server started on port 3001')
-})
