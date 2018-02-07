@@ -18,22 +18,9 @@
   </head>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-  <script>
-    $(function () {
-    var socket = io();
-    $('form').submit(function(){
-      socket.emit('chat message', $('#m').val());
-      $('#m').val('');
-      return false;
-    });
-    socket.on('chat message', function(msg){
-      $('#messages').append($('<li>').text(msg));
-    });
-  });
-  </script>
-  <body>
       <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
       <script>
+      var profPerm;
       function onSignIn(googleUser) {
         // Useful data for your client-side scripts:
         var profile = googleUser.getBasicProfile();
@@ -47,8 +34,22 @@
         // The ID token you need to pass to your backend:
         var id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
+        profPerm = profile;
       };
+      $(function () {
+      var socket = io();
+      $('form').submit(function(){
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message', function(msg){
+        $('#messages').append($('<li>').text(profPerm.getName() + ": " + msg));
+      });
+    });
     </script>
+    <body>
+    <h1>ChenChat</h1>
     <ul id="messages"></ul>
     <form method="post" action="/" enctype="application/json">
       <input id="m" name="message" autocomplete="off" /><button>Send</button>
