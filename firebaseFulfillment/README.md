@@ -12,4 +12,7 @@
 4. Select *Intents* from the left navigation menu. Select the `Default Welcome Intent` intent, scroll down to the end of the page and click *Fulfillment*, check *Use webhook* and then click *Save*. This will allow you to have the welcome intent be a basic webhook intent to test.
 5. Build out your agent and business logic by adding function handlers for Dialogflow actions.
 
-#####
+##### TO-DO
+1. Fix error:206 on Dialogflow. This could be a result of service not being able to send back a response in the correct format.
+2. Write the fulfillment methods for all other intents.
+3. Fix sending the response back to Dialogflow via the webhooks.

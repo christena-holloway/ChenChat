@@ -64,6 +64,13 @@ function processV1Request (request, response) {
         };
         sendResponse(responseToUser);
       }
+    },
+    // Handler for action to switch modes 
+    'switchMode': () => {
+      forwardIntentFulfillment();
+    },
+    'sendHelp': () => {
+      forwardIntentFulfillment();
     }
   };
   // If undefined or unknown action use the default handler
@@ -115,6 +122,57 @@ function processV1Request (request, response) {
       console.log('Response to Dialogflow: ' + JSON.stringify(responseJson));
       response.json(responseJson); // Send response to Dialogflow
     }
+  }
+  // Function to redirect message to the service
+  function forwardIntentFulfillment () {
+    // sending all parameters to webapp, which can use them to form the message as needed.
+    // Successfully posted the message request to be on it's way via the web app
+    if (sendMessageToApp(request.body.result)) {
+      let responseToUser = {
+        speech: 'Your message is being delivered!', // spoken response
+        text: 'Your message is being delivered!' // displayed response
+      };
+      sendResponse(responseToUser);
+    }   
+    else {
+      let responseToUser = {
+        speech: 'I was unable to send your message. Please try again.', // spoken response
+        text: 'I was unable to send your message. Please try again.' // displayed response
+      };
+      sendResponse(responseToUser);
+    }
+  }
+  // Function to send POST request to ChenChat web application
+  // Receives a well-formed message to send to the webapp based on the action
+  // message must be in json format
+  function sendMessageToApp (jsonMessage) {
+
+    var request = require('request');
+    // url_path = 'https://www.chenchat.com/actions/' + action;
+    // url_path = 'http://c1f22e86.ngrok.io';
+    var options = {
+      uri: 'https://c3209f1e.ngrok.io/hook',
+      port: 80,
+      method: 'POST',
+      json: true,
+      body: jsonMessage,
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Charset': 'utf-8',
+      }
+    };
+
+    // Send POST request
+    var status = request.post(options, function (error, response, body) {
+      if (error) {
+        console.error('Failed to send message. error:', error);
+        return false;
+      }
+      console.log('Successfully sent the message! Server responded with:', body);
+      return true;
+    })
+
+    return status;
   }
 }
 // Construct rich response for Google Assistant (v1 requests only)
