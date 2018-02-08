@@ -36,10 +36,13 @@
         // The ID token you need to pass to your backend:
         id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
+
+        var socket = io();
+        socket.emit('id token', id_token);
       };
       $(function () {
       var socket = io();
-      $('form').submit(function(){
+      $('form').submit(function() {
         socket.emit('chat message', {name: profile.getName(), message: $('#m').val() });
         $('#m').val('');
         return false;

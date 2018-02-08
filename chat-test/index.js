@@ -77,6 +77,9 @@ io.on('connection', function(socket){
   socket.on('chat message', function(msg){
     io.emit('chat message', msg.message);
   });
+  socket.on('id token', function(id_token) {
+    //console.log('id_token: ' + id_token);
+  });
 });
 
 //listen to the server
