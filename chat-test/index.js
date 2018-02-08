@@ -6,7 +6,6 @@ var mongoose = require('mongoose');
 var bodyParser = require("body-parser");
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = 3000;
-
 //need this so that all data can be sent to db correctly
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -19,7 +18,7 @@ mongoose.set("debug", true);
 //not sure if we need this
 mongoose.Promise = Promise;
 
-/*set up schema in mongoose(will want to add other 
+/*set up schema in mongoose(will want to add other
 data in messages and also probably another schema)*/
 var messageSchema = new mongoose.Schema({
     message: String
@@ -29,14 +28,14 @@ var messageSchema = new mongoose.Schema({
 var Message = mongoose.model("Message", messageSchema);
 
 //connect to db
-mongoose.connect(conString, function(err){ 
+mongoose.connect(conString, function(err){
     if (err) throw err;
     console.log ("Successfully connected to MongoDB");
     console.log(mongoose.connection.host);
     console.log(mongoose.connection.port);
 });
 
-//var myJSONObject = { "test":"message" };
+//var myJSONObject = { "id_token":id_token };
 //request({
 //    url: "http://localhost:3001/post",
 //    method: "POST",
@@ -61,10 +60,10 @@ io.on('connection', function(socket){
     console.log('user disconnected');
   });
   socket.on('chat message', function(msg){
-    console.log('message: ' + msg);
-    
+    console.log('message: ' + msg.message);
+    console.log('name: ' + msg.name);
     //send data to database
-    var m = new Message({'message': msg});
+    var m = new Message({'message': msg.message});
     m.save(function(err) {
         if (err) {
             console.log(err);
@@ -76,7 +75,7 @@ io.on('connection', function(socket){
     });
   });
   socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
+    io.emit('chat message', msg.message);
   });
 });
 
