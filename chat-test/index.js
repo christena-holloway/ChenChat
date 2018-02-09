@@ -124,10 +124,11 @@ io.on('connection', function(socket){
     console.log('user disconnected');
   });
   socket.on('chat message', function(msg){
-    console.log('message: ' + msg);
+    console.log('msg: ' + msg);
+    console.log('message: ' + msg.message);
     console.log('name: ' + msg.name);
     //send data to database
-    var m = new Message({'message': msg.message});
+    var m = new Message({'message': msg});
     m.save(function(err) {
         if (err) {
             console.log(err);
@@ -139,7 +140,7 @@ io.on('connection', function(socket){
     });
   });
   socket.on('chat message', function(msg){
-    io.emit('chat message', msg.message);
+    io.emit('chat message', msg);
   });
   socket.on('id token', function(id_token) {
     //console.log('id_token: ' + id_token);

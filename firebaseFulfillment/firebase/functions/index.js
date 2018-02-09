@@ -151,7 +151,7 @@ function processV1Request (request, response) {
     // url_path = 'https://www.chenchat.com/actions/' + action;
     // url_path = 'http://c1f22e86.ngrok.io';
     var options = {
-      uri: 'https://c3209f1e.ngrok.io/hook',
+      uri: 'https://b8c7f54f.ngrok.io/',
       port: 80,
       method: 'POST',
       json: true,
