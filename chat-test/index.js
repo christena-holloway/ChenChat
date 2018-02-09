@@ -127,7 +127,7 @@ io.on('connection', function(socket){
     console.log('message: ' + msg);
     console.log('name: ' + msg.name);
     //send data to database
-    var m = new Message({'message': msg});
+    var m = new Message({'message': msg.message});
     m.save(function(err) {
         if (err) {
             console.log(err);
@@ -139,7 +139,10 @@ io.on('connection', function(socket){
     });
   });
   socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
+    io.emit('chat message', msg.message);
+  });
+  socket.on('id token', function(id_token) {
+    //console.log('id_token: ' + id_token);
   });
   socket.on('id token', function(id_token) {
     //console.log('id_token: ' + id_token);
