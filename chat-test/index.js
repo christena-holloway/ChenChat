@@ -7,7 +7,7 @@ var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
 var bodyParser = require("body-parser");
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-var port = 443;
+var port = 3000;
 var url = "https://tenaann.github.io/ChenChat"
 //need this so that all data can be sent to db correctly
 app.use(bodyParser.json());
@@ -41,7 +41,7 @@ mongoose.connect(conString, function(err){
 
 //runs when page is loaded
 app.get("/", function(req, res){
-  res.sendFile(url + '/index.html');
+  res.sendFile(__dirname + '/index.html');
 });
 
 app.post('/', function(req, res){
