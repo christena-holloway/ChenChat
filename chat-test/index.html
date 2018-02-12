@@ -28,8 +28,8 @@
         id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
 
-        var socket = io();
-        socket.emit('id token', id_token);
+        //var socket = io();
+        //socket.emit('id token', id_token);
       };
       $(function () {
       var socket = io();
