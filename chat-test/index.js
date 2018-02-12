@@ -38,19 +38,6 @@ mongoose.connect(conString, function(err){
     console.log(mongoose.connection.port);
 });
 
-//var myJSONObject = { "id_token":id_token };
-//request({
-//    url: "http://localhost:3001/post",
-//    method: "POST",
-//    headers: {
-//        "content-type": "application/json",
-//        },
-//    json: true,   // <--Very important!!!
-//    body: myJSONObject
-//}, function (error, response, body){
-//    console.log(response);
-//});
-
 //runs when page is loaded
 app.get("/", function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -120,9 +107,11 @@ function sendMessage(msg) {
 //send from client to server
 io.on('connection', function(socket){
   console.log('a user connected');
+
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
+
   socket.on('chat message', function(msg){
     console.log('msg: ' + msg);
     console.log('message: ' + msg.message);
@@ -139,12 +128,11 @@ io.on('connection', function(socket){
         }
     });
   });
+
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
   });
-  socket.on('id token', function(id_token) {
-    //console.log('id_token: ' + id_token);
-  });
+
   socket.on('id token', function(id_token) {
     //console.log('id_token: ' + id_token);
   });
