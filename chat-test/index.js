@@ -48,13 +48,17 @@ app.post('/', function(req, res){
     
     console.log('POST /');
     console.dir(req.body);
-
     console.log('parameters are: ');
     console.log(req.body.result.parameters);
+
     handleMessage(req.body);
     // sends a response header to the request
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('Thanks');
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    // send a response in the format required by Dialogflow
+    let responseToAssistant = {
+      messages: [{'speech': 'Your message is being delivered by ChenChat!', 'type': 0}],
+    };
+    res.end(JSON.stringify(responseToAssistant));
 });
 
 function handleMessage(data) {
