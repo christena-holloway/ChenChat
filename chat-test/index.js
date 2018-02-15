@@ -139,9 +139,46 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
+    sendUserInfo(id_token);
     //console.log('id_token: ' + id_token);
   });
 });
+
+var userSchema = new mongoose.Schema({
+  token: String
+}, {collection: "users"});
+
+var User = mongoose.model("User", userSchema);
+  
+function sendUserInfo(userID) {
+
+  User.count({ token: userID }, function(err, count) {
+    if (count === 0) {
+      var u = new User({'token': userID});
+      u.save(function(err) {
+      if (err) {
+        console.log(err);
+        res.status(400).send("Bad Request");
+      }
+      else {
+        console.log("successfully posted user info to db");
+      }
+    })
+    }
+  });
+  
+
+  //var u = new User({'token': userID});
+  /*u.save(function(err) {
+    if (err) {
+      console.log(err);
+      res.status(400).send("Bad Request");
+    }
+    else {
+      console.log("successfully posted user info to db");
+    }
+  });*/
+}
 
 //listen to the server
 http.listen(port, function(){
