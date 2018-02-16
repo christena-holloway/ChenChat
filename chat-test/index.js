@@ -9,7 +9,7 @@ var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = 3000;
-var url = "https://tenaann.github.io/ChenChat"
+var url = "https://tenaann.github.io/ChenChat";
 //need this so that all data can be sent to db correctly
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -46,7 +46,7 @@ app.get("/", function(req, res){
 });
 
 app.post('/', function(req, res){
-    
+
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
@@ -91,7 +91,7 @@ function handleMessage(data) {
 }
 
 function sendMessage(msg) {
-  
+
   console.log('message: ' + msg);
   //send data to database
   var m = new Message({'message': msg});
@@ -148,7 +148,7 @@ io.on('connection', function(socket){
 function getUID(id_token) {
   var decoded = jwtDecode(id_token);
   var sub = decoded['sub'];
-  
+
   return sub;
 }
 
@@ -174,7 +174,7 @@ function sendUserInfo(userID) {
     })
     }
   });
-  
+
 
   //var u = new User({'token': userID});
   /*u.save(function(err) {

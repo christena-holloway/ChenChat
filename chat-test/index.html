@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    
+
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com">
     <meta charset="utf-8">
@@ -30,7 +30,7 @@
       console.log("ID Token: " + id_token);
 
       var socket = io();
-      socket.emit('id token', id_token);
+      socket.emit('id token', 3); //replace 3 with id_token
     };
     $(function () {
       var socket = io();
