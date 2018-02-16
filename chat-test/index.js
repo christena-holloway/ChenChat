@@ -5,7 +5,8 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
-var bodyParser = require("body-parser");
+var jwtDecode = require('jwt-decode');
+var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = 3000;
 var url = "https://tenaann.github.io/ChenChat"
@@ -144,17 +145,24 @@ io.on('connection', function(socket){
   });
 });
 
+function getUID(id_token) {
+  var decoded = jwtDecode(id_token);
+  var sub = decoded['sub'];
+  
+  return sub;
+}
+
 var userSchema = new mongoose.Schema({
-  token: String
+  userID: String
 }, {collection: "users"});
 
 var User = mongoose.model("User", userSchema);
-  
-function sendUserInfo(userID) {
 
-  User.count({ token: userID }, function(err, count) {
+function sendUserInfo(userID) {
+  var sub = getUID(userID);
+  User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
-      var u = new User({'token': userID});
+      var u = new User({'userID': sub});
       u.save(function(err) {
       if (err) {
         console.log(err);
