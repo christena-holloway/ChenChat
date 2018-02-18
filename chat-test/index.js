@@ -14,7 +14,11 @@ var url = "https://tenaann.github.io/ChenChat";
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
-
+//Authentication code
+var GoogleAuth = require('google-auth-library');
+var auth = new GoogleAuth;
+var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
+//End
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 
 //comment/uncomment to show mongoose debug info (everything inserted into db) in the console
@@ -140,6 +144,17 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
+    client.verifyIdToken(
+    token,
+    "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
+    // Or, if multiple clients access the backend:
+    //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3],
+    function(e, login) {
+      var payload = login.getPayload();
+      var userid = payload['sub'];
+      // If request specified a G Suite domain:
+      //var domain = payload['hd'];
+    });
     sendUserInfo(id_token);
     //console.log('id_token: ' + id_token);
   });
