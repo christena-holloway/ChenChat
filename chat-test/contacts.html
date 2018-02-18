@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Contacts</title>
+    <link rel="stylesheet" href="contacts_style.css">
+  </head>
+  <body>
+    <h1><b>Contacts</b></h1>
+    <input type="text" id="filterNames" onkeyup="myFunction()" placeholder="Filter Contacts" title="Type in a name">
+
+    <ul id="contacts">
+      <li><a href="#">Mother</a></li>
+      <li><a href="#">Friend 1</a></li>
+      <li><a href="#">Friend 2</a></li>
+    </ul>
+    <p><button type="button">Add New Contact</button> <button type="button">Edit Contact</button></p>
+    <script>
+    function myFunction() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById("filterNames");
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("contacts");
+        li = ul.getElementsByTagName("li");
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+
+            }
+        }
+    }
+    </script>
+  </body>
+</html>
