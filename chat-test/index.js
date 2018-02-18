@@ -9,12 +9,16 @@ var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = 3000;
-var url = "https://tenaann.github.io/ChenChat"
+var url = "https://tenaann.github.io/ChenChat";
 //need this so that all data can be sent to db correctly
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
-
+//AUTHENTICATION CODE
+var GoogleAuth = require('google-auth-library');
+var auth = new GoogleAuth;
+var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
+//END CODE
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 
 //comment/uncomment to show mongoose debug info (everything inserted into db) in the console
@@ -46,7 +50,7 @@ app.get("/", function(req, res){
 });
 
 app.post('/', function(req, res){
-    
+
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
@@ -91,7 +95,7 @@ function handleMessage(data) {
 }
 
 function sendMessage(msg) {
-  
+
   console.log('message: ' + msg);
   //send data to database
   var m = new Message({'message': msg});
@@ -140,6 +144,18 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
+    client.verifyIdToken(
+    id_token,
+    "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
+    // Or, if multiple clients access the backend:
+    //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3],
+    function(e, login) {
+      var payload = login.getPayload();
+      var userid = payload['sub'];
+      // If request specified a G Suite domain:
+      //var domain = payload['hd'];
+    });
+
     sendUserInfo(id_token);
     //console.log('id_token: ' + id_token);
   });
@@ -148,7 +164,7 @@ io.on('connection', function(socket){
 function getUID(id_token) {
   var decoded = jwtDecode(id_token);
   var sub = decoded['sub'];
-  
+
   return sub;
 }
 
@@ -174,7 +190,7 @@ function sendUserInfo(userID) {
     })
     }
   });
-  
+
 
   //var u = new User({'token': userID});
   /*u.save(function(err) {
