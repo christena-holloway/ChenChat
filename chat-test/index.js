@@ -1,19 +1,22 @@
-//var app = require('express')();
-//var request = require('request');
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
-var bodyParser = require("body-parser");
+var jwtDecode = require('jwt-decode');
+var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = 3000;
-var url = "https://tenaann.github.io/ChenChat"
+var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
-
+//Authentication code
+var GoogleAuth = require('google-auth-library');
+var auth = new GoogleAuth;
+var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
+//End
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 
 //comment/uncomment to show mongoose debug info (everything inserted into db) in the console
@@ -44,8 +47,12 @@ app.get("/", function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get("/chat", function(req, res) {
+  res.sendFile(__dirname + '/chat.html');
+});
+
 app.post('/', function(req, res){
-    
+
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
@@ -93,7 +100,7 @@ function handleMessage(data) {
 }
 
 function sendMessage(msg) {
-  
+
   console.log('message: ' + msg);
   //send data to database
   var m = new Message({'message': msg});
@@ -108,9 +115,6 @@ function sendMessage(msg) {
   });
   io.emit('chat message', msg);
 }
-
-
-
 
 //send from client to server
 io.on('connection', function(socket){
@@ -142,9 +146,64 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
+    client.verifyIdToken(
+    token,
+    "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
+    // Or, if multiple clients access the backend:
+    //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3],
+    function(e, login) {
+      var payload = login.getPayload();
+      var userid = payload['sub'];
+      // If request specified a G Suite domain:
+      //var domain = payload['hd'];
+    });
+    sendUserInfo(id_token);
     //console.log('id_token: ' + id_token);
   });
 });
+
+function getUID(id_token) {
+  var decoded = jwtDecode(id_token);
+  var sub = decoded['sub'];
+
+  return sub;
+}
+
+var userSchema = new mongoose.Schema({
+  userID: String
+}, {collection: "users"});
+
+var User = mongoose.model("User", userSchema);
+
+function sendUserInfo(userID) {
+  var sub = getUID(userID);
+  User.count({ userID: sub }, function(err, count) {
+    if (count === 0) {
+      var u = new User({'userID': sub});
+      u.save(function(err) {
+      if (err) {
+        console.log(err);
+        res.status(400).send("Bad Request");
+      }
+      else {
+        console.log("successfully posted user info to db");
+      }
+    })
+    }
+  });
+
+
+  //var u = new User({'token': userID});
+  /*u.save(function(err) {
+    if (err) {
+      console.log(err);
+      res.status(400).send("Bad Request");
+    }
+    else {
+      console.log("successfully posted user info to db");
+    }
+  });*/
+}
 
 //listen to the server
 http.listen(port, function(){
