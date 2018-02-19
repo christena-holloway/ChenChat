@@ -1,5 +1,3 @@
-//var app = require('express')();
-//var request = require('request');
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
@@ -47,6 +45,10 @@ mongoose.connect(conString, function(err){
 //runs when page is loaded
 app.get("/", function(req, res){
   res.sendFile(__dirname + '/index.html');
+});
+
+app.get("/chat", function(req, res) {
+  res.sendFile(__dirname + '/chat.html'); 
 });
 
 app.post('/', function(req, res){
@@ -110,9 +112,6 @@ function sendMessage(msg) {
   });
   io.emit('chat message', msg);
 }
-
-
-
 
 //send from client to server
 io.on('connection', function(socket){
