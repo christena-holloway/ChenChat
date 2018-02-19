@@ -6,7 +6,7 @@ var mongoose = require('mongoose');
 var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-var port = 3000;
+var port = 443;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
 app.use(bodyParser.json());
