@@ -51,7 +51,7 @@ app.get("/chat", function(req, res) {
   res.sendFile(__dirname + '/chat.html');
 });
 
-app.post('/', function(req, res){
+app.post('/chat', function(req, res){
 
     console.log('POST /');
     console.dir(req.body);
