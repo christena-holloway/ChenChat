@@ -67,9 +67,6 @@ app.post('/chat', function(req, res){
     // sends a response header to the request
     res.writeHead(200, {'Content-Type': 'application/json'});
     // send a response in the format required by Dialogflow
-    // let responseToAssistant = {
-    //   messages: [{'speech': 'Your message is being delivered by ChenChat!', 'type': 0}],
-    // };
     let responseToAssistant = {
       fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
     };

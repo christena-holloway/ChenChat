@@ -277,7 +277,7 @@ function processV2Request (request, response) {
     // url_path = 'https://www.chenchat.com/actions/' + action;
     // url_path = 'http://c1f22e86.ngrok.io';
     var options = {
-      uri: 'https://c0e3457e.ngrok.io/chat',
+      uri: 'https://chenchat2.azurewebsites.net/chat',
       port: 80,
       method: 'POST',
       json: true,
