@@ -6,7 +6,7 @@ var mongoose = require('mongoose');
 var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-var port = 3000;
+var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
 app.use(bodyParser.json());
@@ -103,7 +103,6 @@ function handleMessage(data) {
 }
 
 function sendMessage(msg) {
-  
   console.log('message: ' + msg);
   //send data to database
   var m = new Message({'message': msg});
@@ -159,6 +158,7 @@ io.on('connection', function(socket){
     function(e, login) {
       var payload = login.getPayload();
       var userid = payload['sub'];
+      var name = payload['name'];
       // If request specified a G Suite domain:
       //var domain = payload['hd'];
     });
@@ -174,17 +174,26 @@ function getUID(id_token) {
   return sub;
 }
 
+function getName(id_token) {
+  var decoded = jwtDecode(id_token);
+  var name = decoded['name'];
+  
+  return name;
+}
+
 var userSchema = new mongoose.Schema({
-  userID: String
+  userID: String,
+  fullName: String
 }, {collection: "users"});
 
 var User = mongoose.model("User", userSchema);
 
-function sendUserInfo(userID) {
-  var sub = getUID(userID);
+function sendUserInfo(token) {
+  var sub = getUID(token);
+  var name = getName(token);
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
-      var u = new User({'userID': sub});
+      var u = new User({ 'userID': sub, 'fullName': name });
       u.save(function(err) {
       if (err) {
         console.log(err);
