@@ -149,6 +149,8 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
+    var destination = '/contacts';
+    io.emit('redirect', destination);
     client.verifyIdToken(
     id_token,
     "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
