@@ -43,7 +43,7 @@
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
         console.log('User signed out.');
-        window.location.replace("index");
+        window.location.replace("/index");
       });
     }
   </script>
@@ -52,7 +52,7 @@
       <header>
         <h1 class="title"> Contact's Name </h1>
         <!-- <a href="product.html" class="back-button"> Back </a> -->
-        <a href="#" class="back-button"> Back </a>
+        <a href="/contacts" class="back-button"> Back </a>
         <a href="#" class="signOut" onclick="signOut();"> Sign out </a>
       </header>
 
