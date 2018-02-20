@@ -139,10 +139,6 @@ io.on('connection', function(socket){
     sendMessage(msg);
   });
 
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
-
   socket.on('id token', function(id_token) {
     var destination = '/contacts';
     io.emit('redirect', destination);
