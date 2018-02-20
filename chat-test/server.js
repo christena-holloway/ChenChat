@@ -30,6 +30,7 @@ mongoose.Promise = Promise;
 /*set up schema in mongoose(will want to add other
 data in messages and also probably another schema)*/
 var messageSchema = new mongoose.Schema({
+    sender: String,
     message: String
 }, {collection: "messages"});
 
@@ -102,10 +103,14 @@ function handleMessage(data) {
   sendMessage(msg);
 }
 
+var sub;
+
 function sendMessage(msg) {
+  // TODO: add recipient's user id to db
+  console.log('user id: ' + sub);
   console.log('message: ' + msg);
   //send data to database
-  var m = new Message({'message': msg});
+  var m = new Message({'sender': sub, 'message': msg });
   m.save(function(err) {
       if (err) {
           console.log(err);
@@ -128,19 +133,10 @@ io.on('connection', function(socket){
 
   socket.on('chat message', function(msg){
     console.log('msg: ' + msg);
-    console.log('message: ' + msg.message);
-    console.log('name: ' + msg.name);
+    //console.log('message: ' + msg.message);
+    //console.log('name: ' + msg.name);
     //send data to database
-    var m = new Message({'message': msg});
-    m.save(function(err) {
-        if (err) {
-            console.log(err);
-            res.status(400).send("Bad Request");
-        }
-        else {
-            console.log('successfully posted to db');
-        }
-    });
+    sendMessage(msg);
   });
 
   socket.on('chat message', function(msg){
@@ -189,7 +185,7 @@ var userSchema = new mongoose.Schema({
 var User = mongoose.model("User", userSchema);
 
 function sendUserInfo(token) {
-  var sub = getUID(token);
+  sub = getUID(token);
   var name = getName(token);
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
