@@ -52,7 +52,7 @@ app.get("/chat", function(req, res) {
   res.sendFile(__dirname + '/chat.html');
 });
 
-app.get("/contacts", function(req, res) {
+app.get("/contacts.html", function(req, res) {
   res.sendFile(__dirname + '/contacts.html');
 });
 
