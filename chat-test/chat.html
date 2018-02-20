@@ -1,29 +1,76 @@
 <!DOCTYPE html>
 <html>
   <head>
+
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com">
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="public/css/chat.css">
+    <link rel="stylesheet" type="text/css" href="https://chenchat2.azurewebsites.net/chat-test/public/css/mystyle.css" />
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <title>Socket.IO chat</title>
   </head>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
   <script>
+    var profile;
+    var id_token;
+    function onSignIn(googleUser) {
+      // Useful data for your client-side scripts:
+      profile = googleUser.getBasicProfile();
+      console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+      console.log('Full Name: ' + profile.getName());
+      console.log('Given Name: ' + profile.getGivenName());
+      console.log('Family Name: ' + profile.getFamilyName());
+      console.log("Image URL: " + profile.getImageUrl());
+      console.log("Email: " + profile.getEmail());
+      // The ID token you need to pass to your backend:
+      id_token = googleUser.getAuthResponse().id_token;
+      console.log("ID Token: " + id_token);
+      var socket = io();
+      //socket.emit('id token', id_token);
+    };
     $(function () {
-    var socket = io();
-    $('form').submit(function(){
-      socket.emit('chat message', $('#m').val());
-      $('#m').val('');
-      return false;
+      var socket = io();
+      $('form').submit(function() {
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message', function(msg) {
+        $('#messages').append($('<li>').text(profile.getName() + ": " + msg));
+      });
     });
-    socket.on('chat message', function(msg){
-      $('#messages').append($('<li>').text(msg));
-    });
-  });
+    function signOut() {
+      var auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(function () {
+        console.log('User signed out.');
+        window.location.replace("https://chenchat2.azurewebsites.net/chat-test/index.html");
+      });
+    }
   </script>
+
   <body>
-    <ul id="messages"></ul>
-    <form method="post" action="/" enctype="application/json">
-      <input id="m" name="message" autocomplete="off" /><button>Send</button>
-    </form>
+    <div class="grid-container">
+      <header>
+        <h1 class="title"> Contact's Name </h1>
+        <!-- <a href="product.html" class="back-button"> Back </a> -->
+        <a href="#" class="back-button"> Back </a>
+        <a href="#" class="signOut" onclick="signOut();"> Sign out </a>
+      </header>
+
+      <div class="chat-content">
+        <ul id="messages"></ul>
+      </div>
+
+      <div class="msg-box">
+        <form class="flex-msg-form" method="post" action="/" enctype="application/json">
+          <input id="m" name="message" autocomplete="off" />
+          <button id="send-button">Send</button>
+        </form>
+      </div>
+
+    </div>
   </body>
+  <script src="index.js"></script>
 </html>
