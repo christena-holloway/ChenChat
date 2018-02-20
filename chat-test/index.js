@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
+//var port = process.env.PORT;
 var port = 443;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
@@ -49,6 +50,10 @@ app.get("/", function(req, res){
 
 app.get("/chat", function(req, res) {
   res.sendFile(__dirname + '/chat.html');
+});
+
+app.get("/contacts", function(req, res) {
+  res.sendFile(__dirname + '/contacts.html');
 });
 
 app.post('/chat', function(req, res){
