@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com">
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="https://chenchat2.azurewebsites.net/chat-test/public/css/mystyle.css" />
+    <link rel="stylesheet" type="text/css" href="css/mystyle.css" />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <title>Socket.IO chat</title>
   </head>
-
   <script>
     var profile;
     var id_token;
@@ -45,11 +43,10 @@
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
         console.log('User signed out.');
-        window.location.replace("https://chenchat2.azurewebsites.net/chat-test/index.html");
+        window.location.replace("index.html");
       });
     }
   </script>
-
   <body>
     <div class="grid-container">
       <header>
@@ -69,7 +66,6 @@
           <button id="send-button">Send</button>
         </form>
       </div>
-
     </div>
   </body>
   <script src="index.js"></script>
