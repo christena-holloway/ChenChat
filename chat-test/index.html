@@ -1,16 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <title> ChenChat sign in </title>
-    <link rel="stylesheet" href="css/indexstyle.css">
+    
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com">
+    <link rel="stylesheet" type="text/css" href="css/indexstyle.css" />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <title>ChenChat sign in</title>
   </head>
+
+  <script>
+    var profile;
+    var id_token;
+    function onSignIn(googleUser) {
+      // Useful data for your client-side scripts:
+      profile = googleUser.getBasicProfile();
+      console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+      console.log('Full Name: ' + profile.getName());
+      console.log('Given Name: ' + profile.getGivenName());
+      console.log('Family Name: ' + profile.getFamilyName());
+      console.log("Image URL: " + profile.getImageUrl());
+      console.log("Email: " + profile.getEmail());
+      // The ID token you need to pass to your backend:
+      id_token = googleUser.getAuthResponse().id_token;
+      console.log("ID Token: " + id_token);
+      var socket = io();
+      //window.location.replace("/contacts");
+      socket.emit('id token', id_token);
+    };
+  </script>
+
   <body>
-    <h1> Welcome to ChenChat! </h1>
+ <h1> Welcome to ChenChat! </h1>
     <div id="container">
     <form>
       <label for="username">Username:</label>
@@ -31,25 +54,6 @@
     <a href="/"> Sign up </a> <br>
 <a href="/"> Forgot your password? </a>
     </div>
-    <script>
-       function onSignIn(googleUser) {
-         // Useful data for your client-side scripts:
-         profile = googleUser.getBasicProfile();
-         console.log("ID: " + profile.getId()); // Don't send this directly to your server!
-         console.log('Full Name: ' + profile.getName());
-         console.log('Given Name: ' + profile.getGivenName());
-         console.log('Family Name: ' + profile.getFamilyName());
-         console.log("Image URL: " + profile.getImageUrl());
-         console.log("Email: " + profile.getEmail());
-         
-         // The ID token you need to pass to your backend:
-         var id_token = googleUser.getAuthResponse().id_token;
-         console.log("ID Token: " + id_token);
-         
-         var socket = io();
-         socket.emit('id token', id_token);
-         window.location.replace("/contacts");
-       }
-    </script>
   </body>
+  <script src="index.js"></script>
 </html>
