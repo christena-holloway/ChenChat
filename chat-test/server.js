@@ -6,7 +6,8 @@ var mongoose = require('mongoose');
 var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-var port = process.env.PORT;
+//var port = process.env.PORT;
+var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
 app.use(bodyParser.json());
@@ -51,26 +52,33 @@ app.get("/chat", function(req, res) {
   res.sendFile(__dirname + '/chat.html');
 });
 
-app.post('/', function(req, res){
+app.get("/contacts", function(req, res) {
+  res.sendFile(__dirname + '/contacts.html');
+});
+
+app.post('/chat', function(req, res){
 
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
-    console.log(req.body.result.parameters);
+    console.log(req.body.queryResult.parameters);
 
     handleMessage(req.body);
     // sends a response header to the request
     res.writeHead(200, {'Content-Type': 'application/json'});
     // send a response in the format required by Dialogflow
+    // let responseToAssistant = {
+    //   messages: [{'speech': 'Your message is being delivered by ChenChat!', 'type': 0}],
+    // };
     let responseToAssistant = {
-      messages: [{'speech': 'Your message is being delivered by ChenChat!', 'type': 0}],
+      fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
     };
     res.end(JSON.stringify(responseToAssistant));
 });
 
 function handleMessage(data) {
 
-  var result = data.result;
+  var result = data.queryResult;
   var action = result.action;
   var parameters = result.parameters;
   var msg = '';
