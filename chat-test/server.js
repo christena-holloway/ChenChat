@@ -9,7 +9,21 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
+var session = require('express-session');
+var sess = {
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {},
+  user_name: ''
+};
 
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+};
+
+app.use(session(sess));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
@@ -133,7 +147,7 @@ function sendMessage(msg) {
     }
     console.log('%s corresponds to %s.', user.userID, user.fullName);
     username = user.fullName;
-    io.emit('chat message', (username + ': ' + msg));
+    io.emit('chat message', (sess.name + ': ' + msg));
   });
 
 }
@@ -196,7 +210,8 @@ var userSchema = new mongoose.Schema({
 var User = mongoose.model("User", userSchema);
 function sendUserInfo(token) {
   sub = getUID(token);
-  var name = getName(token);
+  //var name = getName(token);
+  sess.name = getName(token);
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
       var u = new User({ 'userID': sub, 'fullName': name });
@@ -214,6 +229,7 @@ function sendUserInfo(token) {
       console.log("user is already in db");
     }
   });
+
 }
 
 //listen to the server
