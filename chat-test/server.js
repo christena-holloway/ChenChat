@@ -58,7 +58,7 @@ app.get("/contacts", function(req, res) {
   res.sendFile(__dirname + '/contacts.html');
 });
 
-app.post('/', function(req, res){
+app.post('/chat', function(req, res){
     
     console.log('POST /');
     console.dir(req.body);
@@ -70,7 +70,7 @@ app.post('/', function(req, res){
     res.writeHead(200, {'Content-Type': 'application/json'});
     // send a response in the format required by Dialogflow
     let responseToAssistant = {
-      messages: [{'speech': 'Your message is being delivered by ChenChat!', 'type': 0}],
+      fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
     };
     res.end(JSON.stringify(responseToAssistant));
 });
