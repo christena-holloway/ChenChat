@@ -63,7 +63,7 @@ app.post('/chat', function(req, res){
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
-    console.log(req.body.result.parameters);
+    console.log(req.body.queryResult.parameters);
 
     handleMessage(req.body);
     // sends a response header to the request
@@ -88,16 +88,16 @@ function handleMessage(data) {
     var contact = parameters.contact;
     var state = parameters.state;
     var urgency = parameters.urgency;
-    msg += 'User needs help now!';
+    msg += 'I need help now -- ' + urgency;
   }
   else if (action === 'switchMode') {
     var mode = parameters.mode;
     var contact = parameters.contact;
-    msg += 'User needs you to help him switch modes!';
+    msg += 'I need you to help me switch modes to ' + mode + '!';
   }
   // default handler
   else {
-    msg += 'User wants to know if everything is okay on your end';
+    msg += 'Is everything okay on your end?';
   }
   console.log('I am now sending the message!');
   sendMessage(msg);
@@ -109,6 +109,7 @@ function sendMessage(msg) {
   // TODO: add recipient's user id to db
   console.log('user id: ' + sub);
   console.log('message: ' + msg);
+
   //send data to database
   var m = new Message({'sender': sub, 'message': msg });
   m.save(function(err) {
@@ -120,7 +121,8 @@ function sendMessage(msg) {
           console.log('successfully posted to db');
       }
   });
-  io.emit('chat message', msg);
+  console.log("name is " + name);
+  io.emit('chat message', (name + ': ' + msg));
 }
 
 //send from client to server
@@ -179,10 +181,10 @@ var userSchema = new mongoose.Schema({
 }, {collection: "users"});
 
 var User = mongoose.model("User", userSchema);
-
+var name;
 function sendUserInfo(token) {
   sub = getUID(token);
-  var name = getName(token);
+  name = getName(token);
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
       var u = new User({ 'userID': sub, 'fullName': name });

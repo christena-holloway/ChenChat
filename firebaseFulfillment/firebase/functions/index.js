@@ -255,7 +255,7 @@ function processV2Request (request, response) {
   function forwardIntentFulfillment () {
     // sending all parameters to webapp, which can use them to form the message as needed.
     // Successfully posted the message request to be on it's way via the web app
-    if (sendMessageToApp(request.body.result)) {
+    if (sendMessageToApp(request.body.queryResult)) {
       let responseToUser = {
         fulfillmentText: 'Your message is being delivered!' // displayed response
       };
@@ -271,7 +271,7 @@ function processV2Request (request, response) {
   // Function to send POST request to ChenChat web application
   // Receives a well-formed message to send to the webapp based on the action
   // message must be in json format
-  function sendMessageToApp (jsonMessage) {
+  function sendMessageToApp(jsonMessage) {
 
     var request = require('request');
     // url_path = 'https://www.chenchat.com/actions/' + action;
