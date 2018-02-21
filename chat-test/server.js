@@ -77,7 +77,7 @@ app.post('/chat', function(req, res){
 
 function handleMessage(data) {
 
-  var result = data.result;
+  var result = data.queryResult;
   var action = result.action;
   var parameters = result.parameters;
   var msg = '';
