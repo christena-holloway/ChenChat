@@ -271,7 +271,7 @@ function processV2Request (request, response) {
   // Function to send POST request to ChenChat web application
   // Receives a well-formed message to send to the webapp based on the action
   // message must be in json format
-  function sendMessageToApp (jsonMessage) {
+  function sendMessageToApp(jsonMessage) {
 
     var request = require('request');
     // url_path = 'https://www.chenchat.com/actions/' + action;
