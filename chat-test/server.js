@@ -121,8 +121,20 @@ function sendMessage(msg) {
           console.log('successfully posted to db');
       }
   });
-  console.log("name is " + name);
-  io.emit('chat message', (name + ': ' + msg));
+
+  var User = mongoose.model("User", userSchema);
+  var username;
+  // find each person with a last name matching 'Ghost', selecting the `name` and `occupation` fields
+  User.findOne({ 'userID': sub }, 'fullName', function (err, user) {
+    if (err) {
+      console.log(err);
+      res.status(400).send("Bad Request");
+    }
+    console.log('%s corresponds to %s.', user.userID, user.fullName);
+    username = user.fullName;
+    io.emit('chat message', (username + ': ' + msg));
+  });
+  
 }
 
 //send from client to server
@@ -142,7 +154,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
-    var destination = '/contacts';
+    var destination = '/chat';
     io.emit('redirect', destination);
     client.verifyIdToken(
     id_token,
@@ -181,10 +193,9 @@ var userSchema = new mongoose.Schema({
 }, {collection: "users"});
 
 var User = mongoose.model("User", userSchema);
-var name;
 function sendUserInfo(token) {
   sub = getUID(token);
-  name = getName(token);
+  var name = getName(token);
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
       var u = new User({ 'userID': sub, 'fullName': name });
