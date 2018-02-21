@@ -9,6 +9,15 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
+var session = require('express-session');
+var sess = {
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true },
+  name: ''
+};
+app.use(session(sess));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
@@ -59,7 +68,7 @@ app.get("/contacts", function(req, res) {
 });
 
 app.post('/chat', function(req, res){
-    
+
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
@@ -121,8 +130,8 @@ function sendMessage(msg) {
           console.log('successfully posted to db');
       }
   });
-  console.log("name is " + name);
-  io.emit('chat message', (name + ': ' + msg));
+  console.log("name is " + sess.name);
+  io.emit('chat message', (sess.name + ': ' + msg));
 }
 
 //send from client to server
@@ -164,14 +173,14 @@ io.on('connection', function(socket){
 function getUID(id_token) {
   var decoded = jwtDecode(id_token);
   var sub = decoded['sub'];
-  
+
   return sub;
 }
 
 function getName(id_token) {
   var decoded = jwtDecode(id_token);
   var name = decoded['name'];
-  
+
   return name;
 }
 
@@ -181,10 +190,10 @@ var userSchema = new mongoose.Schema({
 }, {collection: "users"});
 
 var User = mongoose.model("User", userSchema);
-var name;
+//var name;
 function sendUserInfo(token) {
   sub = getUID(token);
-  name = getName(token);
+  sess.name = getName(token);
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
       var u = new User({ 'userID': sub, 'fullName': name });
