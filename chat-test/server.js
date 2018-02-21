@@ -6,18 +6,19 @@ var mongoose = require('mongoose');
 var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-//var port = process.env.PORT;
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
+
 //Authentication code
 var GoogleAuth = require('google-auth-library');
 var auth = new GoogleAuth;
 var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
 //End
+
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 
 //comment/uncomment to show mongoose debug info (everything inserted into db) in the console
@@ -29,6 +30,7 @@ mongoose.Promise = Promise;
 /*set up schema in mongoose(will want to add other
 data in messages and also probably another schema)*/
 var messageSchema = new mongoose.Schema({
+    sender: String,
     message: String
 }, {collection: "messages"});
 
@@ -36,7 +38,7 @@ var messageSchema = new mongoose.Schema({
 var Message = mongoose.model("Message", messageSchema);
 
 //connect to db
-mongoose.connect(conString, function(err){
+mongoose.connect(conString, { useMongoClient: true }, function(err){
     if (err) throw err;
     console.log ("Successfully connected to MongoDB");
     console.log(mongoose.connection.host);
@@ -56,29 +58,26 @@ app.get("/contacts", function(req, res) {
   res.sendFile(__dirname + '/contacts.html');
 });
 
-app.post('/chat', function(req, res){
-
+app.post('/', function(req, res){
+    
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
-    console.log(req.body.queryResult.parameters);
+    console.log(req.body.result.parameters);
 
     handleMessage(req.body);
     // sends a response header to the request
     res.writeHead(200, {'Content-Type': 'application/json'});
     // send a response in the format required by Dialogflow
-    // let responseToAssistant = {
-    //   messages: [{'speech': 'Your message is being delivered by ChenChat!', 'type': 0}],
-    // };
     let responseToAssistant = {
-      fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
+      messages: [{'speech': 'Your message is being delivered by ChenChat!', 'type': 0}],
     };
     res.end(JSON.stringify(responseToAssistant));
 });
 
 function handleMessage(data) {
 
-  var result = data.queryResult;
+  var result = data.result;
   var action = result.action;
   var parameters = result.parameters;
   var msg = '';
@@ -104,11 +103,14 @@ function handleMessage(data) {
   sendMessage(msg);
 }
 
-function sendMessage(msg) {
+var sub;
 
+function sendMessage(msg) {
+  // TODO: add recipient's user id to db
+  console.log('user id: ' + sub);
   console.log('message: ' + msg);
   //send data to database
-  var m = new Message({'message': msg});
+  var m = new Message({'sender': sub, 'message': msg });
   m.save(function(err) {
       if (err) {
           console.log(err);
@@ -131,34 +133,24 @@ io.on('connection', function(socket){
 
   socket.on('chat message', function(msg){
     console.log('msg: ' + msg);
-    console.log('message: ' + msg.message);
-    console.log('name: ' + msg.name);
+    //console.log('message: ' + msg.message);
+    //console.log('name: ' + msg.name);
     //send data to database
-    var m = new Message({'message': msg});
-    m.save(function(err) {
-        if (err) {
-            console.log(err);
-            res.status(400).send("Bad Request");
-        }
-        else {
-            console.log('successfully posted to db');
-        }
-    });
-  });
-
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
+    sendMessage(msg);
   });
 
   socket.on('id token', function(id_token) {
+    var destination = '/contacts';
+    io.emit('redirect', destination);
     client.verifyIdToken(
-    token,
+    id_token,
     "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
     // Or, if multiple clients access the backend:
     //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3],
     function(e, login) {
       var payload = login.getPayload();
       var userid = payload['sub'];
+      var name = payload['name'];
       // If request specified a G Suite domain:
       //var domain = payload['hd'];
     });
@@ -170,21 +162,30 @@ io.on('connection', function(socket){
 function getUID(id_token) {
   var decoded = jwtDecode(id_token);
   var sub = decoded['sub'];
-
+  
   return sub;
 }
 
+function getName(id_token) {
+  var decoded = jwtDecode(id_token);
+  var name = decoded['name'];
+  
+  return name;
+}
+
 var userSchema = new mongoose.Schema({
-  userID: String
+  userID: String,
+  fullName: String
 }, {collection: "users"});
 
 var User = mongoose.model("User", userSchema);
 
-function sendUserInfo(userID) {
-  var sub = getUID(userID);
+function sendUserInfo(token) {
+  sub = getUID(token);
+  var name = getName(token);
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
-      var u = new User({'userID': sub});
+      var u = new User({ 'userID': sub, 'fullName': name });
       u.save(function(err) {
       if (err) {
         console.log(err);
@@ -195,19 +196,10 @@ function sendUserInfo(userID) {
       }
     })
     }
-  });
-
-
-  //var u = new User({'token': userID});
-  /*u.save(function(err) {
-    if (err) {
-      console.log(err);
-      res.status(400).send("Bad Request");
-    }
     else {
-      console.log("successfully posted user info to db");
+      console.log("user is already in db");
     }
-  });*/
+  });
 }
 
 //listen to the server
