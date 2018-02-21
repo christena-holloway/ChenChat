@@ -77,7 +77,7 @@ app.post('/chat', function(req, res){
 
 function handleMessage(data) {
 
-  var result = data.result;
+  var result = data.queryResult;
   var action = result.action;
   var parameters = result.parameters;
   var msg = '';
@@ -187,14 +187,14 @@ function sendUserInfo(token) {
     if (count === 0) {
       var u = new User({ 'userID': sub, 'fullName': name });
       u.save(function(err) {
-      if (err) {
-        console.log(err);
-        res.status(400).send("Bad Request");
-      }
-      else {
-        console.log("successfully posted user info to db");
-      }
-    })
+        if (err) {
+          console.log(err);
+          res.status(400).send("Bad Request");
+        }
+        else {
+          console.log("successfully posted user info to db");
+        }
+      })
     }
     else {
       console.log("user is already in db");
