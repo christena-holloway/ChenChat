@@ -63,7 +63,7 @@ app.post('/chat', function(req, res){
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
-    console.log(req.body.result.parameters);
+    console.log(req.body.queryResult.parameters);
 
     handleMessage(req.body);
     // sends a response header to the request
