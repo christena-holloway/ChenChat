@@ -9,6 +9,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
@@ -59,7 +60,7 @@ app.get("/contacts", function(req, res) {
 });
 
 app.post('/chat', function(req, res){
-    
+
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
@@ -176,14 +177,14 @@ io.on('connection', function(socket){
 function getUID(id_token) {
   var decoded = jwtDecode(id_token);
   var sub = decoded['sub'];
-  
+
   return sub;
 }
 
 function getName(id_token) {
   var decoded = jwtDecode(id_token);
   var name = decoded['name'];
-  
+
   return name;
 }
 
