@@ -108,11 +108,19 @@ function handleMessage(data) {
   else if (action === 'switchMode') {
     var mode = parameters.mode;
     var contact = parameters.contact;
-    msg += 'I need you to help me switch modes to ' + mode + '!';
+    msg += contact + ', I need help ' + mode + '!';
+  }
+  else if (action === 'reportState') {
+    var state = parameters.state;
+    msg += 'I ' + state + '!';
+  }
+  else if (action === 'whereIsMy') {
+    var object = parameters.object;
+    msg += 'Where is my ' + object + '?';
   }
   // default handler
   else {
-    msg += 'Is everything okay on your end?';
+    msg += 'Chun-Han is trying to communicate with you but something went wrong!';
   }
   console.log('I am now sending the message!');
   sendMessage(msg);

@@ -219,6 +219,12 @@ function processV2Request (request, response) {
     },
     'sendHelp': () => {
       forwardIntentFulfillment();
+    },
+    'reportState': () => {
+      forwardIntentFulfillment();
+    },
+    'whereIsMy': () => {
+      forwardIntentFulfillment();
     }
   };
   // If undefined or unknown action use the default handler
