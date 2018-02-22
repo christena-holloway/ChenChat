@@ -75,9 +75,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
 // // NEW SESSION CODE
-// if (app.get('env') === 'production') {
-//   app.set('trust proxy', 1) // trust first proxy
-// };
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+};
 // app.use(session);
 
 //Authentication code
