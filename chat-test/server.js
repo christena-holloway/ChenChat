@@ -32,7 +32,7 @@ app.use(session({
 
 ////==============================================================
 
-const notifier = require('node-notifier');
+// const notifier = require('node-notifier');
 
 //need this so that all data can be sent to db correctly
 //NEW SESSION code
@@ -209,19 +209,19 @@ function sendMessage(msg) {
     //io.emit('chat message', (username + ': ' + msg));
     //n.sound
     io.emit('chat message', (name + ': ' + msg));
-    notifier.notify(
-      {
-        title:'ChenChat',
-        message: msg,
-        icon: (__dirname + '/umich.jpg'),
-        contentImage: void 0,
-        sound: 'Pop',
-        wait: true
-      },
-      function(err, response) {
-        // Response is response from notification
-      }
-    );
+    // notifier.notify(
+    //   {
+    //     title:'ChenChat',
+    //     message: msg,
+    //     icon: (__dirname + '/umich.jpg'),
+    //     contentImage: void 0,
+    //     sound: 'Pop',
+    //     wait: true
+    //   },
+    //   function(err, response) {
+    //     // Response is response from notification
+    //   }
+    // );
   });
 
 }
