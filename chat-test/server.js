@@ -268,12 +268,14 @@ var username;
 io.on('connection', function(socket){
   users[username] = socket.id;
   keys[socket.id] = username;
-  console.log(username + ' connected');
+  console.log(username + ' connected with socket id: ' + socket.id);
 
   socket.on('disconnect', function(){
-    console.log(keys[socket.id] + ' disconnected');
-    delete users[keys[socket.id]];
-    delete keys[socket.id];
+    console.log(keys[socket.id] + ' disconnected with socket id: ' + socket.id);
+    if(socket.id in keys) {
+      delete users[keys[socket.id]];
+      delete keys[socket.id];
+    }
     console.log(users);
   });
 
@@ -285,8 +287,14 @@ io.on('connection', function(socket){
     //sendMessage(msg, session.username);//added the session variable
     //var temp = socket.handshake.session.profilename;//NEW LINE
     //console.log("temp is " + temp);
-    console.log("socket is " + keys[socket.id]);
-    sendMessage(msg, keys[socket.id]);
+    console.log("socket is " + socket.id);
+    if(socket.id in keys) {
+      sendMessage(msg, keys[socket.id]);
+    }
+    else {
+      console.log("not logged in");
+    }
+
     //sendMessage(msg, temp);
   });
 
