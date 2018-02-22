@@ -24,7 +24,6 @@
     "method-override": "^2.3.10",
     "mongoose": "^4.13.11",
     "node-notifier": "^5.2.1",
-    "path": "^9.5.0",
     "request": "^2.83.0",
     "session.socket.io": "^0.2.1",
     "socket.io": "^2.0.4"

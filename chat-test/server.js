@@ -9,7 +9,6 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 const notifier = require('node-notifier');
-const path = require('path');
 
 //need this so that all data can be sent to db correctly
 //NEW SESSION code
@@ -190,7 +189,7 @@ function sendMessage(msg) {
       {
         title:'ChenChat',
         message: msg,
-        icon:path.join(__dirname, 'umich.jpg'),
+        icon: (__dirname + '/umich.jpg'),
         contentImage: void 0,
         sound: 'Pop',
         wait: true
