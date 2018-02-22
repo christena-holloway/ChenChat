@@ -272,7 +272,7 @@ io.on('connection', function(socket){
 
   socket.on('disconnect', function(){
     console.log(keys[socket.id] + ' disconnected with socket id: ' + socket.id);
-    if(socket.id in keys) {
+    if(socket.id in keys && keys[socket.id] in users) {
       delete users[keys[socket.id]];
       delete keys[socket.id];
     }
@@ -288,7 +288,7 @@ io.on('connection', function(socket){
     //var temp = socket.handshake.session.profilename;//NEW LINE
     //console.log("temp is " + temp);
     console.log("socket is " + socket.id);
-    if(socket.id in keys) {
+    if(socket.id in keys && keys[socket.id] in users) {
       sendMessage(msg, keys[socket.id]);
     }
     else {
