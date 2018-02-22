@@ -186,7 +186,7 @@ function sendMessage(msg) {
     //io.emit('chat message', (username + ': ' + msg));
     //n.sound
     io.emit('chat message', (name + ': ' + msg));
-    notifier.notify(
+    /*notifier.notify(
       {
         title:'ChenChat',
         message: msg,
@@ -198,7 +198,7 @@ function sendMessage(msg) {
       function(err, response) {
         // Response is response from notification
       }
-    );
+    );*/
   });
 
 }
