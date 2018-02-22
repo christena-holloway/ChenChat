@@ -8,8 +8,8 @@ var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
-const notifier = require('node-notifier');
-const path = require('path');
+//const notifier = require('node-notifier');
+//const path = require('path');
 
 //need this so that all data can be sent to db correctly
 //NEW SESSION code
