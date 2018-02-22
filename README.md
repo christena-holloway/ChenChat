@@ -7,7 +7,6 @@
 3. The application will continue to listen to message commands until the user tells it to close the application.
 
 User can...
-------------
 	- Send for help
 	  * examples: "Help me." "Call for help!" "Send help."
 	- Say how he or she is feeling
