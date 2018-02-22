@@ -10,6 +10,7 @@ var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
 //NEW SESSION code
+/*
 var session = require("express-session")({
     secret: "my-secret",
     resave: true,
@@ -24,7 +25,7 @@ if (app.get('env') === 'production') {
 };
 
 io.use(sharedsession(session));
-
+*/
 
 //NEW SESSION CODE END
 
@@ -159,7 +160,7 @@ function handleMessage(data) {
 
 var sub;
 
-function sendMessage(msg, tmp) {
+function sendMessage(msg) {
   // TODO: add recipient's user id to db
   console.log('user id: ' + sub);
   console.log('message: ' + msg);
@@ -187,8 +188,8 @@ function sendMessage(msg, tmp) {
     //console.log('%s corresponds to %s.', user.userID, user.fullName);
     //username = user.fullName;
     //io.emit('chat message', (username + ': ' + msg));
-    //io.emit('chat message', (name + ': ' + msg));
-    io.emit('chat message', (tmp + ': ' + msg));
+    io.emit('chat message', (name + ': ' + msg));
+    //io.emit('chat message', (tmp + ': ' + msg));
   });
 
 }
@@ -208,9 +209,9 @@ io.on('connection', function(socket){
     //console.log('name: ' + msg.name);
     //send data to database
     //sendMessage(msg, session.username);//added the session variable
-    var temp = socket.handshake.session.profilename;//NEW LINE
+    //var temp = socket.handshake.session.profilename;//NEW LINE
     //sendMessage(msg); OLD LINE
-    sendMessage(msg, temp);
+    sendMessage(msg);
   });
 
   socket.on('id token', function(id_token) {
@@ -228,8 +229,8 @@ io.on('connection', function(socket){
       // If request specified a G Suite domain:
       //var domain = payload['hd'];
     });
-    socket.handshake.session.profilename = getName(id_token);//NEW LINE
-    socket.handshake.session.save();//NEW LINE
+    //socket.handshake.session.profilename = getName(id_token);//NEW LINE
+    //socket.handshake.session.save();//NEW LINE
     sendUserInfo(id_token);
     //console.log('id_token: ' + id_token);
   });
