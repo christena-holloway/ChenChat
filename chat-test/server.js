@@ -199,10 +199,10 @@ function handleMessage(data) {
   }
   // default handler
   else {
-    msg += 'Chun-Han is trying to communicate with you but something went wrong!';
+    msg += 'I am trying to communicate with you but something went wrong!';
   }
   console.log('I am now sending the message!');
-  sendMessage(msg);
+  sendMessage(msg, 'Chun-Han');
 }
 
 var sub;
