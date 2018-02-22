@@ -13,6 +13,7 @@
     "base-64": "^0.1.0",
     "body-parser": "^1.18.2",
     "client-sessions": "^0.8.0",
+    "cookie-parser": "^1.4.3",
     "express": "^4.15.2",
     "express-session": "^1.15.6",
     "google-auth-library": "^0.12.0",
