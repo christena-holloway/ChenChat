@@ -9,24 +9,24 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
-//New Session CODE
-/*
-var cookieParser = require('cookie-parser');
-var methodOverride = require('method-override');
-var expressSession = require('express-session');
+//NEW SESSION code
+var session = require("express-session")({
+    secret: "my-secret",
+    resave: true,
+    saveUninitialized: true
+  });
+var sharedsession = require("express-socket.io-session");
 
-var myCookieParser = cookieParser('secret');
-var sessionStore = new expressSession.MemoryStore();
+app.use(session);
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+};
 
-app.use(methodOverride());
-app.use(myCookieParser);
+io.use(sharedsession(session));
 
-app.use(expressSession({ secret: 'secret', resave: false, saveUninitialized: true, store: sessionStore }));
 
-var SessionSockets = require('session.socket.io')
-  , sessionSockets = new SessionSockets(io, sessionStore, myCookieParser);
-  */
-//End New Session Code
+//NEW SESSION CODE END
 
 /* SESSION CODE
 var session = require('express-session');
@@ -159,7 +159,7 @@ function handleMessage(data) {
 
 var sub;
 
-function sendMessage(msg, user_name) {
+function sendMessage(msg, tmp) {
   // TODO: add recipient's user id to db
   console.log('user id: ' + sub);
   console.log('message: ' + msg);
@@ -187,8 +187,8 @@ function sendMessage(msg, user_name) {
     //console.log('%s corresponds to %s.', user.userID, user.fullName);
     //username = user.fullName;
     //io.emit('chat message', (username + ': ' + msg));
-    io.emit('chat message', (name + ': ' + msg));
-    //io.emit('chat message', (user_name + ': ' + msg));
+    //io.emit('chat message', (name + ': ' + msg));
+    io.emit('chat message', (tmp + ': ' + msg));
   });
 
 }
@@ -208,7 +208,9 @@ io.on('connection', function(socket){
     //console.log('name: ' + msg.name);
     //send data to database
     //sendMessage(msg, session.username);//added the session variable
-    sendMessage(msg);
+    var temp = socket.handshake.session.profilename;//NEW LINE
+    //sendMessage(msg); OLD LINE
+    sendMessage(msg, temp);
   });
 
   socket.on('id token', function(id_token) {
@@ -226,8 +228,8 @@ io.on('connection', function(socket){
       // If request specified a G Suite domain:
       //var domain = payload['hd'];
     });
-    //session.username = getName(id_token);//NEW LINE
-    //session.save();//NEW LINE
+    socket.handshake.session.profilename = getName(id_token);//NEW LINE
+    socket.handshake.session.save();//NEW LINE
     sendUserInfo(id_token);
     //console.log('id_token: ' + id_token);
   });
