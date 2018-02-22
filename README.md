@@ -18,5 +18,7 @@
 	* examples: "I need to type." "I need to use the phone." "I want to use the mouse."
 4. Ask for help finding objects
 	* examples: "I need my straw." "I can't find my mouthpiece."
+5. Close application
+	* examples: "Leave chat." "I'm done chatting." "Close app."
 
 
