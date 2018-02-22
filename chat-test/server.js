@@ -9,6 +9,21 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
+var session = require('express-session');
+var sess = {
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {},
+  user_name: ''
+};
+
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+};
+
+app.use(session(sess));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
@@ -59,7 +74,7 @@ app.get("/contacts", function(req, res) {
 });
 
 app.post('/chat', function(req, res){
-    
+
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
@@ -121,8 +136,20 @@ function sendMessage(msg) {
           console.log('successfully posted to db');
       }
   });
-  console.log("name is " + name);
-  io.emit('chat message', (name + ': ' + msg));
+
+  var User = mongoose.model("User", userSchema);
+  var username;
+  // find each person with a last name matching 'Ghost', selecting the `name` and `occupation` fields
+  User.findOne({ 'userID': sub }, 'fullName', function (err, user) {
+    if (err) {
+      console.log(err);
+      res.status(400).send("Bad Request");
+    }
+    console.log('%s corresponds to %s.', user.userID, user.fullName);
+    username = user.fullName;
+    io.emit('chat message', (sess.name + ': ' + msg));
+  });
+
 }
 
 //send from client to server
@@ -142,7 +169,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
-    var destination = '/contacts';
+    var destination = '/chat';
     io.emit('redirect', destination);
     client.verifyIdToken(
     id_token,
@@ -164,14 +191,14 @@ io.on('connection', function(socket){
 function getUID(id_token) {
   var decoded = jwtDecode(id_token);
   var sub = decoded['sub'];
-  
+
   return sub;
 }
 
 function getName(id_token) {
   var decoded = jwtDecode(id_token);
   var name = decoded['name'];
-  
+
   return name;
 }
 
@@ -181,10 +208,10 @@ var userSchema = new mongoose.Schema({
 }, {collection: "users"});
 
 var User = mongoose.model("User", userSchema);
-var name;
 function sendUserInfo(token) {
   sub = getUID(token);
-  name = getName(token);
+  //var name = getName(token);
+  sess.name = getName(token);
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
       var u = new User({ 'userID': sub, 'fullName': name });
@@ -202,6 +229,7 @@ function sendUserInfo(token) {
       console.log("user is already in db");
     }
   });
+
 }
 
 //listen to the server
