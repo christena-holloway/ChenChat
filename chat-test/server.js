@@ -20,7 +20,7 @@ var session = require("express-session")({
     saveUninitialized: true,
     cookie: { secure: true }
   });
-var sharedsession = require("express-socket.io-session");
+
 
 
 
@@ -55,8 +55,6 @@ if (app.get('env') === 'production') {
   app.set('trust proxy', 1) // trust first proxy
 };
 app.use(session);
-io.use(sharedsession(session));
-
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
