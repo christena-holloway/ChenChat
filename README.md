@@ -16,8 +16,8 @@
 4. Ask for help finding objects
 	* examples: "I need my straw." "I can't find my mouthpiece."
 
-# Instructions for Web Applicaiton Use:
-1. Navigate to website at chenchat2.azurewebsites.net and login with Google Account
+# Instructions for Web Application Use:
+1. Navigate to website at chenchat2.azurewebsites.net and login with Google Account.
 2. Type message in empty field and click send.
 
 
