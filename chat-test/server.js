@@ -182,7 +182,7 @@ function handleMessage(data) {
     var contact = parameters.contact;
     var state = parameters.state;
     var urgency = parameters.urgency;
-    msg += 'I need help now -- ' + urgency;
+    msg += 'I need help ' + urgency;
   }
   else if (action === 'switchMode') {
     var mode = parameters.mode;
