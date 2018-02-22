@@ -10,22 +10,17 @@ var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
 //NEW SESSION code
-/*
+
 var session = require("express-session")({
     secret: "my-secret",
-    resave: true,
-    saveUninitialized: true
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
   });
 var sharedsession = require("express-socket.io-session");
 
-app.use(session);
-if (app.get('env') === 'production') {
-  app.set('trust proxy', 1) // trust first proxy
-  sess.cookie.secure = true // serve secure cookies
-};
 
-io.use(sharedsession(session));
-*/
+
 
 //NEW SESSION CODE END
 
@@ -52,13 +47,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
-/* SESSION CODE
-app.use((req, res, next) => {
-    if (req.cookies.user_sid && !req.session.user) {
-        res.clearCookie('user_sid');
-    }
-    next();
-});*/
+// NEW SESSION CODE
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+};
+app.use(session);
+io.use(sharedsession(session));
+
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
