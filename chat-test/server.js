@@ -10,6 +10,7 @@ var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
 //New Session CODE
+/*
 var cookieParser = require('cookie-parser');
 var methodOverride = require('method-override');
 var expressSession = require('express-session');
@@ -24,6 +25,7 @@ app.use(expressSession({ secret: 'secret', resave: false, saveUninitialized: tru
 
 var SessionSockets = require('session.socket.io')
   , sessionSockets = new SessionSockets(io, sessionStore, myCookieParser);
+  */
 //End New Session Code
 
 /* SESSION CODE
@@ -185,15 +187,15 @@ function sendMessage(msg, user_name) {
     //console.log('%s corresponds to %s.', user.userID, user.fullName);
     //username = user.fullName;
     //io.emit('chat message', (username + ': ' + msg));
-    //io.emit('chat message', (name + ': ' + msg));
-    io.emit('chat message', (user_name + ': ' + msg));
+    io.emit('chat message', (name + ': ' + msg));
+    //io.emit('chat message', (user_name + ': ' + msg));
   });
 
 }
 
 //send from client to server
-//io.on('connection', function(socket){
-sessionSockets.on('connection', function (err, socket, session) {
+io.on('connection', function(socket){
+
   console.log('a user connected');
 
   socket.on('disconnect', function(){
@@ -205,7 +207,8 @@ sessionSockets.on('connection', function (err, socket, session) {
     //console.log('message: ' + msg.message);
     //console.log('name: ' + msg.name);
     //send data to database
-    sendMessage(msg, session.username);//added the session variable
+    //sendMessage(msg, session.username);//added the session variable
+    sendMessage(msg);
   });
 
   socket.on('id token', function(id_token) {
@@ -223,8 +226,8 @@ sessionSockets.on('connection', function (err, socket, session) {
       // If request specified a G Suite domain:
       //var domain = payload['hd'];
     });
-    session.username = getName(id_token);//NEW LINE
-    session.save();//NEW LINE
+    //session.username = getName(id_token);//NEW LINE
+    //session.save();//NEW LINE
     sendUserInfo(id_token);
     //console.log('id_token: ' + id_token);
   });
