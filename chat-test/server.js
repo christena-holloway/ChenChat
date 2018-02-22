@@ -8,8 +8,8 @@ var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
-//const notifier = require('node-notifier');
-//const path = require('path');
+const notifier = require('node-notifier');
+const path = require('path');
 
 //need this so that all data can be sent to db correctly
 //NEW SESSION code
@@ -186,7 +186,7 @@ function sendMessage(msg) {
     //io.emit('chat message', (username + ': ' + msg));
     //n.sound
     io.emit('chat message', (name + ': ' + msg));
-    /*notifier.notify(
+    notifier.notify(
       {
         title:'ChenChat',
         message: msg,
@@ -198,7 +198,7 @@ function sendMessage(msg) {
       function(err, response) {
         // Response is response from notification
       }
-    );*/
+    );
   });
 
 }
