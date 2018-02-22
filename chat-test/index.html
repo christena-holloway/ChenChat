@@ -31,7 +31,7 @@
         window.location.href = destination;
       });
 
-
+      var passportSocketIo = require("passport.socketio");
       var sessionStore = new RedisStore();
       //in your passport.socketio setup
       //With Socket.io >= 1.0 (you will have the same setup for Socket.io <1)

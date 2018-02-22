@@ -14,7 +14,7 @@ var url = "https://chenchat2.azurewebsites.net";
 //==============================================================
 
 // initialize our modules
-var passportSocketIo = require("passport.socketio");
+
 
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
