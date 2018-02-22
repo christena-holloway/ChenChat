@@ -12,6 +12,20 @@ const notifier = require('node-notifier');
 const path = require('path');
 
 //need this so that all data can be sent to db correctly
+//NEW SESSION code
+
+var session = require("express-session")({
+    secret: "my-secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+  });
+var sharedsession = require("express-socket.io-session");
+
+
+
+
+//NEW SESSION CODE END
 
 /* SESSION CODE
 var session = require('express-session');
@@ -36,13 +50,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
-/* SESSION CODE
-app.use((req, res, next) => {
-    if (req.cookies.user_sid && !req.session.user) {
-        res.clearCookie('user_sid');
-    }
-    next();
-});*/
+// NEW SESSION CODE
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+};
+app.use(session);
+io.use(sharedsession(session));
+
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
@@ -175,24 +189,25 @@ function sendMessage(msg) {
     //n.sound
     io.emit('chat message', (name + ': ' + msg));
     notifier.notify(
-  {
-    title:'ChenChat',
-    message: msg,
-    icon:path.join(__dirname, 'umich.jpg'),
-    contentImage: void 0,
-    sound: 'Pop',
-    wait: true
-  },
-  function(err, response) {
-    // Response is response from notification
-  }
-);
+      {
+        title:'ChenChat',
+        message: msg,
+        icon:path.join(__dirname, 'umich.jpg'),
+        contentImage: void 0,
+        sound: 'Pop',
+        wait: true
+      },
+      function(err, response) {
+        // Response is response from notification
+      }
+    );
   });
 
 }
 
 //send from client to server
 io.on('connection', function(socket){
+
   console.log('a user connected');
 
   socket.on('disconnect', function(){
@@ -204,6 +219,9 @@ io.on('connection', function(socket){
     //console.log('message: ' + msg.message);
     //console.log('name: ' + msg.name);
     //send data to database
+    //sendMessage(msg, session.username);//added the session variable
+    //var temp = socket.handshake.session.profilename;//NEW LINE
+    //sendMessage(msg); OLD LINE
     sendMessage(msg);
   });
 
@@ -222,6 +240,8 @@ io.on('connection', function(socket){
       // If request specified a G Suite domain:
       //var domain = payload['hd'];
     });
+    //socket.handshake.session.profilename = getName(id_token);//NEW LINE
+    //socket.handshake.session.save();//NEW LINE
     sendUserInfo(id_token);
     //console.log('id_token: ' + id_token);
   });
@@ -248,7 +268,7 @@ var userSchema = new mongoose.Schema({
 
 var name;
 var User = mongoose.model("User", userSchema);
-function sendUserInfo(token,req) {
+function sendUserInfo(token) {
   sub = getUID(token);
   //var name = getName(token);
   name = getName(token);

@@ -1,4 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:400,700);
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
 
 $green: #86BB71;
 $blue: #94C2ED;
@@ -30,13 +31,16 @@ html, body {
 
 header {
   grid-row: 1 / 2;
-  background-color: #D7CDCA;
+  background-color: #374251;
   border-bottom-style: groove;
+  height: 100px;
 }
 
 .title {
-  color: blue;
+  color: white;
   text-align: center;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 40px;
 }
 
 .back-button {
@@ -52,7 +56,7 @@ header {
   position: absolute;
   left: 0;
   top: 0;
-  margin-top: 12px;
+  margin-top: 30px;
   margin-left: 12px;
 }
 
@@ -69,7 +73,7 @@ header {
   position: absolute;
   right: 0;
   top: 0;
-  margin-top: 12px;
+  margin-top: 30px;
   margin-right: 12px;
 }
 
@@ -107,13 +111,13 @@ form input {
 
 form button {
   width: 20%;
-  color: blue;
+  color: white;
   font-size: 22px;
   text-transform: uppercase;
   border: none;
   cursor: pointer;
   font-weight: bold;
-  background: #F2F5F8;
+  background: #E38968;
   border-style: groove;
 
   &:hover {
@@ -145,6 +149,7 @@ form button {
 }
 #messages li {
   padding: 5px 10px;
+  font-size: 30px;
 }
 #messages li:nth-child(odd) {
   background: #eee;
