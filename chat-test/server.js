@@ -8,8 +8,35 @@ var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
+
+
+
+//==============================================================
+
+// initialize our modules
+
+/*
+var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
+
+var sessionStore = new RedisStore();
+
+app.use(session({
+    key: 'express.sid',
+    store: sessionStore,
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+}));
+*/
+
+////==============================================================
+
+// const notifier = require('node-notifier');
+
 //need this so that all data can be sent to db correctly
 //NEW SESSION code
+
 /*
 var session = require("express-session")({
     secret: "my-secret",
@@ -19,6 +46,19 @@ var session = require("express-session")({
   });
 var sharedsession = require("express-socket.io-session");
 */
+
+
+// var session = require("express-session")({
+//     secret: "my-secret",
+//     resave: false,
+
+//     saveUninitialized: true,
+//     cookie: { secure: true }
+//   });
+
+
+
+
 
 
 //NEW SESSION CODE END
@@ -46,6 +86,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
+
 /* NEW SESSION CODE
 if (app.get('env') === 'production') {
   app.set('trust proxy', 1) // trust first proxy
@@ -57,6 +98,13 @@ io.of('/').use(sharedsession(session, {
 */
 
 //io.use(sharedsession(session));
+
+
+// // NEW SESSION CODE
+/*if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+};*/
+// app.use(session);
 
 
 //Authentication code
@@ -189,8 +237,26 @@ function sendMessage(msg, temp) {
     //console.log('%s corresponds to %s.', user.userID, user.fullName);
     //username = user.fullName;
     //io.emit('chat message', (username + ': ' + msg));
+
     //io.emit('chat message', (name + ': ' + msg));
     //io.emit('chat message', (temp + ': ' + msg));
+
+    //n.sound
+    //io.emit('chat message', (name + ': ' + msg));
+    // notifier.notify(
+    //   {
+    //     title:'ChenChat',
+    //     message: msg,
+    //     icon: (__dirname + '/umich.jpg'),
+    //     contentImage: void 0,
+    //     sound: 'Pop',
+    //     wait: true
+    //   },
+    //   function(err, response) {
+    //     // Response is response from notification
+    //   }
+    // );
+
   });
   console.log("variable is " + temp);
   io.emit('chat message', (temp + ': ' + msg));
