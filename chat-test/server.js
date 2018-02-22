@@ -9,6 +9,22 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
+//New Session CODE
+var cookieParser = require('cookie-parser');
+var methodOverride = require('method-override');
+var expressSession = require('express-session');
+
+var myCookieParser = cookieParser('secret');
+var sessionStore = new expressSession.MemoryStore();
+
+app.use(methodOverride());
+app.use(myCookieParser);
+
+app.use(expressSession({ secret: 'secret', resave: false, saveUninitialized: true, store: sessionStore }));
+
+var SessionSockets = require('session.socket.io')
+  , sessionSockets = new SessionSockets(io, sessionStore, myCookieParser);
+//End New Session Code
 
 /* SESSION CODE
 var session = require('express-session');
@@ -141,7 +157,7 @@ function handleMessage(data) {
 
 var sub;
 
-function sendMessage(msg) {
+function sendMessage(msg, user_name) {
   // TODO: add recipient's user id to db
   console.log('user id: ' + sub);
   console.log('message: ' + msg);
@@ -169,13 +185,15 @@ function sendMessage(msg) {
     //console.log('%s corresponds to %s.', user.userID, user.fullName);
     //username = user.fullName;
     //io.emit('chat message', (username + ': ' + msg));
-    io.emit('chat message', (name + ': ' + msg));
+    //io.emit('chat message', (name + ': ' + msg));
+    io.emit('chat message', (user_name + ': ' + msg));
   });
 
 }
 
 //send from client to server
-io.on('connection', function(socket){
+//io.on('connection', function(socket){
+sessionSockets.on('connection', function (err, socket, session) {
   console.log('a user connected');
 
   socket.on('disconnect', function(){
@@ -187,7 +205,7 @@ io.on('connection', function(socket){
     //console.log('message: ' + msg.message);
     //console.log('name: ' + msg.name);
     //send data to database
-    sendMessage(msg);
+    sendMessage(msg, session.username);//added the session variable
   });
 
   socket.on('id token', function(id_token) {
@@ -205,6 +223,8 @@ io.on('connection', function(socket){
       // If request specified a G Suite domain:
       //var domain = payload['hd'];
     });
+    session.username = getName(id_token);//NEW LINE
+    session.save();//NEW LINE
     sendUserInfo(id_token);
     //console.log('id_token: ' + id_token);
   });
@@ -231,7 +251,7 @@ var userSchema = new mongoose.Schema({
 
 var name;
 var User = mongoose.model("User", userSchema);
-function sendUserInfo(token,req) {
+function sendUserInfo(token) {
   sub = getUID(token);
   //var name = getName(token);
   name = getName(token);
