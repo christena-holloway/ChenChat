@@ -37,12 +37,13 @@ app.use(session({
 //need this so that all data can be sent to db correctly
 //NEW SESSION code
 
-var session = require("express-session")({
-    secret: "my-secret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }
-  });
+// var session = require("express-session")({
+//     secret: "my-secret",
+//     resave: false,
+
+//     saveUninitialized: true,
+//     cookie: { secure: true }
+//   });
 
 
 
@@ -73,11 +74,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
-// NEW SESSION CODE
-if (app.get('env') === 'production') {
-  app.set('trust proxy', 1) // trust first proxy
-};
-app.use(session);
+// // NEW SESSION CODE
+// if (app.get('env') === 'production') {
+//   app.set('trust proxy', 1) // trust first proxy
+// };
+// app.use(session);
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
