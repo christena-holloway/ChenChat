@@ -300,7 +300,7 @@ io.on('connection', function(socket){
 
   socket.on('id token', function(id_token) {
     var destination = '/chat';
-    io.emit('redirect', destination);
+
     client.verifyIdToken(
     id_token,
     "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
@@ -315,6 +315,7 @@ io.on('connection', function(socket){
     });
     //socket.handshake.session.profilename = getName(id_token);//NEW LINE
     username = getName(id_token);
+    io.emit('redirect', destination);
     //users[socket.id] = temp;
     //socket.handshake.session.save();//NEW LINE
     //console.log("hey " + socket.handshake.session.profilename);
