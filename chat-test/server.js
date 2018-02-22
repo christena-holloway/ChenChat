@@ -10,16 +10,15 @@ var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
 //NEW SESSION code
-
+/*
 var session = require("express-session")({
     secret: "my-secret",
-    resave: false,
+    resave: true,
     saveUninitialized: true,
     cookie: { secure: true }
   });
 var sharedsession = require("express-socket.io-session");
-
-
+*/
 
 
 //NEW SESSION CODE END
@@ -47,12 +46,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
-// NEW SESSION CODE
+/* NEW SESSION CODE
 if (app.get('env') === 'production') {
   app.set('trust proxy', 1) // trust first proxy
 };
 app.use(session);
-io.use(sharedsession(session));
+io.of('/').use(sharedsession(session, {
+    autoSave: true
+}));
+*/
+
+//io.use(sharedsession(session));
 
 
 //Authentication code
@@ -155,7 +159,9 @@ function handleMessage(data) {
 
 var sub;
 
-function sendMessage(msg) {
+var dict = {};
+
+function sendMessage(msg, temp) {
   // TODO: add recipient's user id to db
   console.log('user id: ' + sub);
   console.log('message: ' + msg);
@@ -183,19 +189,26 @@ function sendMessage(msg) {
     //console.log('%s corresponds to %s.', user.userID, user.fullName);
     //username = user.fullName;
     //io.emit('chat message', (username + ': ' + msg));
-    io.emit('chat message', (name + ': ' + msg));
-    //io.emit('chat message', (tmp + ': ' + msg));
+    //io.emit('chat message', (name + ': ' + msg));
+    //io.emit('chat message', (temp + ': ' + msg));
   });
-
+  console.log("variable is " + temp);
+  io.emit('chat message', (temp + ': ' + msg));
 }
-
+var users = {};
+var keys = {};
 //send from client to server
+var username;
 io.on('connection', function(socket){
-
-  console.log('a user connected');
+  users[username] = socket.id;
+  keys[socket.id] = username;
+  console.log(username + ' connected');
 
   socket.on('disconnect', function(){
-    console.log('user disconnected');
+    console.log(keys[socket.id] + ' disconnected');
+    delete users[keys[socket.id]];
+    delete keys[socket.id];
+    console.log(users);
   });
 
   socket.on('chat message', function(msg){
@@ -205,8 +218,10 @@ io.on('connection', function(socket){
     //send data to database
     //sendMessage(msg, session.username);//added the session variable
     //var temp = socket.handshake.session.profilename;//NEW LINE
-    //sendMessage(msg); OLD LINE
-    sendMessage(msg);
+    //console.log("temp is " + temp);
+    console.log("socket is " + keys[socket.id]);
+    sendMessage(msg, keys[socket.id]);
+    //sendMessage(msg, temp);
   });
 
   socket.on('id token', function(id_token) {
@@ -225,7 +240,10 @@ io.on('connection', function(socket){
       //var domain = payload['hd'];
     });
     //socket.handshake.session.profilename = getName(id_token);//NEW LINE
+    username = getName(id_token);
+    //users[socket.id] = temp;
     //socket.handshake.session.save();//NEW LINE
+    //console.log("hey " + socket.handshake.session.profilename);
     sendUserInfo(id_token);
     //console.log('id_token: ' + id_token);
   });
@@ -256,6 +274,7 @@ function sendUserInfo(token) {
   sub = getUID(token);
   //var name = getName(token);
   name = getName(token);
+
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
       var u = new User({ 'userID': sub, 'fullName': name });
