@@ -8,6 +8,29 @@ var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
+
+
+//==============================================================
+
+// initialize our modules
+var passportSocketIo = require("passport.socketio");
+
+var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
+
+var sessionStore = new RedisStore();
+
+app.use(session({
+    key: 'express.sid',
+    store: sessionStore,
+    secret: 'keyboard cat',
+    resave: false, 
+    saveUninitialized: false
+}));
+
+
+////==============================================================
+
 //need this so that all data can be sent to db correctly
 //New Session CODE
 /*
