@@ -9,24 +9,37 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
+
+/* SESSION CODE
 var session = require('express-session');
-var sess = {
-  secret: 'keyboard cat',
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
+app.use(session({
+  key: 'user_sid',
+  secret: 'secretkey',
   resave: false,
   saveUninitialized: true,
   cookie: {},
   user_name: ''
-};
+}));
 
 if (app.get('env') === 'production') {
   app.set('trust proxy', 1) // trust first proxy
   sess.cookie.secure = true // serve secure cookies
-};
+};*/
 
-app.use(session(sess));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
+
+/* SESSION CODE
+app.use((req, res, next) => {
+    if (req.cookies.user_sid && !req.session.user) {
+        res.clearCookie('user_sid');
+    }
+    next();
+});*/
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
@@ -108,11 +121,19 @@ function handleMessage(data) {
   else if (action === 'switchMode') {
     var mode = parameters.mode;
     var contact = parameters.contact;
-    msg += 'I need you to help me switch modes to ' + mode + '!';
+    msg += contact + ', I need help ' + mode + '!';
+  }
+  else if (action === 'reportState') {
+    var state = parameters.state;
+    msg += 'I ' + state + '!';
+  }
+  else if (action === 'whereIsMy') {
+    var object = parameters.object;
+    msg += 'Where is my ' + object + '?';
   }
   // default handler
   else {
-    msg += 'Is everything okay on your end?';
+    msg += 'Chun-Han is trying to communicate with you but something went wrong!';
   }
   console.log('I am now sending the message!');
   sendMessage(msg);
@@ -145,9 +166,10 @@ function sendMessage(msg) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
-    console.log('%s corresponds to %s.', user.userID, user.fullName);
-    username = user.fullName;
-    io.emit('chat message', (sess.name + ': ' + msg));
+    //console.log('%s corresponds to %s.', user.userID, user.fullName);
+    //username = user.fullName;
+    //io.emit('chat message', (username + ': ' + msg));
+    io.emit('chat message', (name + ': ' + msg));
   });
 
 }
@@ -207,11 +229,12 @@ var userSchema = new mongoose.Schema({
   fullName: String
 }, {collection: "users"});
 
+var name;
 var User = mongoose.model("User", userSchema);
-function sendUserInfo(token) {
+function sendUserInfo(token,req) {
   sub = getUID(token);
   //var name = getName(token);
-  sess.name = getName(token);
+  name = getName(token);
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
       var u = new User({ 'userID': sub, 'fullName': name });

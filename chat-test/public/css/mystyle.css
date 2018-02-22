@@ -31,7 +31,7 @@ html, body {
 header {
   grid-row: 1 / 2;
   background-color: #D7CDCA;
-  border-bottom-style: groove; 
+  border-bottom-style: groove;
 }
 
 .title {
@@ -87,26 +87,26 @@ ul {
   grid-row: 3;
 }
 
-.flex-msg-form { 
+.flex-msg-form {
   display: flex;
   flex-direction: row;
-  background: #000; 
-  position: fixed; 
-  bottom: 0; 
-  width: 100%;  
+  background: #000;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   color: white;
 
 }
 
-form input { 
-  width: 80%; 
+form input {
+  width: 80%;
   height: 70px;
   font-size: 27px;
   border-style: groove;
 }
 
-form button { 
-  width: 20%; 
+form button {
+  width: 20%;
   color: blue;
   font-size: 22px;
   text-transform: uppercase;
@@ -115,20 +115,20 @@ form button {
   font-weight: bold;
   background: #F2F5F8;
   border-style: groove;
-      
+
   &:hover {
     color: darken($blue, 7%);
   }
 }
 
-#messages { 
-  list-style-type: none; 
+#messages {
+  list-style-type: none;
   line-height: 30px;
   font-size: 20px;
   /*border-radius: 7px;
   margin-bottom: 30px;*/
   /*position: relative;*/
-  
+
   &:after {
     bottom: 100%;
     left: 7%;
@@ -143,11 +143,12 @@ form button {
     margin-left: -10px;
   }
 }
-#messages li { 
-  padding: 5px 10px; 
+#messages li {
+  padding: 5px 10px;
 }
-#messages li:nth-child(odd) { 
-  background: #eee; 
-  color:rgb(128,128,128); 
+#messages li:nth-child(odd) {
+  background: #eee;
+  color:rgb(128,128,128);
   font:"Lato", Arial, sans-serif;
+  font-size: 30px;
 }
