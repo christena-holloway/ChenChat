@@ -111,13 +111,13 @@ form input {
 
 form button {
   width: 20%;
-  color: blue;
+  color: white;
   font-size: 22px;
   text-transform: uppercase;
   border: none;
   cursor: pointer;
   font-weight: bold;
-  background: #F2F5F8;
+  background: #E38968;
   border-style: groove;
 
   &:hover {
