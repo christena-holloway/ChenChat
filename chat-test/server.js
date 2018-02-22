@@ -9,7 +9,8 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 //need this so that all data can be sent to db correctly
-/*
+
+/* SESSION CODE
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
@@ -32,12 +33,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
+/* SESSION CODE
 app.use((req, res, next) => {
     if (req.cookies.user_sid && !req.session.user) {
         res.clearCookie('user_sid');
     }
     next();
-});
+});*/
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
@@ -156,9 +158,10 @@ function sendMessage(msg) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
-    console.log('%s corresponds to %s.', user.userID, user.fullName);
-    username = user.fullName;
-    io.emit('chat message', (username + ': ' + msg));
+    //console.log('%s corresponds to %s.', user.userID, user.fullName);
+    //username = user.fullName;
+    //io.emit('chat message', (username + ': ' + msg));
+    io.emit('chat message', (name + ': ' + msg));
   });
 
 }
@@ -218,10 +221,12 @@ var userSchema = new mongoose.Schema({
   fullName: String
 }, {collection: "users"});
 
+var name;
 var User = mongoose.model("User", userSchema);
 function sendUserInfo(token,req) {
   sub = getUID(token);
-  var name = getName(token);
+  //var name = getName(token);
+  name = getName(token);
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
       var u = new User({ 'userID': sub, 'fullName': name });
