@@ -139,7 +139,7 @@ mongoose.connect(conString, { useMongoClient: true }, function(err){
     console.log(mongoose.connection.port);
 });
 
-//runs when page is loaded
+//GET METHODS (so that we don't get "cannot GET" errors
 app.get("/", function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
@@ -150,6 +150,10 @@ app.get("/chat", function(req, res) {
 
 app.get("/contacts", function(req, res) {
   res.sendFile(__dirname + '/contacts.html');
+});
+
+app.get("/signup", function(req, res) {
+  res.sendFile(__dirname + '/signup.html');
 });
 
 app.post('/chat', function(req, res){
