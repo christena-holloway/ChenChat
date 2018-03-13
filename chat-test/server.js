@@ -19,6 +19,8 @@ var auth = new GoogleAuth;
 var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
 //End
 
+var currentChatroom;
+
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 
 //comment/uncomment to show mongoose debug info (everything inserted into db) in the console
@@ -30,12 +32,13 @@ mongoose.Promise = Promise;
 /*set up schema in mongoose(will want to add other
 data in messages and also probably another schema)*/
 var messageSchema = new mongoose.Schema({
+    chat_name: String,
     members: [],
     messages: []
 }, {collection: "messages"});
 
 //turn schema into a model (might wanna figure out why we have to do this)
-//var Message = mongoose.model("Message", messageSchema);
+var Message = mongoose.model("Message", messageSchema);
 
 //connect to db
 mongoose.connect(conString, { useMongoClient: true }, function(err){
@@ -60,10 +63,6 @@ app.get("/chat", function(req, res) {
 
 app.get("/contacts", function(req, res) {
   res.sendFile(__dirname + '/contacts.html');
-});
-
-app.get("/signup", function(req, res) {
-  res.sendFile(__dirname + '/signup.html');
 });
 
 app.post('/chat', function(req, res){
@@ -123,26 +122,59 @@ var sub;
 
 var dict = {};
 
+//message collection
+var m;
+
+//TEMP HARDCODED CHAT ROOM NAME !!!DELETE LATER!!!
+var chatName = "help";
+var chatName1 = "food";
+var chatName2 = "help";
+
 function sendMessage(msg, temp) {
   // TODO: add recipient's user id to db
-  console.log('user id: ' + sub);
-  console.log('message: ' + msg);
 
   //send data to database
-  var MessageModel = mongoose.model('MessageModel', messageSchema);
-  var m = new MessageModel;
-  m.members.push(sub);
-  var msgObj = {'from': sub, 'body': msg};
-  m.messages.push(msgObj);
-  m.save(function(err) {
-      if (err) {
-          console.log(err);
-          res.status(400).send("Bad Request");
-      }
-      else {
-          console.log('successfully posted to db');
-      }
+  //var MessageModel = mongoose.model('MessageModel', messageSchema);
+  
+  //check if chat room already exists
+  Message.count({ chat_name: chatName }, function (err, count) {
+    console.log("counting");
+    //if this chat room does not exist yet, create it
+    if (count === 0) {
+      console.log("creating new chat room");
+      m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
+      var msgObj = {'from': sub, 'body': msg};
+      m.messages.push(msgObj);
+      m.save(function(err) {
+        if (err) {
+            console.log(err);
+            res.status(400).send("Bad Request");
+        }
+        else {
+            console.log('successfully posted to db');
+        }
+      });
+    }
+    else {
+      Message.findOne({ chat_name: chatName }, function (err, doc) {
+        //doc is document for the chat room
+        m = doc;
+        var msgObj = {'from': sub, 'body': msg};
+        m.messages.push(msgObj);
+        m.save(function(err) {
+          if (err) {
+              console.log(err);
+              res.status(400).send("Bad Request");
+          }
+          else {
+              console.log('successfully posted to db');
+          }
+        });
+      });
+    }
   });
+
+  
 
   var User = mongoose.model("User", userSchema);
   var username;
@@ -152,6 +184,8 @@ function sendMessage(msg, temp) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
+    
+    
     //console.log('%s corresponds to %s.', user.userID, user.fullName);
     //username = user.fullName;
     //io.emit('chat message', (username + ': ' + msg));
@@ -174,11 +208,11 @@ function sendMessage(msg, temp) {
     //     // Response is response from notification
     //   }
     // );
-
   });
   console.log("variable is " + temp);
   io.emit('chat message', (temp + ': ' + msg));
 }
+
 var users = {};
 var keys = {};
 //send from client to server
@@ -241,8 +275,6 @@ io.on('connection', function(socket){
     //console.log('id_token: ' + id_token);
   });
 });
-
-
 
 function getUID(id_token) {
   var decoded = jwtDecode(id_token);
