@@ -66,7 +66,6 @@ app.get("/contacts", function(req, res) {
 });
 
 app.post('/chat', function(req, res){
-
     console.log('POST /');
     console.dir(req.body);
     console.log('parameters are: ');
@@ -126,9 +125,7 @@ var dict = {};
 var m;
 
 //TEMP HARDCODED CHAT ROOM NAME !!!DELETE LATER!!!
-var chatName = "help";
-var chatName1 = "food";
-var chatName2 = "help";
+var chatName;
 
 function sendMessage(msg, temp) {
   // TODO: add recipient's user id to db
@@ -173,8 +170,6 @@ function sendMessage(msg, temp) {
       });
     }
   });
-
-  
 
   var User = mongoose.model("User", userSchema);
   var username;
@@ -229,6 +224,14 @@ io.on('connection', function(socket){
       delete keys[socket.id];
     }
     console.log(users);
+  });
+  
+  socket.on('chat name', function(inChatName) {
+    chatName = inChatName;
+    console.log("chat name" + chatName);
+    
+    var destination = '/chat';
+    io.emit('redirect', destination);
   });
 
   socket.on('chat message', function(msg){
