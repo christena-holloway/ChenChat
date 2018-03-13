@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="css/chatrm.css" />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <title>Chat Rooms</title>
   </head>
@@ -25,6 +26,12 @@
       id_token = googleUser.getAuthResponse().id_token;
       console.log("ID Token: " + id_token);
     };
+    $(function () {
+      $('form').submit(function() {
+        var input_vals = $(this).serialize();
+        window.location.href = '/chatroom/'+ input_vals[0];
+      });
+    });
     function signOut() {
       window.location.replace("/");
     }

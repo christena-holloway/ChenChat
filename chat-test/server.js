@@ -54,12 +54,6 @@ app.get("/chatroom", function(req, res){
   res.sendFile(__dirname + '/chatroom.html');
 });
 
-app.post("/chatroom", function(req, res) {
-  // do stuff with req
-  console.log('POST /');
-  console.log(req);
-});
-
 app.get("/chat", function(req, res) {
   res.sendFile(__dirname + '/chat.html');
 });
@@ -223,7 +217,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
-    var destination = '/chat';
+    var destination = '/chatroom';
 
     client.verifyIdToken(
     id_token,
@@ -247,6 +241,8 @@ io.on('connection', function(socket){
     //console.log('id_token: ' + id_token);
   });
 });
+
+
 
 function getUID(id_token) {
   var decoded = jwtDecode(id_token);
