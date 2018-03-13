@@ -50,6 +50,10 @@ app.get("/", function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get("/chatroom", function(req, res){
+  res.sendFile(__dirname + '/chatroom.html');
+});
+
 app.get("/chat", function(req, res) {
   res.sendFile(__dirname + '/chat.html');
 });
