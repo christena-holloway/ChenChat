@@ -41,7 +41,7 @@ var messageSchema = new mongoose.Schema({
 var Message = mongoose.model("Message", messageSchema);
 
 //connect to db
-mongoose.connect(conString, { useMongoClient: true }, function(err){
+mongoose.connect(conString, function(err){
     if (err) throw err;
     console.log ("Successfully connected to MongoDB");
     console.log(mongoose.connection.host);
