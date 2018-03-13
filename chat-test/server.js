@@ -30,12 +30,12 @@ mongoose.Promise = Promise;
 /*set up schema in mongoose(will want to add other
 data in messages and also probably another schema)*/
 var messageSchema = new mongoose.Schema({
-    sender: String,
-    message: String
+    members: [],
+    messages: []
 }, {collection: "messages"});
 
 //turn schema into a model (might wanna figure out why we have to do this)
-var Message = mongoose.model("Message", messageSchema);
+//var Message = mongoose.model("Message", messageSchema);
 
 //connect to db
 mongoose.connect(conString, { useMongoClient: true }, function(err){
@@ -133,7 +133,11 @@ function sendMessage(msg, temp) {
   console.log('message: ' + msg);
 
   //send data to database
-  var m = new Message({'sender': sub, 'message': msg });
+  var MessageModel = mongoose.model('MessageModel', messageSchema);
+  var m = new MessageModel;
+  m.members.push(sub);
+  var msgObj = {'from': sub, 'body': msg};
+  m.messages.push(msgObj);
   m.save(function(err) {
       if (err) {
           console.log(err);
@@ -256,21 +260,31 @@ function getName(id_token) {
   return name;
 }
 
+function getEmail(id_token) {
+    var decoded = jwtDecode(id_token);
+    var email = decoded['email'];
+    
+    return email;
+}
+
 var userSchema = new mongoose.Schema({
   userID: String,
-  fullName: String
+  fullName: String,
+  email: String
 }, {collection: "users"});
 
 var name;
+var email;
+
 var User = mongoose.model("User", userSchema);
 function sendUserInfo(token) {
   sub = getUID(token);
-  //var name = getName(token);
   name = getName(token);
+  email = getEmail(token);
 
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
-      var u = new User({ 'userID': sub, 'fullName': name });
+      var u = new User({ 'userID': sub, 'fullName': name, 'email': email });
       u.save(function(err) {
         if (err) {
           console.log(err);
@@ -285,7 +299,6 @@ function sendUserInfo(token) {
       console.log("user is already in db");
     }
   });
-
 }
 
 //listen to the server
