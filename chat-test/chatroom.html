@@ -26,10 +26,6 @@
       id_token = googleUser.getAuthResponse().id_token;
       console.log("ID Token: " + id_token);
     };
-    $('form').submit(function() {
-        // var input_vals = $(this).serialize();
-      window.location.replace("/chat");//+ input_vals[0];
-    });
     function signOut() {
       window.location.replace("/");
     }
@@ -55,6 +51,12 @@
         </form>
       </div>
     </div>
+    <script>
+      $('form').submit(function() {
+        // var input_vals = $(this).serialize();
+        window.location.replace("/chat");//+ input_vals[0];
+      });
+    </script>
   </body>
   <script src="server.js"></script>
 </html>
