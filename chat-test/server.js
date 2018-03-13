@@ -54,8 +54,10 @@ app.get("/chatroom", function(req, res){
   res.sendFile(__dirname + '/chatroom.html');
 });
 
-app.post("/chatroom", function(req,res){
+app.post("/chatroom", function(req, res) {
   // do stuff with req
+  console.log('POST /');
+  console.log(req);
 });
 
 app.get("/chat", function(req, res) {
