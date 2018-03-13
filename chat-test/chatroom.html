@@ -29,6 +29,10 @@
     function signOut() {
       window.location.replace("/");
     }
+    function ChatRedirect() {
+        // var input_vals = $(this).serialize();
+      window.location.replace("/chat");//+ input_vals[0];
+    }
 
   </script>
   <body>
@@ -47,16 +51,10 @@
         <form class="chatrm-form" enctype="application/json">
           Name: <input id="chat_id" name="name" autocomplete="off" /><br>
           Members: <input type="email" id="chat_mems" name="members" autocomplete="off" multiple/><br><br>
-          <button id="submit-button" onclick="ChatRedirect()">Submit</button>
+          <button id="submit-button" onclick="ChatRedirect();">Submit</button>
         </form>
       </div>
     </div>
-    <script>
-      function ChatRedirect(){
-        // var input_vals = $(this).serialize();
-        window.location.replace("/chat");//+ input_vals[0];
-      }
-    </script>
   </body>
-  <script src="server.js"></script>
+  <script src="index.js"></script>
 </html>
