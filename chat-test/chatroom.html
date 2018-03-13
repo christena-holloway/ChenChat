@@ -26,11 +26,9 @@
       id_token = googleUser.getAuthResponse().id_token;
       console.log("ID Token: " + id_token);
     };
-    $(function () {
-      $('form').submit(function() {
+    $('form').submit(function() {
         // var input_vals = $(this).serialize();
-        window.location.replace('/chat');//+ input_vals[0];
-      });
+      window.location.replace("/chat");//+ input_vals[0];
     });
     function signOut() {
       window.location.replace("/");
