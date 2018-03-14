@@ -15,12 +15,6 @@
     function onSignIn(googleUser) {
       // Useful data for your client-side scripts:
       profile = googleUser.getBasicProfile();
-      /*console.log("ID: " + profile.getId()); // Don't send this directly to your server!
-      console.log('Full Name: ' + profile.getName());
-      console.log('Given Name: ' + profile.getGivenName());
-      console.log('Family Name: ' + profile.getFamilyName());
-      console.log("Image URL: " + profile.getImageUrl());
-      console.log("Email: " + profile.getEmail());*/
       // The ID token you need to pass to your backend:
       id_token = googleUser.getAuthResponse().id_token;
       //console.log("ID Token: " + id_token);
@@ -30,19 +24,7 @@
       socket.on('redirect', function(destination) {
         window.location.href = destination;
       });
-      /*
-      var passportSocketIo = require("passport.socketio");
-      var sessionStore = new RedisStore();
-      //in your passport.socketio setup
-      //With Socket.io >= 1.0 (you will have the same setup for Socket.io <1)
-      socket.use(passportSocketIo.authorize({
-        key:          'express.sid',       //make sure is the same as in your session settings in app.js
-        secret:       'keyboard cat',      //make sure is the same as in your session settings in app.js
-        store:        sessionStore
-      }));
-      */
     };
-
   </script>
   <body>
     <div class="g-signin2" data-width="300" data-height="100" data-onsuccess="onSignIn" data-theme="dark"></div>
