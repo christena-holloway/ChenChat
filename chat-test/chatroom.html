@@ -8,6 +8,7 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <title>Chat Rooms</title>
   </head>
   <script>
@@ -21,7 +22,7 @@
     function signOut() {
       window.location.replace("/");
     }
-    function ChatRedirect() {
+    function chatRedirect() {
       // var input_vals = $(this).serialize();
       var inChatName = document.getElementById("chat_id").value;
       //console.log("VALUE IN: " + inChatName);
@@ -37,7 +38,7 @@
   <body>
     <div class="grid-container">
       <header>
-        <h1 class="title"> Specify Chat Room </h1>
+        <h1 class="title"> Select Chat Room </h1>
         <a href="/" class="back-button" style="display: none;"> Back </a>
         <a href="/" class="signOut" onclick="signOut();"> Sign out </a>
       </header>
@@ -50,9 +51,10 @@
         <form class="chatrm-form" enctype="application/json">
           Name: <input id="chat_id" name="name" autocomplete="off" /><br>
           Members: <input type="email" id="chat_mems" name="members" autocomplete="off" multiple/><br><br>
-          <input type="button" onclick="ChatRedirect();" value="Submit" />
+          <input id="selectRoom" type="button" onclick="chatRedirect();" value="Submit" />
         </form>
       </div>
     </div>
   </body>
+  <script src="server.js"></script>
 </html>

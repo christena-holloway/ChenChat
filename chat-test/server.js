@@ -112,7 +112,7 @@ function changeChatRoom(data) {
   var parameters = result.parameters;
 
   // TODO: Use JS to set form values and to click submit button!
-
+  $("#selectRoom").click();
 }
 
 // To handle sending a message in the chat
