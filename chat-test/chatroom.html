@@ -3,11 +3,12 @@
   <head>
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com">
-    <link rel="stylesheet" type="text/css" href="css/indexstyle.css" />
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/chatrm.css" />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-    <title>ChenChat sign in</title>
+    <title>Chat Rooms</title>
   </head>
   <script>
     var profile;
@@ -24,27 +25,42 @@
       // The ID token you need to pass to your backend:
       id_token = googleUser.getAuthResponse().id_token;
       //console.log("ID Token: " + id_token);
+    };
+    function signOut() {
+      window.location.replace("/");
+    }
+    function ChatRedirect() {
+      // var input_vals = $(this).serialize();
+      var inChatName = document.getElementById("chat_id").value;
+      //console.log("VALUE IN: " + inChatName);
       var socket = io();
-      //window.location.replace("/contacts");
-      socket.emit('id token', id_token);
+      socket.emit('chat name', inChatName);
+      //window.location.replace("/chat");//+ input_vals[0];
       socket.on('redirect', function(destination) {
         window.location.href = destination;
       });
-      /*
-      var passportSocketIo = require("passport.socketio");
-      var sessionStore = new RedisStore();
-      //in your passport.socketio setup
-      //With Socket.io >= 1.0 (you will have the same setup for Socket.io <1)
-      socket.use(passportSocketIo.authorize({
-        key:          'express.sid',       //make sure is the same as in your session settings in app.js
-        secret:       'keyboard cat',      //make sure is the same as in your session settings in app.js
-        store:        sessionStore
-      }));
-      */
-    };
+    }
 
   </script>
   <body>
-    <div class="g-signin2" data-width="300" data-height="100" data-onsuccess="onSignIn" data-theme="dark"></div>
+    <div class="grid-container">
+      <header>
+        <h1 class="title"> Specify Chat Room </h1>
+        <a href="/" class="back-button" style="display: none;"> Back </a>
+        <a href="/" class="signOut" onclick="signOut();"> Sign out </a>
+      </header>
+
+      <div class="chat-content">
+        <ul id="messages"></ul>
+      </div>
+
+      <div class="chat-rm">
+        <form class="chatrm-form" enctype="application/json">
+          Name: <input id="chat_id" name="name" autocomplete="off" /><br>
+          Members: <input type="email" id="chat_mems" name="members" autocomplete="off" multiple/><br><br>
+          <input type="button" onclick="ChatRedirect();" value="Submit" />
+        </form>
+      </div>
+    </div>
   </body>
 </html>

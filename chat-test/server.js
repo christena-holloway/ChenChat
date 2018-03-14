@@ -19,6 +19,8 @@ var auth = new GoogleAuth;
 var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
 //End
 
+var currentChatroom;
+
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 
 //comment/uncomment to show mongoose debug info (everything inserted into db) in the console
@@ -30,15 +32,16 @@ mongoose.Promise = Promise;
 /*set up schema in mongoose(will want to add other
 data in messages and also probably another schema)*/
 var messageSchema = new mongoose.Schema({
-    sender: String,
-    message: String
+    chat_name: String,
+    members: [],
+    messages: []
 }, {collection: "messages"});
 
 //turn schema into a model (might wanna figure out why we have to do this)
 var Message = mongoose.model("Message", messageSchema);
 
 //connect to db
-mongoose.connect(conString, { useMongoClient: true }, function(err){
+mongoose.connect(conString, function(err){
     if (err) throw err;
     console.log ("Successfully connected to MongoDB");
     console.log(mongoose.connection.host);
@@ -50,7 +53,11 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/chat', function(req, res) {
+app.get("/chatroom", function(req, res){
+  res.sendFile(__dirname + '/chatroom.html');
+});
+
+app.get("/chat", function(req, res) {
   res.sendFile(__dirname + '/chat.html');
 });
 
@@ -143,21 +150,54 @@ var sub;
 
 var dict = {};
 
+//message collection
+var m;
+
+//TEMP HARDCODED CHAT ROOM NAME !!!DELETE LATER!!!
+var chatName;
+
 function sendMessage(msg, temp) {
   // TODO: add recipient's user id to db
-  console.log('user id: ' + sub);
-  console.log('message: ' + msg);
 
   //send data to database
-  var m = new Message({'sender': sub, 'message': msg });
-  m.save(function(err) {
-      if (err) {
-          console.log(err);
-          res.status(400).send("Bad Request");
-      }
-      else {
-          console.log('successfully posted to db');
-      }
+  //var MessageModel = mongoose.model('MessageModel', messageSchema);
+  
+  //check if chat room already exists
+  Message.count({ chat_name: chatName }, function (err, count) {
+    console.log("counting");
+    //if this chat room does not exist yet, create it
+    if (count === 0) {
+      console.log("creating new chat room");
+      m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
+      var msgObj = {'from': sub, 'body': msg};
+      m.messages.push(msgObj);
+      m.save(function(err) {
+        if (err) {
+            console.log(err);
+            res.status(400).send("Bad Request");
+        }
+        else {
+            console.log('successfully posted to db');
+        }
+      });
+    }
+    else {
+      Message.findOne({ chat_name: chatName }, function (err, doc) {
+        //doc is document for the chat room
+        m = doc;
+        var msgObj = {'from': sub, 'body': msg};
+        m.messages.push(msgObj);
+        m.save(function(err) {
+          if (err) {
+              console.log(err);
+              res.status(400).send("Bad Request");
+          }
+          else {
+              console.log('successfully posted to db');
+          }
+        });
+      });
+    }
   });
 
   var User = mongoose.model("User", userSchema);
@@ -168,6 +208,8 @@ function sendMessage(msg, temp) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
+    
+    
     //console.log('%s corresponds to %s.', user.userID, user.fullName);
     //username = user.fullName;
     //io.emit('chat message', (username + ': ' + msg));
@@ -190,11 +232,11 @@ function sendMessage(msg, temp) {
     //     // Response is response from notification
     //   }
     // );
-
   });
   console.log("variable is " + temp);
   io.emit('chat message', (temp + ': ' + msg));
 }
+
 var users = {};
 var keys = {};
 //send from client to server
@@ -211,6 +253,14 @@ io.on('connection', function(socket){
       delete keys[socket.id];
     }
     console.log(users);
+  });
+  
+  socket.on('chat name', function(inChatName) {
+    chatName = inChatName;
+    console.log("chat name" + chatName);
+    
+    var destination = '/chat';
+    io.emit('redirect', destination);
   });
 
   socket.on('chat message', function(msg){
@@ -233,7 +283,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
-    var destination = '/chat';
+    var destination = '/chatroom';
 
     client.verifyIdToken(
     id_token,
@@ -272,21 +322,31 @@ function getName(id_token) {
   return name;
 }
 
+function getEmail(id_token) {
+    var decoded = jwtDecode(id_token);
+    var email = decoded['email'];
+    
+    return email;
+}
+
 var userSchema = new mongoose.Schema({
   userID: String,
-  fullName: String
+  fullName: String,
+  email: String
 }, {collection: "users"});
 
 var name;
+var email;
+
 var User = mongoose.model("User", userSchema);
 function sendUserInfo(token) {
   sub = getUID(token);
-  //var name = getName(token);
   name = getName(token);
+  email = getEmail(token);
 
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
-      var u = new User({ 'userID': sub, 'fullName': name });
+      var u = new User({ 'userID': sub, 'fullName': name, 'email': email });
       u.save(function(err) {
         if (err) {
           console.log(err);
@@ -301,7 +361,6 @@ function sendUserInfo(token) {
       console.log("user is already in db");
     }
   });
-
 }
 
 //listen to the server
