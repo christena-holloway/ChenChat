@@ -29,15 +29,19 @@ mongoose.set("debug", true);
 //not sure if we need this
 mongoose.Promise = Promise;
 
-/*set up schema in mongoose(will want to add other
-data in messages and also probably another schema)*/
+//define message and user schemas
 var messageSchema = new mongoose.Schema({
     chat_name: String,
     members: [],
     messages: []
 }, {collection: "messages"});
 
-//turn schema into a model (might wanna figure out why we have to do this)
+var userSchema = new mongoose.Schema({
+  userID: String,
+  fullName: String,
+  email: String
+}, {collection: "users"});
+
 var Message = mongoose.model("Message", messageSchema);
 
 //connect to db
@@ -124,15 +128,11 @@ var dict = {};
 //message collection
 var m;
 
-//TEMP HARDCODED CHAT ROOM NAME !!!DELETE LATER!!!
 var chatName;
 
 function sendMessage(msg, temp) {
   // TODO: add recipient's user id to db
 
-  //send data to database
-  //var MessageModel = mongoose.model('MessageModel', messageSchema);
-  
   //check if chat room already exists
   Message.count({ chat_name: chatName }, function (err, count) {
     console.log("counting");
@@ -173,36 +173,12 @@ function sendMessage(msg, temp) {
 
   var User = mongoose.model("User", userSchema);
   var username;
-  // find each person with a last name matching 'Ghost', selecting the `name` and `occupation` fields
+  
   User.findOne({ 'userID': sub }, 'fullName', function (err, user) {
     if (err) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
-    
-    
-    //console.log('%s corresponds to %s.', user.userID, user.fullName);
-    //username = user.fullName;
-    //io.emit('chat message', (username + ': ' + msg));
-
-    //io.emit('chat message', (name + ': ' + msg));
-    //io.emit('chat message', (temp + ': ' + msg));
-
-    //n.sound
-    //io.emit('chat message', (name + ': ' + msg));
-    // notifier.notify(
-    //   {
-    //     title:'ChenChat',
-    //     message: msg,
-    //     icon: (__dirname + '/umich.jpg'),
-    //     contentImage: void 0,
-    //     sound: 'Pop',
-    //     wait: true
-    //   },
-    //   function(err, response) {
-    //     // Response is response from notification
-    //   }
-    // );
   });
   console.log("variable is " + temp);
   io.emit('chat message', (temp + ': ' + msg));
@@ -236,12 +212,6 @@ io.on('connection', function(socket){
 
   socket.on('chat message', function(msg){
     console.log('msg: ' + msg);
-    //console.log('message: ' + msg.message);
-    //console.log('name: ' + msg.name);
-    //send data to database
-    //sendMessage(msg, session.username);//added the session variable
-    //var temp = socket.handshake.session.profilename;//NEW LINE
-    //console.log("temp is " + temp);
     console.log("socket is " + socket.id);
     if(socket.id in keys && keys[socket.id] in users) {
       sendMessage(msg, keys[socket.id]);
@@ -249,8 +219,6 @@ io.on('connection', function(socket){
     else {
       console.log("not logged in");
     }
-
-    //sendMessage(msg, temp);
   });
 
   socket.on('id token', function(id_token) {
@@ -299,12 +267,6 @@ function getEmail(id_token) {
     
     return email;
 }
-
-var userSchema = new mongoose.Schema({
-  userID: String,
-  fullName: String,
-  email: String
-}, {collection: "users"});
 
 var name;
 var email;
