@@ -46,23 +46,38 @@ mongoose.connect(conString, { useMongoClient: true }, function(err){
 });
 
 //GET METHODS (so that we don't get "cannot GET" errors
-app.get("/", function(req, res){
+app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get("/chat", function(req, res) {
+app.get('/chat', function(req, res) {
   res.sendFile(__dirname + '/chat.html');
 });
 
-app.get("/contacts", function(req, res) {
+app.get('/contacts', function(req, res) {
   res.sendFile(__dirname + '/contacts.html');
 });
 
-app.get("/signup", function(req, res) {
+app.get('/signup', function(req, res) {
   res.sendFile(__dirname + '/signup.html');
 });
 
-app.post('/chat', function(req, res){
+app.post('/chatroom', function(req, res) {
+  console.log('POST to chatroom pg /');
+  console.log(req.body);
+
+  changeChatRoom(req.body);
+  // sends a response header to the request
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  // send a response in the format required by Dialogflow
+  let responseToAssistant = {
+    fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
+  };
+  res.end(JSON.stringify(responseToAssistant));
+
+});
+
+app.post('/chat', function(req, res) {
 
     console.log('POST /');
     console.dir(req.body);
@@ -79,14 +94,23 @@ app.post('/chat', function(req, res){
     res.end(JSON.stringify(responseToAssistant));
 });
 
+function changeChatRoom(data) {
+
+  var result = data.queryResult;
+  var action = result.action;
+  var parameters = result.parameters;
+
+  // TODO: Use JS to set form values and to click submit button!
+
+}
+
+// To handle sending a message in the chat
 function handleMessage(data) {
 
   var result = data.queryResult;
   var action = result.action;
   var parameters = result.parameters;
   var msg = '';
-
-  // TODO: Use the parameters as needed
 
   if (action === 'sendHelp') {
     var contact = parameters.contact;

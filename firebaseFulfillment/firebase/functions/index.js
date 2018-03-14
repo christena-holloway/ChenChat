@@ -215,16 +215,20 @@ function processV2Request (request, response) {
     },
     // Handler for action to switch modes 
     'switchMode': () => {
-      forwardIntentFulfillment();
+      forwardIntentFulfillment('chat');
     },
     'sendHelp': () => {
-      forwardIntentFulfillment();
+      forwardIntentFulfillment('chat');
     },
     'reportState': () => {
-      forwardIntentFulfillment();
+      forwardIntentFulfillment('chat');
     },
     'whereIsMy': () => {
-      forwardIntentFulfillment();
+      forwardIntentFulfillment('chat');
+    }
+    ,
+    'changeChatRoom': () => {
+      forwardIntentFulfillment('chatroom');
     }
   };
   // If undefined or unknown action use the default handler
@@ -258,18 +262,18 @@ function processV2Request (request, response) {
     }
   }
   // Function to redirect message to the service
-  function forwardIntentFulfillment () {
+  function forwardIntentFulfillment(path) {
     // sending all parameters to webapp, which can use them to form the message as needed.
     // Successfully posted the message request to be on it's way via the web app
-    if (sendMessageToApp(request.body.queryResult)) {
+    if (sendMessageToApp(request.body.queryResult, path)) {
       let responseToUser = {
-        fulfillmentText: 'Your message is being delivered!' // displayed response
+        fulfillmentText: 'Your request is being processed!' // displayed response
       };
       sendResponse(responseToUser);
     }   
     else {
       let responseToUser = {
-        fulfillmentText: 'I was unable to send your message. Please try again.' // displayed response
+        fulfillmentText: 'I was unable to process your request. Please try again.' // displayed response
       };
       sendResponse(responseToUser);
     }
@@ -277,13 +281,12 @@ function processV2Request (request, response) {
   // Function to send POST request to ChenChat web application
   // Receives a well-formed message to send to the webapp based on the action
   // message must be in json format
-  function sendMessageToApp(jsonMessage) {
+  function sendMessageToApp(jsonMessage, path) {
 
     var request = require('request');
-    // url_path = 'https://www.chenchat.com/actions/' + action;
-    // url_path = 'http://c1f22e86.ngrok.io';
+    var urlPath = 'https://chenchat2.azurewebsites.net/' + path;
     var options = {
-      uri: 'https://chenchat2.azurewebsites.net/chat',
+      uri: urlPath,
       port: 80,
       method: 'POST',
       json: true,
@@ -297,10 +300,10 @@ function processV2Request (request, response) {
     // Send POST request
     var status = request.post(options, function (error, response, body) {
       if (error) {
-        console.error('Failed to send message. error:', error);
+        console.error('Failed to send request. error:', error);
         return false;
       }
-      console.log('Successfully sent the message! Server responded with:', body);
+      console.log('Successfully sent the request! Server responded with:', body);
       return true;
     })
 
