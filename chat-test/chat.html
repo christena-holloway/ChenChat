@@ -23,7 +23,8 @@
     //display chat room name
     var socket = io();
     socket.on('getChatName', function(chatName) {
-      
+      console.log(chatName);
+      document.getElementById('chat_name').innerHTML = chatName;
     });
     $(function () {
       //var socket = io();
@@ -51,6 +52,7 @@
         <h1 class="title"> ChenChat </h1>
         <!-- <a href="product.html" class="back-but ton"> Back </a> -->
         <a href="/contacts" class="back-button" style="display: none;"> Back </a>
+        <p id="chat_name"> </p>
         <a class="signOut" onclick="signOut();"> Sign out </a>
       </header>
 

@@ -208,6 +208,7 @@ io.on('connection', function(socket){
     
     var destination = '/chat';
     io.emit('redirect', destination);
+    io.emit('getChatName', chatName);
   });
 
   socket.on('chat message', function(msg){
