@@ -76,15 +76,18 @@ app.get('/signup', function(req, res) {
 app.post('/', function(req, res) {
   console.log('POST to /');
   console.log(req.body);
+  console.log('action is ' + req.body.queryResult.action);
 
-  var path = req.body.path;
-  if(path == 'chat') {
-    // send POST req to /chat
-    transferPostRequest(req.body.jsonMessage, path);
-  }
-  else if(path == 'chatroom') {
+  var action = req.body.queryResult.action;
+  if(action == 'changeChatRoom') {
     // send POST req to /chatroom
-    transferPostRequest(req.body.jsonMessage, path);
+    console.log("Switching chat rooms");
+    transferPostRequest(req.body, 'chatroom');
+  }
+  else {
+    // send POST req to /chat
+    console.log("Sending message to /chat page");
+    transferPostRequest(req.body, 'chat');
   }
 
   // sends a response header to the request
@@ -119,7 +122,7 @@ app.post('/chat', function(req, res) {
     console.log('parameters are: ');
     console.log(req.body.queryResult.parameters);
 
-    handleMessage(req.body.jsonMessage);
+    handleMessage(req.body);
     // sends a response header to the request
     res.writeHead(200, {'Content-Type': 'application/json'});
     // send a response in the format required by Dialogflow

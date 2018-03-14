@@ -265,10 +265,10 @@ function processV2Request (request, response) {
 
   // Function to redirect message to the service
   // requestType must be either 'msg' or 'room'
-  function forwardIntentFulfillment(path) {
+  function forwardIntentFulfillment() {
     // sending all parameters to webapp, which can use them to form the message as needed.
     // Successfully posted the message request to be on it's way via the web app
-    if (sendMessageToApp(request.body.queryResult, path)) {
+    if (sendMessageToApp(request.body.queryResult)) {
       let responseToUser = {
         fulfillmentText: 'Your request is being processed!' // displayed response
       };
@@ -284,22 +284,18 @@ function processV2Request (request, response) {
   // Function to send POST request to ChenChat web application
   // Receives a well-formed message to send to the webapp based on the action
   // message must be in json format
-  function sendMessageToApp(jsonMessage, path) {
+  function sendMessageToApp(jsonMessage) {
 
     var request = require('request');
 
     var urlPath = 'https://chenchat2.azurewebsites.net/';
-    var data = {
-      jsonMessage: jsonMessage,
-      path: path
-    };
-    jsonData = JSON.stringify(data);
+    // var urlPath = 'https://6363e2a2.ngrok.io/';
     var options = {
       uri: urlPath,
       port: 80,
       method: 'POST',
       json: true,
-      body: jsonData,
+      body: jsonMessage,
       headers: {
         'Accept': 'application/json',
         'Accept-Charset': 'utf-8',
