@@ -237,6 +237,7 @@ function processV2Request (request, response) {
   }
   // Run the proper handler function to handle the request from Dialogflow
   actionHandlers[action]();
+
   // Function to send correctly formatted responses to Dialogflow which are then sent to the user
   function sendResponse (responseToUser) {
     // if the response is a string send it as a response to the user
@@ -261,7 +262,9 @@ function processV2Request (request, response) {
       response.json(responseJson);
     }
   }
+
   // Function to redirect message to the service
+  // requestType must be either 'msg' or 'room'
   function forwardIntentFulfillment(path) {
     // sending all parameters to webapp, which can use them to form the message as needed.
     // Successfully posted the message request to be on it's way via the web app
@@ -284,13 +287,19 @@ function processV2Request (request, response) {
   function sendMessageToApp(jsonMessage, path) {
 
     var request = require('request');
-    var urlPath = 'https://chenchat2.azurewebsites.net/' + path;
+
+    var urlPath = 'https://chenchat2.azurewebsites.net/';
+    var data = {
+      jsonMessage: jsonMessage,
+      path: path
+    };
+    jsonData = JSON.stringify(data);
     var options = {
       uri: urlPath,
       port: 80,
       method: 'POST',
       json: true,
-      body: jsonMessage,
+      body: jsonData,
       headers: {
         'Accept': 'application/json',
         'Accept-Charset': 'utf-8',

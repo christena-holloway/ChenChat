@@ -73,8 +73,24 @@ app.get('/signup', function(req, res) {
   res.sendFile(__dirname + '/signup.html');
 });
 
+app.post('/', function(req, res) {
+  console.log('POST to /');
+  console.log(req.body);
+
+  var path = req.body.path;
+  if(path == 'chat') {
+    // send POST req to /chat
+    transferPostRequest(req.body.jsonMessage, path);
+  }
+  else if(path == 'chatroom') {
+    // send POST req to /chatroom
+    transferPostRequest(req.body.jsonMessage, path);
+  }
+
+})
+
 app.post('/chatroom', function(req, res) {
-  console.log('POST to chatroom pg /');
+  console.log('POST to /chatroom');
   console.log(req.body);
 
   changeChatRoom(req.body);
@@ -82,7 +98,7 @@ app.post('/chatroom', function(req, res) {
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
   let responseToAssistant = {
-    fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
+    fulfillmentText: 'Your room request is being handled by ChenChat!' // displayed response
   };
   res.end(JSON.stringify(responseToAssistant));
 
@@ -90,12 +106,12 @@ app.post('/chatroom', function(req, res) {
 
 app.post('/chat', function(req, res) {
 
-    console.log('POST /');
+    console.log('POST /chat');
     console.dir(req.body);
     console.log('parameters are: ');
     console.log(req.body.queryResult.parameters);
 
-    handleMessage(req.body);
+    handleMessage(req.body.jsonMessage);
     // sends a response header to the request
     res.writeHead(200, {'Content-Type': 'application/json'});
     // send a response in the format required by Dialogflow
@@ -104,6 +120,34 @@ app.post('/chat', function(req, res) {
     };
     res.end(JSON.stringify(responseToAssistant));
 });
+
+function transferPostRequest(data, path) {
+  var request = require('request');
+  var urlPath = 'https://chenchat2.azurewebsites.net/' + path;
+  var options = {
+    uri: urlPath,
+    port: 80,
+    method: 'POST',
+    json: true,
+    body: data,
+    headers: {
+      'Accept': 'application/json',
+      'Accept-Charset': 'utf-8',
+    }
+  };
+
+  // Send POST request
+  var status = request.post(options, function (error, response, body) {
+    if (error) {
+      console.error('Failed to transfer request to /' + path + '. Error:', error);
+      return false;
+    }
+    console.log('Successfully transferred the request to /' + path + '. Server responded with:', body);
+    return true;
+  })
+
+  return status;
+}
 
 function changeChatRoom(data) {
 
