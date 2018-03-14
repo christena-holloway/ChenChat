@@ -233,12 +233,12 @@ io.on('connection', function(socket){
   
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
-    console.log("chat name" + chatName);
-    
+    console.log("chat name " + chatName);
     var destination = '/chat';
     io.emit('redirect', destination);
-    io.emit('getChatName', chatName);
   });
+  
+  io.emit('getChatName', chatName);
 
   socket.on('chat message', function(msg){
     console.log('msg: ' + msg);
