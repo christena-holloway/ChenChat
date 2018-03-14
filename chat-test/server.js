@@ -104,7 +104,10 @@ app.post('/chatroom', function(req, res) {
   console.log('POST to /chatroom');
   console.log(req.body);
 
-  changeChatRoom(req.body);
+  var chatRoom = req.body.queryResult.parameters.chatRoom;
+  console.log("Chat room is " + chatRoom);
+
+  changeChatRoom(chatRoom);
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
@@ -160,16 +163,13 @@ function transferPostRequest(data, path) {
   return status;
 }
 
-function changeChatRoom(data) {
-
-  var result = data.queryResult;
-  var action = result.action;
-  var parameters = result.parameters;
+function changeChatRoom(chatRoom) {
 
   // TODO: Use JS to set form values and to click submit button!
   console.log("Redirecting to a different chat room!");
   window.location.href = '/chatroom';
-  $("#selectRoom").click();
+  document.getElementById("chat_id").value = chatRoom;
+  // document.getElementById("selectRoom").click();
 }
 
 // To handle sending a message in the chat
