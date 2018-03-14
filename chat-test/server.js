@@ -87,6 +87,14 @@ app.post('/', function(req, res) {
     transferPostRequest(req.body.jsonMessage, path);
   }
 
+  // sends a response header to the request
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  // send a response in the format required by Dialogflow
+  let responseToAssistant = {
+    fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
+  };
+  res.end(JSON.stringify(responseToAssistant));
+
 })
 
 app.post('/chatroom', function(req, res) {
@@ -98,7 +106,7 @@ app.post('/chatroom', function(req, res) {
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
   let responseToAssistant = {
-    fulfillmentText: 'Your room request is being handled by ChenChat!' // displayed response
+    fulfillmentText: 'Your request to change chat rooms is being handled!' // displayed response
   };
   res.end(JSON.stringify(responseToAssistant));
 
