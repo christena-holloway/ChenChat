@@ -20,8 +20,13 @@
       var socket = io();
       //socket.emit('id token', id_token);
     };
+    //display chat room name
+    var socket = io();
+    socket.on('getChatName', function(chatName) {
+      
+    });
     $(function () {
-      var socket = io();
+      //var socket = io();
       $('form').submit(function() {
         socket.emit('chat message', $('#m').val());
         $('#m').val('');
@@ -61,4 +66,5 @@
       </div>
     </div>
   </body>
+  <script src="index.js"></script>
 </html>
