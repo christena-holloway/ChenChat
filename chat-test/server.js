@@ -118,7 +118,7 @@ app.post('/chatroom', function(req, res) {
 app.post('/chat', function(req, res) {
 
     console.log('POST /chat');
-    console.dir(req.body);
+    console.log(req.body);
     console.log('parameters are: ');
     console.log(req.body.queryResult.parameters);
 
@@ -167,6 +167,8 @@ function changeChatRoom(data) {
   var parameters = result.parameters;
 
   // TODO: Use JS to set form values and to click submit button!
+  console.log("Redirecting to a different chat room!");
+  window.location.href = '/chatroom';
   $("#selectRoom").click();
 }
 
