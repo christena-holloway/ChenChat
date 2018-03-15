@@ -60,6 +60,11 @@ form {
   padding-top: 10px;
 
 }
+p {
+  font: 12px Helvetica, Arial;
+  color: gray;
+  font-weight: light;
+}
 form input[type=button] {
   width: 20%;
   color: white;
