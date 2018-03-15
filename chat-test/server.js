@@ -78,19 +78,8 @@ app.post('/', function(req, res) {
   console.log(req.body);
   console.log('action is ' + req.body.queryResult.action);
 
-  var action = req.body.queryResult.action;
-  if(action == 'changeChatRoom') {
-    // send POST req to /chatroom
-    console.log("Switching chat rooms");
-    // window.location.href = '/chatroom';
-    changeChatRoom();
-    transferPostRequest(req.body, 'chatroom');
-  }
-  else {
-    // send POST req to /chat
-    console.log("Sending message to /chat page");
-    transferPostRequest(req.body, 'chat');
-  }
+  var jsonMessage = req.body;
+  var action = jsonMessage.queryResult.action;
 
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
@@ -99,6 +88,19 @@ app.post('/', function(req, res) {
     fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
   };
   res.end(JSON.stringify(responseToAssistant));
+
+  if(action == 'changeChatRoom') {
+    // send POST req to /chatroom
+    console.log("Switching chat rooms");
+    // window.location.href = '/chatroom';
+    changeChatRoom();
+    transferPostRequest(jsonMessage, 'chatroom');
+  }
+  else {
+    // send POST req to /chat
+    console.log("Sending message to /chat page");
+    transferPostRequest(jsonMessage, 'chat');
+  }
 
 })
 
