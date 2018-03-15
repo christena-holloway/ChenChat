@@ -1,9 +1,12 @@
-body {
-  background-color: #C5DDEB;
+header {
+  grid-row: 1 / 2;
+  background-color: #374251;
+  border-bottom-style: groove;
+  height: 100px;
 }
-h1 {
+.title {
   font: 50px Helvetica, Arial;
-  color: darkslateblue;
+  color: white;
   font-weight: bold;
   text-align: center;
 }
@@ -13,6 +16,9 @@ h2 {
   color: gray;
   text-align: center;
   margin-top: 355px;
+}
+body {
+  background-color: #C5DDEB;
 }
 .g-signin2 {
   width: 100%
