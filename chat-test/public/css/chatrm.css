@@ -47,11 +47,15 @@ form {
   margin-top: 10px;
 }
 .chatrm-form{
-  font-family: Helvetica Neue, Arial;
+
+  font: 25px Helvetica Neue, Arial;
+  font-weight: bold;
   color: darkslateblue;
+  margin-left: 18px;
+  padding-top: 10px;
 
 }
-form button {
+form input[type=button] {
   width: 20%;
   color: white;
   font-size: 22px;
