@@ -46,6 +46,26 @@ form {
   margin: 0 auto;
   margin-top: 10px;
 }
+.chatrm-form{
+  font-family: Helvetica Neue, Arial;
+  color: darkslateblue;
+
+}
+form button {
+  width: 20%;
+  color: white;
+  font-size: 22px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #E38968;
+  border-style: groove;
+
+  &:hover {
+    color: darken($blue, 7%);
+  }
+}
 label {
     color: #555;
     display: inline-block;
