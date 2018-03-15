@@ -158,3 +158,6 @@ form button {
   font:"Lato", Arial, sans-serif;
   font-size: 30px;
 }
+#messages small {
+  font-size: 10px;
+}
