@@ -83,6 +83,7 @@ app.post('/', function(req, res) {
     // send POST req to /chatroom
     console.log("Switching chat rooms");
     // window.location.href = '/chatroom';
+    changeChatRoom();
     transferPostRequest(req.body, 'chatroom');
   }
   else {
@@ -108,7 +109,7 @@ app.post('/chatroom', function(req, res) {
   var chatRoom = req.body.queryResult.parameters.chatRoom;
   console.log("Chat room is " + chatRoom);
 
-  changeChatRoom(chatRoom);
+  // changeChatRoom(chatRoom);
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
@@ -164,13 +165,13 @@ function transferPostRequest(data, path) {
   return status;
 }
 
-function changeChatRoom(chatRoom) {
+function changeChatRoom() {
 
   // TODO: Use JS to set form values and to click submit button!
   console.log("Redirecting to a different chat room!");
-  // window.location.href = '/chatroom';
+  window.location.href = '/chatroom';
   // document.location.href= '/chatroom',true;
-  document.getElementById("chat_id").value = chatRoom;
+  // document.getElementById("chat_id").value = chatRoom;
   return false;
   // document.getElementById("selectRoom").click();
 }
