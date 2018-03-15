@@ -1,9 +1,6 @@
-body {
-  background-color: #C5DDEB;
-}
 h1 {
   font: 50px Helvetica, Arial;
-  color: darkslateblue;
+  color: #374251;
   font-weight: bold;
   text-align: center;
 }
@@ -13,6 +10,9 @@ h2 {
   color: gray;
   text-align: center;
   margin-top: 355px;
+}
+body {
+  background-color: #C5DDEB;
 }
 .g-signin2 {
   width: 100%
