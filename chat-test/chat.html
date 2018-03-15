@@ -27,9 +27,12 @@
         $('#m').val('');
         return false;
       });
-      socket.on('chat message', function(msg) {
-        $('#messages').append($('<li>').text(msg));
-      });
+      socket.on('chat message', function(msg) {     
+        var listElt = $('<li>').text(msg);
+        listElt = listElt.append($('<br>'));
+        var whole = listElt.append($('<small>').text(time));
+        $('#messages').append(whole);
+      })
     });
     
     function signOut() {
@@ -57,8 +60,10 @@
       </header>
 
       <div class="chat-content">
-        <ul id="messages"></ul>
+        <ul id="messages">
+        </ul>
       </div>
+      <li id="test"> testing </li>
       <div class="msg-box">
         <form class="flex-msg-form" method="post" action="/" enctype="application/json">
           <input id="m" name="message" autocomplete="off" />
