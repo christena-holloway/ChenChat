@@ -66,7 +66,9 @@ app.get("/chatroom", function(req, res){
 
 app.get("/chat", function(req, res) {
   var results = queryMessages(chatName);
+  console.log("test1");
   console.log(results);
+  console.log("test2");
   //queryUsers(results);
   res.render(__dirname + '/chat.html', { testVar: chatName});
 });
@@ -280,7 +282,7 @@ function sendMessage(msg, temp, chat_token = 'test') {
 
 function queryMessages(roomName) {
   var result_array1 = [];
-  var Message2 = mongoose.model("Message", messageSchema);
+  //var Message2 = mongoose.model("Message", messageSchema);
   /*
   Message2.findOne({ 'chat_name': roomName }, 'messages', function (err, result) {
     if (err) {
@@ -295,12 +297,12 @@ function queryMessages(roomName) {
   */
   console.log("this is the room name: " + roomName);
 
-  var query = Message2.findOne({ 'chat_name': roomName });
+  var query = Message.findOne({ 'chat_name': roomName });
 
   // selecting the `name` and `occupation` fields
   query.select('messages');
 
-  // execute the query at a later time
+  /*
   query.exec(function (err, result) {
     if (err) return handleError(err);
     // Prints "Space Ghost is a talk show host."
@@ -318,8 +320,23 @@ function queryMessages(roomName) {
     }
 
   });
+  */
+  var promise = query.exec();
+  promise.then(function (result) {
+    if (result != null) {
+      result.messages.forEach(function(value) {
+        result_array1.push(value);
+      });
+      //result_array1 = result.messages;
+      //console.log(result_array1);
+      //result_array1.save();
 
+      //console.log(id_array);
+      console.log(result);
+      return result.messages;
+    };
 
+  });
 }
 
 function queryUsers(results) {
