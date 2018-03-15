@@ -8,6 +8,7 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <title>ChenChat</title>
   </head>
   <script>
@@ -16,11 +17,13 @@
     socket.on('getChatName', function(chatName) {
       document.getElementById('chat_name').innerHTML = chatName;
     });
-    
+    //var time;
     $(function () {
-      //var socket = io();
+      var now = moment();
+      var time = now.format('YYYY-MM-DD hh:mm A');
+      console.log("time on client is: " + time);
       $('form').submit(function() {
-        socket.emit('chat message', $('#m').val());
+        socket.emit('chat message', { msg: $('#m').val(), timestamp: time });
         $('#m').val('');
         return false;
       });
@@ -28,11 +31,11 @@
         $('#messages').append($('<li>').text(msg));
       });
     });
+    
     function signOut() {
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
         console.log('User signed out.');
-        //window.location.replace("/");
         document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://chenchat2.azurewebsites.net";
       });
     }

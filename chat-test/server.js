@@ -230,10 +230,10 @@ function sendMessage(msg, temp) {
     if (count === 0) {
       console.log("creating new chat room");
       m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
-      var now = moment();
-      var formatted = now.format('YYYY-MM-DD hh:mm');
-      var msgObj = {'from': sub, 'body': msg, 'timestamp': formatted};
+      var time = getTimestamp();
+      var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
       m.messages.push(msgObj);
+      
       m.save(function(err) {
         if (err) {
             console.log(err);
@@ -248,9 +248,8 @@ function sendMessage(msg, temp) {
       Message.findOne({ chat_name: chatName }, function (err, doc) {
         //doc is document for the chat room
         m = doc;
-      var now = moment();
-      var formatted = now.format('YYYY-MM-DD hh:mm A');
-      var msgObj = {'from': sub, 'body': msg, 'timestamp': formatted};
+        var time = getTimestamp();
+        var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
         m.messages.push(msgObj);
         m.save(function(err) {
           if (err) {
@@ -305,15 +304,19 @@ io.on('connection', function(socket){
   
   io.emit('getChatName', chatName);
 
-  socket.on('chat message', function(msg){
-    console.log('msg: ' + msg);
-    console.log("socket is " + socket.id);
+  socket.on('chat message', function(data){
+    var msg = data.msg;
+    var time = data.timestamp;
+    console.log("message and time on server " + msg + ", " + time);
+    //console.log('msg: ' + msg);
+    //console.log("socket is " + socket.id);
     if(socket.id in keys && keys[socket.id] in users) {
       sendMessage(msg, keys[socket.id]);
     }
     else {
       console.log("not logged in");
     }
+    var currentTime = getTimestamp();
   });
 
   socket.on('id token', function(id_token) {
@@ -337,6 +340,13 @@ io.on('connection', function(socket){
     sendUserInfo(id_token);
   });
 });
+
+function getTimestamp() {
+  var now = moment();
+  var time = now.format('YYYY-MM-DD hh:mm A');
+  
+  return time;
+}
 
 function getUID(id_token) {
   var decoded = jwtDecode(id_token);
