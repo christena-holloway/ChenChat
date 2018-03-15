@@ -7,6 +7,14 @@ h1 {
   font-weight: bold;
   text-align: center;
 }
+h2 {
+  position: relative;
+  font: 18px Helvetica, Arial;
+  font-weight: normal;
+  color: gray;
+  text-align: center;
+  margin-top: 355px;
+}
 .g-signin2 {
   width: 100%
 }
@@ -131,14 +139,6 @@ img {
   width: 14%;
   margin-bottom: 15px;
   margin-top: -1%;
-}
-h2 {
-  position: relative;
-  font: 18px Helvetica, Arial;
-  font-weight: normal;
-  color: gray;
-  text-align: center;
-  margin-top: 355px;
 }
 h4 {
   display: inline-block;
