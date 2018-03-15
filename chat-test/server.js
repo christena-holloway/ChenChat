@@ -84,26 +84,21 @@ app.post('/', function(req, res) {
   if(action == "changeChatRoom") {
     // send POST req to /chatroom
     console.log("Switching chat rooms");
-    // window.location.href = '/chatroom';
-    // res.redirect('/chatroom');
-    // changeChatRoom();
-    res.redirect(307, 'https://chenchat2.azurewebsites.net/' + 'chatroom');
-    // transferPostRequest(jsonMessage, 'chatroom');
+    transferPostRequest(jsonMessage, 'chatroom');
   }
   else {
     // send POST req to /chat
     console.log("Sending message to /chat page");
-    res.redirect(307, 'https://chenchat2.azurewebsites.net/' + 'chat');
-    // transferPostRequest(jsonMessage, 'chat');
+    transferPostRequest(jsonMessage, 'chat');
   }
 
-  // // sends a response header to the request
-  // res.writeHead(200, {'Content-Type': 'application/json'});
-  // // send a response in the format required by Dialogflow
-  // let responseToAssistant = {
-  //   fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
-  // };
-  // res.end(JSON.stringify(responseToAssistant));
+  // sends a response header to the request
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  // send a response in the format required by Dialogflow
+  let responseToAssistant = {
+    fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
+  };
+  res.end(JSON.stringify(responseToAssistant));
 
 })
 
@@ -114,7 +109,7 @@ app.post('/chatroom', function(req, res) {
   var chatRoom = req.body.queryResult.parameters.chatRoom;
   console.log("Chat room is " + chatRoom);
 
-  changeChatRoom(chatRoom, res);
+  changeChatRoom(chatRoom);
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
@@ -175,15 +170,7 @@ function changeChatRoom(chatRoom, res) {
   // TODO: Use JS to set form values and to click submit button!
   console.log("Redirecting to a different chat room!");
 
-  // window.location.href = '/chatroom';
-  // document.location.href= '/chatroom',true;
-
-  // res.location('/chatroom');
-  res.writeHead(301, {Location: 'https://chenchat2.azurewebsites.net/chatroom'});
-  res.end();
-
   // document.getElementById("chat_id").value = chatRoom;
-  return false;
   // document.getElementById("selectRoom").click();
 }
 
