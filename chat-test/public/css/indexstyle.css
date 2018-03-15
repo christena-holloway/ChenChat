@@ -2,7 +2,7 @@ header {
   grid-row: 1 / 2;
   background-color: #374251;
   border-bottom-style: groove;
-  height: 400px;
+  height: 100px;
 }
 .title {
   font: 50px Helvetica, Arial;
