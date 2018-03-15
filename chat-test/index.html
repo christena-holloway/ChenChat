@@ -27,13 +27,6 @@
       });
     };
 
-    var socket = io();
-    socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
-      console.log('Redirecting  to chat room page');
-      document.location.href = 'https://chenchat2.azurewebsites.net/chatroom';
-      socket.emit('insertChatRoomName', chatRoom);
-    });
-
   </script>
   <h1 class="title">Welcome to ChenChat!</h1></header>
   <body>
