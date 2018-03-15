@@ -12,6 +12,13 @@
     <title>Select a Chat Room</title>
   </head>
   <script>
+    var socket = io();
+    socket.on('getChatRoomFromDialogFlow', function(chatRoom) {
+      window.location.href = '/chatroom';
+      document.getElementById("chat_id").value = chatRoom;
+      document.getElementById("selectRoom").click();
+    });
+
     function chatRedirect() {
       // var input_vals = $(this).serialize();
       var inChatName = document.getElementById("chat_id").value;

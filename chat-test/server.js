@@ -84,7 +84,10 @@ app.post('/', function(req, res) {
   if(action == "changeChatRoom") {
     // send POST req to /chatroom
     console.log("Switching chat rooms");
-    transferPostRequest(jsonMessage, 'chatroom');
+    var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
+    console.log("Chat room is " + chatRoom);
+    // transferPostRequest(jsonMessage, 'chatroom');
+    io.emit('getChatRoomFromDialogFlow', chatRoom);
   }
   else {
     // send POST req to /chat
@@ -109,7 +112,7 @@ app.post('/chatroom', function(req, res) {
   var chatRoom = req.body.queryResult.parameters.chatRoom;
   console.log("Chat room is " + chatRoom);
 
-  changeChatRoom(chatRoom);
+  // changeChatRoom(chatRoom);
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
