@@ -81,19 +81,14 @@ app.post('/', function(req, res) {
   var jsonMessage = req.body;
   var action = jsonMessage.queryResult.action;
 
-  // sends a response header to the request
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  // send a response in the format required by Dialogflow
-  let responseToAssistant = {
-    fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
-  };
-  res.end(JSON.stringify(responseToAssistant));
+  
 
-  if(action == 'changeChatRoom') {
+  if(action == "changeChatRoom") {
     // send POST req to /chatroom
     console.log("Switching chat rooms");
     // window.location.href = '/chatroom';
-    changeChatRoom();
+    res.location('/chatroom');
+    // changeChatRoom();
     transferPostRequest(jsonMessage, 'chatroom');
   }
   else {
@@ -101,6 +96,14 @@ app.post('/', function(req, res) {
     console.log("Sending message to /chat page");
     transferPostRequest(jsonMessage, 'chat');
   }
+
+  // sends a response header to the request
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  // send a response in the format required by Dialogflow
+  let responseToAssistant = {
+    fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
+  };
+  res.end(JSON.stringify(responseToAssistant));
 
 })
 
@@ -171,8 +174,12 @@ function changeChatRoom() {
 
   // TODO: Use JS to set form values and to click submit button!
   console.log("Redirecting to a different chat room!");
-  window.location.href = '/chatroom';
+
+  // window.location.href = '/chatroom';
   // document.location.href= '/chatroom',true;
+
+  // res.location('/chatroom');
+
   // document.getElementById("chat_id").value = chatRoom;
   return false;
   // document.getElementById("selectRoom").click();
