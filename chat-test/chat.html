@@ -16,6 +16,12 @@
     socket.on('getChatName', function(chatName) {
       document.getElementById('chat_name').innerHTML = chatName;
     });
+
+    socket.on('getChatRoomFromDialogFlow', function(chatRoom) {
+      console.log('Redirecting  to chat room page');
+      window.location.href = '/chatroom';
+      socket.emit('insert chat room name', chatRoom);
+    });
     
     $(function () {
       //var socket = io();

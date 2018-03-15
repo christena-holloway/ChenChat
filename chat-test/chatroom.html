@@ -12,9 +12,10 @@
     <title>Select a Chat Room</title>
   </head>
   <script>
+
     var socket = io();
-    socket.on('getChatRoomFromDialogFlow', function(chatRoom) {
-      window.location.href = '/chatroom';
+    socket.on('insert chat room name', function(chatRoom) {
+      console.log('Filling in fields for chat room');
       document.getElementById("chat_id").value = chatRoom;
       document.getElementById("selectRoom").click();
     });

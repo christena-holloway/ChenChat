@@ -81,19 +81,22 @@ app.post('/', function(req, res) {
   var jsonMessage = req.body;
   var action = jsonMessage.queryResult.action;
 
-  if(action == "changeChatRoom") {
-    // send POST req to /chatroom
-    console.log("Switching chat rooms");
-    var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
-    console.log("Chat room is " + chatRoom);
-    // transferPostRequest(jsonMessage, 'chatroom');
-    io.emit('getChatRoomFromDialogFlow', chatRoom);
-  }
-  else {
-    // send POST req to /chat
-    console.log("Sending message to /chat page");
-    transferPostRequest(jsonMessage, 'chat');
-  }
+  // if(action == "changeChatRoom") {
+  //   // send POST req to /chatroom
+  //   console.log("Switching chat rooms");
+  //   var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
+  //   console.log("Chat room is " + chatRoom);
+  //   // transferPostRequest(jsonMessage, 'chatroom');
+  //   io.emit('getChatRoomFromDialogFlow', chatRoom);
+  // }
+  // else {
+  //   // send POST req to /chat
+  //   console.log("Sending message to /chat page");
+  //   transferPostRequest(jsonMessage, 'chat');
+  // }
+  // send POST req to /chat
+  console.log("Sending message to /chat page");
+  transferPostRequest(jsonMessage, 'chat');
 
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
@@ -130,7 +133,18 @@ app.post('/chat', function(req, res) {
     console.log('parameters are: ');
     console.log(req.body.queryResult.parameters);
 
-    handleMessage(req.body);
+    var action = jsonMessage.queryResult.action;
+
+    if(action == "changeChatRoom") {
+      var chatRoom = req.body.queryResult.parameters.chatRoom;
+      console.log("Chat room is " + chatRoom);
+      // transferPostRequest(jsonMessage, 'chatroom');
+      io.emit('getChatRoomFromDialogFlow', chatRoom);
+    }
+    else {
+      handleMessage(req.body);
+    }
+    
     // sends a response header to the request
     res.writeHead(200, {'Content-Type': 'application/json'});
     // send a response in the format required by Dialogflow
