@@ -87,21 +87,23 @@ app.post('/', function(req, res) {
     // window.location.href = '/chatroom';
     // res.redirect('/chatroom');
     // changeChatRoom();
-    transferPostRequest(jsonMessage, 'chatroom');
+    res.redirect(307, 'https://chenchat2.azurewebsites.net/' + 'chatroom');
+    // transferPostRequest(jsonMessage, 'chatroom');
   }
   else {
     // send POST req to /chat
     console.log("Sending message to /chat page");
-    transferPostRequest(jsonMessage, 'chat');
+    res.redirect(307, 'https://chenchat2.azurewebsites.net/' + 'chat');
+    // transferPostRequest(jsonMessage, 'chat');
   }
 
-  // sends a response header to the request
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  // send a response in the format required by Dialogflow
-  let responseToAssistant = {
-    fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
-  };
-  res.end(JSON.stringify(responseToAssistant));
+  // // sends a response header to the request
+  // res.writeHead(200, {'Content-Type': 'application/json'});
+  // // send a response in the format required by Dialogflow
+  // let responseToAssistant = {
+  //   fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
+  // };
+  // res.end(JSON.stringify(responseToAssistant));
 
 })
 
@@ -113,13 +115,13 @@ app.post('/chatroom', function(req, res) {
   console.log("Chat room is " + chatRoom);
 
   changeChatRoom(chatRoom, res);
-  // // sends a response header to the request
-  // res.writeHead(200, {'Content-Type': 'application/json'});
-  // // send a response in the format required by Dialogflow
-  // let responseToAssistant = {
-  //   fulfillmentText: 'Your request to change chat rooms is being handled!' // displayed response
-  // };
-  // res.end(JSON.stringify(responseToAssistant));
+  // sends a response header to the request
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  // send a response in the format required by Dialogflow
+  let responseToAssistant = {
+    fulfillmentText: 'Your request to change chat rooms is being handled!' // displayed response
+  };
+  res.end(JSON.stringify(responseToAssistant));
 
 });
 
