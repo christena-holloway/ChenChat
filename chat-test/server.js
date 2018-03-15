@@ -82,7 +82,7 @@ app.post('/', function(req, res) {
   if(action == 'changeChatRoom') {
     // send POST req to /chatroom
     console.log("Switching chat rooms");
-    window.location.href = '/chatroom';
+    // window.location.href = '/chatroom';
     transferPostRequest(req.body, 'chatroom');
   }
   else {
