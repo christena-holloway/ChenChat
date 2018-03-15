@@ -132,11 +132,11 @@ img {
   margin-bottom: 15px;
   margin-top: -1%;
 }
-h3 {
+h2 {
   position: relative;
   font: 18px Helvetica, Arial;
-  font-weight: bold;
-  color: darkslateblue;
+  font-weight: normal;
+  color: gray;
   text-align: center;
   margin-top: 355px;
 }
