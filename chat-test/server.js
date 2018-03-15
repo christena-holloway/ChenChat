@@ -169,6 +169,7 @@ function changeChatRoom(chatRoom) {
   console.log("Redirecting to a different chat room!");
   window.location.href = '/chatroom';
   document.getElementById("chat_id").value = chatRoom;
+  return false;
   // document.getElementById("selectRoom").click();
 }
 
