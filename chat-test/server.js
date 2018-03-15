@@ -89,14 +89,12 @@ app.post('/', function(req, res) {
     // window.location.href = '/chatroom';
     // res.redirect('/chatroom');
     // changeChatRoom();
-    // transferPostRequest(jsonMessage, 'chatroom');
-    res.redirect(307, '/chatroom');
+    transferPostRequest(jsonMessage, 'chatroom');
   }
   else {
     // send POST req to /chat
     console.log("Sending message to /chat page");
-    // transferPostRequest(jsonMessage, 'chat');
-    res.redirect(307, '/chat');
+    transferPostRequest(jsonMessage, 'chat');
   }
 
   // sends a response header to the request
