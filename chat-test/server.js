@@ -82,6 +82,7 @@ app.post('/', function(req, res) {
   if(action == 'changeChatRoom') {
     // send POST req to /chatroom
     console.log("Switching chat rooms");
+    window.location.href = '/chatroom';
     transferPostRequest(req.body, 'chatroom');
   }
   else {
@@ -167,8 +168,10 @@ function changeChatRoom(chatRoom) {
 
   // TODO: Use JS to set form values and to click submit button!
   console.log("Redirecting to a different chat room!");
-  window.location.href = '/chatroom';
+  // window.location.href = '/chatroom';
+  // document.location.href= '/chatroom',true;
   document.getElementById("chat_id").value = chatRoom;
+  return false;
   // document.getElementById("selectRoom").click();
 }
 
