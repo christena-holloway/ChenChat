@@ -87,14 +87,16 @@ app.post('/', function(req, res) {
     // send POST req to /chatroom
     console.log("Switching chat rooms");
     // window.location.href = '/chatroom';
-    res.location('/chatroom');
+    // res.redirect('/chatroom');
     // changeChatRoom();
-    transferPostRequest(jsonMessage, 'chatroom');
+    // transferPostRequest(jsonMessage, 'chatroom');
+    res.redirect(307, '/chatroom');
   }
   else {
     // send POST req to /chat
     console.log("Sending message to /chat page");
-    transferPostRequest(jsonMessage, 'chat');
+    // transferPostRequest(jsonMessage, 'chat');
+    res.redirect(307, '/chat');
   }
 
   // sends a response header to the request
@@ -114,7 +116,7 @@ app.post('/chatroom', function(req, res) {
   var chatRoom = req.body.queryResult.parameters.chatRoom;
   console.log("Chat room is " + chatRoom);
 
-  // changeChatRoom(chatRoom);
+  changeChatRoom(chatRoom);
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
