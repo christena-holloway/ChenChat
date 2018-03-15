@@ -38,11 +38,18 @@
       });
     });
     function signOut() {
-      //var auth2 = gapi.auth2.getAuthInstance();
-      //auth2.signOut().then(function () {
-        //console.log('User signed out.');
-        window.location.replace("/");
-      //});
+      var auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(function () {
+        console.log('User signed out.');
+        //window.location.replace("/");
+        document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://chenchat2.azurewebsites.net";
+      });
+    }
+    
+    function onLoad() {
+      gapi.load('auth2', function() {
+        gapi.auth2.init();
+      });
     }
 
   </script>
@@ -52,7 +59,7 @@
         <h1 class="title" id="chat_name"> </h1>
         <!-- <a href="product.html" class="back-but ton"> Back </a> -->
         <a href="/contacts" class="back-button" style="display: none;"> Back </a>
-        <a class="signOut" onclick="signOut();"> Log out </a>
+        <a href="/" class="signOut" onclick="signOut();"> Log out </a>
       </header>
 
       <div class="chat-content">
