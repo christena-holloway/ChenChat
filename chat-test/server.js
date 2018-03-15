@@ -323,14 +323,10 @@ io.on('connection', function(socket){
       // If request specified a G Suite domain:
       //var domain = payload['hd'];
     });
-    //socket.handshake.session.profilename = getName(id_token);//NEW LINE
+
     username = getName(id_token);
     io.emit('redirect', destination);
-    //users[socket.id] = temp;
-    //socket.handshake.session.save();//NEW LINE
-    //console.log("hey " + socket.handshake.session.profilename);
     sendUserInfo(id_token);
-    //console.log('id_token: ' + id_token);
   });
 });
 
