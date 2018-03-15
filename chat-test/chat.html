@@ -21,6 +21,7 @@
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
       console.log('Redirecting  to chat room page');
       document.location.href = 'https://chenchat2.azurewebsites.net/chatroom';
+      console.log("Sending chat room to fill in the field now");
       socket.emit('insertChatRoomName', chatRoom);
     });
     
