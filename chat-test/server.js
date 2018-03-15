@@ -12,6 +12,8 @@ var url = "https://chenchat2.azurewebsites.net";
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
@@ -61,8 +63,12 @@ app.get("/chatroom", function(req, res){
   res.sendFile(__dirname + '/chatroom.html');
 });
 
+
 app.get("/chat", function(req, res) {
-  res.sendFile(__dirname + '/chat.html');
+  var results = queryMessages(chatName);
+  console.log(results);
+  //queryUsers(results);
+  res.render(__dirname + '/chat.html', { testVar: chatName});
 });
 
 app.get('/contacts', function(req, res) {
@@ -216,7 +222,7 @@ var m;
 
 var chatName;
 
-function sendMessage(msg, temp) {
+function sendMessage(msg, temp, chat_token = 'test') {
   // TODO: add recipient's user id to db
 
   //check if chat room already exists
@@ -259,21 +265,85 @@ function sendMessage(msg, temp) {
 
   var User = mongoose.model("User", userSchema);
   var username;
-  
-  User.findOne({ 'userID': sub }, 'fullName', function (err, user) {
+
+  User.findOne({ 'userID': sub }, 'userID fullName', function (err, user) {
     if (err) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
+
+    console.log("ID is: " + user.fullName);
   });
   console.log("variable is " + temp);
-  io.emit('chat message', (temp + ': ' + msg));
+  io.emit(chat_token, (temp + ': ' + msg));
+}
+
+function queryMessages(roomName) {
+  var result_array1 = [];
+  var Message2 = mongoose.model("Message", messageSchema);
+  /*
+  Message2.findOne({ 'chat_name': roomName }, 'messages', function (err, result) {
+    if (err) {
+      console.log(err);
+      res.status(400).send("Bad Request");
+    }
+    if (result != null) {
+      console.log(message.messages.body);
+    }
+
+  });
+  */
+  console.log("this is the room name: " + roomName);
+
+  var query = Message2.findOne({ 'chat_name': roomName });
+
+  // selecting the `name` and `occupation` fields
+  query.select('messages');
+
+  // execute the query at a later time
+  query.exec(function (err, result) {
+    if (err) return handleError(err);
+    // Prints "Space Ghost is a talk show host."
+    if (result != null) {
+      result.messages.forEach(function(value) {
+        result_array1.push(value);
+      });
+      //result_array1 = result.messages;
+      //console.log(result_array1);
+      //result_array1.save();
+
+      //console.log(id_array);
+      console.log(result);
+      return result.messages;
+    }
+
+  });
+
+
+}
+
+function queryUsers(results) {
+  var id_array = [];
+  console.log(results);
+  results.forEach(function(value) {
+    id_array.push(value.from);
+  });
+  var User = mongoose.model("User", userSchema);
+  var query = User.findOne({ 'userID': id_array});
+  query.select('fullName');
+  query.exec(function (err, users) {
+    if (err) return handleError(err);
+    console.log(users);
+  });
 }
 
 var users = {};
 var keys = {};
+var chat_names = {};
+var chat_keys = {};
 //send from client to server
 var username;
+var temp_variable;
 io.on('connection', function(socket){
   users[username] = socket.id;
   keys[socket.id] = username;
@@ -287,21 +357,28 @@ io.on('connection', function(socket){
     }
     console.log(users);
   });
-  
+
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
+    //chat_names[chatName] = socket.id; //NEW LINE
+    //chat_keys[socket.id] = chatName; //NEW LINE
     console.log("chat name " + chatName);
     var destination = '/chat';
     io.emit('redirect', destination);
   });
-  
+
   io.emit('getChatName', chatName);
 
-  socket.on('chat message', function(msg){
+  socket.on('chat message', function(data){
+    var msg = data.msg;
+    var chat_token = data.chat_token;
     console.log('msg: ' + msg);
+    console.log("token is: " + chat_token)
+    //console.log('token is: ' + socket.handshake.query.token);
     console.log("socket is " + socket.id);
     if(socket.id in keys && keys[socket.id] in users) {
-      sendMessage(msg, keys[socket.id]);
+      sendMessage(msg, keys[socket.id], chat_token);
+      //sendMessage(msg, keys[socket.id]);
     }
     else {
       console.log("not logged in");
@@ -347,7 +424,7 @@ function getName(id_token) {
 function getEmail(id_token) {
     var decoded = jwtDecode(id_token);
     var email = decoded['email'];
-    
+
     return email;
 }
 
