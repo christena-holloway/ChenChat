@@ -289,7 +289,6 @@ function processV2Request (request, response) {
     var request = require('request');
 
     var urlPath = 'https://chenchat2.azurewebsites.net/';
-    // var urlPath = 'https://6363e2a2.ngrok.io/';
     var options = {
       uri: urlPath,
       port: 80,

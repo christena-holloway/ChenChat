@@ -14,7 +14,7 @@
   <script>
 
     var socket = io();
-    socket.on('insert chat room name', function(chatRoom) {
+    socket.on('insertChatRoomName', function(chatRoom) {
       console.log('Filling in fields for chat room');
       document.getElementById("chat_id").value = chatRoom;
       document.getElementById("selectRoom").click();
