@@ -1,9 +1,6 @@
-html {
-  background-color: #374251;
-}
-.title {
+h1 {
   font: 50px Helvetica, Arial;
-  color: white;
+  color: #374251;
   font-weight: bold;
   text-align: center;
 }
