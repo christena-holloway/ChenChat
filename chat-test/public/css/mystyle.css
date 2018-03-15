@@ -61,6 +61,7 @@ header {
 }
 
 .signOut {
+  font-family: Helvetica Neue, Arial;
   background-color: #E38968;
   border: none;
   color: white;

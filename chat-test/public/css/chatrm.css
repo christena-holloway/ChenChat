@@ -7,6 +7,28 @@ h1 {
   font-weight: bold;
   text-align: center;
 }
+h2 {
+  font: 30px Helvetica, Arial;
+  color: gray;
+  font-weight: normal;
+  text-align: center;
+}
+a.signOut {
+  background-color: #E38968;
+  border: none;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 40px;
+  height: 40px;
+  width: 70px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-top: 30px;
+  margin-right: 12px;
+}
 #container {
   position: absolute;
   width: 340px;
@@ -24,6 +46,26 @@ form {
   margin: 0 auto;
   margin-top: 10px;
 }
+.chatrm-form{
+  font-family: Helvetica Neue, Arial;
+  color: darkslateblue;
+
+}
+form button {
+  width: 20%;
+  color: white;
+  font-size: 22px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #E38968;
+  border-style: groove;
+
+  &:hover {
+    color: darken($blue, 7%);
+  }
+}
 label {
     color: #555;
     display: inline-block;
@@ -31,7 +73,7 @@ label {
     padding-top: 10px;
     font-size: 14px;
 }
-p a {
+p {
   font-size: 11px;
   color: #aaa;
   float: right;
@@ -110,26 +152,4 @@ input[type=submit]:active {
     background-image: -moz-linear-gradient(top left 90deg, #6ec2e8 0%, #b6e2ff 100%);
     background-image: linear-gradient(top left 90deg, #6ec2e8 0%, #b6e2ff 100%);
 }
-img {
-  position: absolute;
-  display: block;
-  margin-left: 42.5%;
-  margin-right: -50%;
-  width: 14%;
-  margin-bottom: 15px;
-  margin-top: -1%;
-}
-h3 {
-  position: relative;
-  font: 18px Helvetica, Arial;
-  font-weight: bold;
-  color: darkslateblue;
-  text-align: center;
-  margin-top: 355px;
-}
-h4 {
-  display: inline-block;
-}
-#signup {
-  text-align: center;
 }
