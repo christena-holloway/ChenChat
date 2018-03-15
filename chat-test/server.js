@@ -81,8 +81,6 @@ app.post('/', function(req, res) {
   var jsonMessage = req.body;
   var action = jsonMessage.queryResult.action;
 
-  
-
   if(action == "changeChatRoom") {
     // send POST req to /chatroom
     console.log("Switching chat rooms");
@@ -114,14 +112,14 @@ app.post('/chatroom', function(req, res) {
   var chatRoom = req.body.queryResult.parameters.chatRoom;
   console.log("Chat room is " + chatRoom);
 
-  changeChatRoom(chatRoom);
-  // sends a response header to the request
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  // send a response in the format required by Dialogflow
-  let responseToAssistant = {
-    fulfillmentText: 'Your request to change chat rooms is being handled!' // displayed response
-  };
-  res.end(JSON.stringify(responseToAssistant));
+  changeChatRoom(chatRoom, res);
+  // // sends a response header to the request
+  // res.writeHead(200, {'Content-Type': 'application/json'});
+  // // send a response in the format required by Dialogflow
+  // let responseToAssistant = {
+  //   fulfillmentText: 'Your request to change chat rooms is being handled!' // displayed response
+  // };
+  // res.end(JSON.stringify(responseToAssistant));
 
 });
 
@@ -170,7 +168,7 @@ function transferPostRequest(data, path) {
   return status;
 }
 
-function changeChatRoom() {
+function changeChatRoom(chatRoom, res) {
 
   // TODO: Use JS to set form values and to click submit button!
   console.log("Redirecting to a different chat room!");
@@ -179,6 +177,8 @@ function changeChatRoom() {
   // document.location.href= '/chatroom',true;
 
   // res.location('/chatroom');
+  res.writeHead(301, {Location: 'https://chenchat2.azurewebsites.net/chatroom'});
+  res.end();
 
   // document.getElementById("chat_id").value = chatRoom;
   return false;
