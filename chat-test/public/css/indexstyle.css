@@ -1,8 +1,5 @@
-header {
-  grid-row: 1 / 2;
+html {
   background-color: #374251;
-  border-bottom-style: groove;
-  height: 100px;
 }
 .title {
   font: 50px Helvetica, Arial;
