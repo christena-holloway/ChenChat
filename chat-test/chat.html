@@ -19,7 +19,7 @@
 
     socket.on('getChatRoomFromDialogFlow', function(chatRoom) {
       console.log('Redirecting  to chat room page');
-      window.location.href = '/chatroom';
+      document.location.href = 'https://chenchat2.azurewebsites.net/chatroom';
       socket.emit('insert chat room name', chatRoom);
     });
     
