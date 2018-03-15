@@ -23,11 +23,12 @@
     "koa-session": "^5.8.1",
     "koa-static": "^4.0.2",
     "method-override": "^2.3.10",
+    "moment": "^2.21.0",
     "mongoose": "^4.13.11",
     "node-notifier": "^5.2.1",
     "passport": "^0.4.0",
     "passport.socketio": "^3.7.0",
-    "request": "^2.83.0",
+    "request": "^2.85.0",
     "session.socket.io": "^0.2.1",
     "socket.io": "^2.0.4",
     "socket.io.session": "^1.0.13"

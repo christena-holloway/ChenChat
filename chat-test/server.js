@@ -5,6 +5,7 @@ var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
 var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
+var moment = require('moment');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
@@ -225,12 +226,13 @@ function sendMessage(msg, temp) {
 
   //check if chat room already exists
   Message.count({ chat_name: chatName }, function (err, count) {
-    console.log("counting");
     //if this chat room does not exist yet, create it
     if (count === 0) {
       console.log("creating new chat room");
       m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
-      var msgObj = {'from': sub, 'body': msg};
+      var now = moment();
+      var formatted = now.format('YYYY-MM-DD hh:mm');
+      var msgObj = {'from': sub, 'body': msg, 'timestamp': formatted};
       m.messages.push(msgObj);
       m.save(function(err) {
         if (err) {
@@ -246,7 +248,9 @@ function sendMessage(msg, temp) {
       Message.findOne({ chat_name: chatName }, function (err, doc) {
         //doc is document for the chat room
         m = doc;
-        var msgObj = {'from': sub, 'body': msg};
+      var now = moment();
+      var formatted = now.format('YYYY-MM-DD hh:mm A');
+      var msgObj = {'from': sub, 'body': msg, 'timestamp': formatted};
         m.messages.push(msgObj);
         m.save(function(err) {
           if (err) {
