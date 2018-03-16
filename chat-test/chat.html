@@ -25,10 +25,12 @@
 
     });
     */
+    var urlString = window.location.href;
+    var url = new URL(urlString);
+    var username = url.searchParams.get("name");
 
     window.onload = function() {
-      var urlString = window.location.href;
-      var url = new URL(urlString);
+
       var chatRoom = url.searchParams.get("chatroom");
       document.getElementById('chat_name').innerHTML = chatRoom;
       chat_name = chatRoom;
@@ -36,8 +38,9 @@
 
 
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
-      console.log('Redirecting to chat room page');
-      window.location.href = '/chatroom?chatroom=' + chatRoom;
+      console.log('Redirecting  to chat room page');
+      window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
+      // console.log("Sending chat room to fill in the field now");
       // socket.emit('insertChatRoomName', chatRoom);
     });
 
@@ -45,7 +48,7 @@
       var now = moment();
       var time = now.format('YYYY-MM-DD hh:mm A');
       $('form').submit(function() {
-          socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name });
+          socket.emit('chat message', { msg: username + ": " + $('#m').val(), timestamp: time, chat_token: chat_name });
           console.log(chat_name);
           $('#m').val('');
         return false;
