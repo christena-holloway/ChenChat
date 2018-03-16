@@ -235,47 +235,23 @@ var m;
 var chatName;
 
 function sendMessage(msg, temp) {
-  // TODO: add recipient's user id to db
-
   //check if chat room already exists
-/*   Message.count({ chat_name: chatName }, function (err, count) {
-    console.log("counting");
-    //if this chat room does not exist yet, create it
-    if (count === 0) {
-      console.log("creating new chat room");
-      m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
-      var time = getTimestamp();
-      var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
-      m.messages.push(msgObj);
-      m.save(function(err) {
-        if (err) {
-            console.log(err);
-            res.status(400).send("Bad Request");
-        }
-        else {
-            console.log('successfully posted to db');
-        }
-      });
-    }
-    else {
-      Message.findOne({ chat_name: chatName }, function (err, doc) {
-        //doc is document for the chat room
-        m = doc;
-        var time = getTimestamp();
-        var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
-        m.messages.push(msgObj);
-        m.save(function(err) {
-          if (err) {
-              console.log(err);
-              res.status(400).send("Bad Request");
-          }
-          else {
-              console.log('successfully posted to db');
-          }
-        });
-      });
-    }
-  }); */
+  Message.findOne({ chat_name: chatName }, function (err, doc) {
+    //doc is document for the chat room
+    m = doc;
+    var time = getTimestamp();
+    var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
+    m.messages.push(msgObj);
+    m.save(function(err) {
+      if (err) {
+          console.log(err);
+          res.status(400).send("Bad Request");
+      }
+      else {
+          console.log('successfully posted to db');
+      }
+    });
+  });
 
   var User = mongoose.model("User", userSchema);
   var username;
@@ -332,37 +308,22 @@ io.on('connection', function(socket){
     var currentTime = getTimestamp();
   });
   
-  /*socket.on('entered emails', function(emails) {
-    var stripped = emails.replace(/\s/g, "");
-    var emailArr = stripped.split(',');
-    console.log("chatName " + chatName);
-    m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
-    m.save();
-    //add email addresses to corresponding messages doc (chatName variable)
-    Message.findOne({ '': chatName }, function (err, chatRoom) {
-      if (err) return handleError(err);
-      var membersField = chatRoom.members;
-      m.update({ 'members': emailArr });
-    })
-  });*/
   socket.on('entered emails', function(emails) {
     var stripped = emails.replace(/\s/g, "");
     var emailArr = stripped.split(',');
     console.log(emailArr);
+    
+    //check if chatroom exists
     Message.count({ chat_name: chatName }, function (err, count) {
     //if this chat room does not exist yet, create it
       if (count === 0) {
-        console.log("creating new chat room");
         m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
         //add members
         for (var i = 0; i < emailArr.length; ++i) {
           m.members.push(emailArr[i]);
         }
-        //m.update({ chat_name: chatName }, { $push: { messages: emailArr } });
         console.log("after new message");
-        //var time = getTimestamp();
-        //var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
-        //m.messages.push(msgObj);
+
         m.save(function(err) {
           if (err) {
               console.log(err);
@@ -373,13 +334,18 @@ io.on('connection', function(socket){
           }
         });
       }
-      /*else {
+      else {
         Message.findOne({ chat_name: chatName }, function (err, doc) {
           //doc is document for the chat room
           m = doc;
-          var time = getTimestamp();
-          var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
-          m.messages.push(msgObj);
+          for (var i = 0; i < emailArr.length; ++i) {
+            Message.count({ chat_name: chatName }, function (err, count) {
+              if (count == 0) {
+                            m.members.push(emailArr[i]);
+
+              }
+            });
+          }
           m.save(function(err) {
             if (err) {
                 console.log(err);
@@ -390,7 +356,7 @@ io.on('connection', function(socket){
             }
           });
         });
-      }*/
+      }
     });
   })
 
