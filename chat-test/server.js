@@ -24,6 +24,8 @@ var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps
 //End
 
 var currentChatroom;
+var name;
+var email;
 
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 
@@ -341,7 +343,7 @@ io.on('connection', function(socket){
     var currentTime = getTimestamp();
   });
 
-  socket.on('entered emails', function(emails) {
+    socket.on('entered emails', function(emails) {
     var stripped = emails.replace(/\s/g, "");
     var emailArr = stripped.split(',');
     console.log(emailArr);
@@ -351,9 +353,15 @@ io.on('connection', function(socket){
     //if this chat room does not exist yet, create it
       if (count === 0) {
         m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
+        //!!!!TODO: make sure duplicate email addresses aren't entered
+        //push current user to members vector
+        m.members.push(email);
         //add members
         for (var i = 0; i < emailArr.length; ++i) {
-          m.members.push(emailArr[i]);
+          console.log(emailArr[i]);
+          if (emailArr[i] !== "") {
+            m.members.push(emailArr[i]);
+          }
         }
         console.log("after new message");
 
@@ -374,8 +382,7 @@ io.on('connection', function(socket){
           for (var i = 0; i < emailArr.length; ++i) {
             Message.count({ chat_name: chatName }, function (err, count) {
               if (count == 0) {
-                            m.members.push(emailArr[i]);
-
+                m.members.push(emailArr[i]);
               }
             });
           }
@@ -391,7 +398,7 @@ io.on('connection', function(socket){
         });
       }
     });
-  })
+  });
 
   socket.on('id token', function(id_token) {
     var destination = '/chatroom?name=';
@@ -441,9 +448,6 @@ function getEmail(id_token) {
 
     return email;
 }
-
-var name;
-var email;
 
 var User = mongoose.model("User", userSchema);
 function sendUserInfo(token) {
