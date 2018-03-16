@@ -155,6 +155,7 @@ app.post('/chatroom', function(req, res) {
 var messagePath;
 io.on('chatNameForGoogleMessage', function(chatRoom) {
   var messagePath = '?chatroom=' + chatRoom + '&name=' + 'Chun-Han';
+  // ?chatroom=testing%20atta&name=Attaullah%20Azim
   console.log("Message path is " + messagePath);
 });
 
@@ -175,12 +176,8 @@ app.post('/chat', function(req, res) {
     io.emit('getChatRoomFromGoogleApi', chatRoom);
   }
   else {
-    // ?chatroom=testing%20atta&name=Attaullah%20Azim
-    io.on('chatNameForGoogleMessage', function(chatRoom) {
-      console.log("Transferring google message to the correct path")
-      transferPostRequest(jsonMessage, messagePath);
-    });
-    
+    console.log("Transferring google message to the correct path");
+    transferPostRequest(jsonMessage, messagePath);
     // handleMessage(req.body);
   }
 
