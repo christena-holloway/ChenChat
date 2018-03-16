@@ -8,7 +8,8 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
-var url = "https://chenchat2.azurewebsites.net";
+//var url = "https://chenchat2.azurewebsites.net";
+var url = "https://localhost:" + port;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -65,8 +66,29 @@ app.get("/chatroom", function(req, res){
 });
 
 app.get("/chat", function(req, res) {
-  //res.sendFile(__dirname + '/chat.html');
-  res.render(__dirname + '/chat.html', { chatVar: chatName, nameVar: username });
+  var result_array1 = [];
+  var Message2 = mongoose.model("Message", messageSchema);
+
+  function callback() {
+    res.render(__dirname + '/chat.html', { messages: result_array1});
+  }
+
+  var query = Message2.findOne({ 'chat_name': chatName });
+
+  // selecting the `name` and `occupation` fields
+  query.select('messages');
+
+  // execute the query at a later time
+  query.exec(function (err, result) {
+    if (err) return handleError(err);
+    // Prints "Space Ghost is a talk show host."
+    if (result != null) {
+      result.messages.forEach(function(value) {
+        result_array1.push(value);
+      });
+    }
+    callback();
+  });
 });
 
 app.get('/contacts', function(req, res) {
