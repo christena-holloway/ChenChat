@@ -5,14 +5,16 @@ var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
 var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
-var moment = require('moment');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
-var url = "https://chenchat2.azurewebsites.net";
+//var url = "https://chenchat2.azurewebsites.net";
+var url = "http://localhost:" + port;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
@@ -62,8 +64,37 @@ app.get("/chatroom", function(req, res){
   res.sendFile(__dirname + '/chatroom.html');
 });
 
+
 app.get("/chat", function(req, res) {
-  res.sendFile(__dirname + '/chat.html');
+  var result_array1 = [];
+  var Message2 = mongoose.model("Message", messageSchema);
+
+  console.log("this is the room name: " + chatName);
+
+  function callback() {
+    console.log('enter callback');
+    console.log(result_array1);
+    console.log('rendering chat page');
+    res.render(__dirname + '/chat.html', { testVar: chatName, messages: result_array1});
+  }
+
+  var query = Message2.findOne({ 'chat_name': chatName });
+
+  // selecting the `name` and `occupation` fields
+  query.select('messages');
+
+  // execute the query at a later time
+  r = query.exec(function (err, result) {
+    if (err) return handleError(err);
+    // Prints "Space Ghost is a talk show host."
+    if (result != null) {
+      result.messages.forEach(function(value) {
+        result_array1.push(value);
+      });
+    }
+    callback();
+  });
+  //queryUsers(results);
 });
 
 app.get('/contacts', function(req, res) {
@@ -79,25 +110,17 @@ app.post('/', function(req, res) {
   console.log(req.body);
   console.log('action is ' + req.body.queryResult.action);
 
-  var jsonMessage = req.body;
-  var action = jsonMessage.queryResult.action;
-
-  // if(action == "changeChatRoom") {
-  //   // send POST req to /chatroom
-  //   console.log("Switching chat rooms");
-  //   var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
-  //   console.log("Chat room is " + chatRoom);
-  //   // transferPostRequest(jsonMessage, 'chatroom');
-  //   io.emit('getChatRoomFromDialogFlow', chatRoom);
-  // }
-  // else {
-  //   // send POST req to /chat
-  //   console.log("Sending message to /chat page");
-  //   transferPostRequest(jsonMessage, 'chat');
-  // }
-  // send POST req to /chat
-  console.log("Sending message to /chat page");
-  transferPostRequest(jsonMessage, 'chat');
+  var action = req.body.queryResult.action;
+  if(action == 'changeChatRoom') {
+    // send POST req to /chatroom
+    console.log("Switching chat rooms");
+    transferPostRequest(req.body, 'chatroom');
+  }
+  else {
+    // send POST req to /chat
+    console.log("Sending message to /chat page");
+    transferPostRequest(req.body, 'chat');
+  }
 
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
@@ -116,7 +139,7 @@ app.post('/chatroom', function(req, res) {
   var chatRoom = req.body.queryResult.parameters.chatRoom;
   console.log("Chat room is " + chatRoom);
 
-  // changeChatRoom(chatRoom);
+  changeChatRoom(chatRoom);
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
@@ -134,18 +157,7 @@ app.post('/chat', function(req, res) {
     console.log('parameters are: ');
     console.log(req.body.queryResult.parameters);
 
-    var action = jsonMessage.queryResult.action;
-
-    if(action == "changeChatRoom") {
-      var chatRoom = req.body.queryResult.parameters.chatRoom;
-      console.log("Chat room is " + chatRoom);
-      // transferPostRequest(jsonMessage, 'chatroom');
-      io.emit('getChatRoomFromDialogFlow', chatRoom);
-    }
-    else {
-      handleMessage(req.body);
-    }
-    
+    handleMessage(req.body);
     // sends a response header to the request
     res.writeHead(200, {'Content-Type': 'application/json'});
     // send a response in the format required by Dialogflow
@@ -183,12 +195,12 @@ function transferPostRequest(data, path) {
   return status;
 }
 
-function changeChatRoom(chatRoom, res) {
+function changeChatRoom(chatRoom) {
 
   // TODO: Use JS to set form values and to click submit button!
   console.log("Redirecting to a different chat room!");
-
-  // document.getElementById("chat_id").value = chatRoom;
+  window.location.href = '/chatroom';
+  document.getElementById("chat_id").value = chatRoom;
   // document.getElementById("selectRoom").click();
 }
 
@@ -233,9 +245,10 @@ var dict = {};
 
 //message collection
 var m;
+
 var chatName;
 
-function sendMessage(msg, temp) {
+function sendMessage(msg, temp, chat_token = 'test') {
   // TODO: add recipient's user id to db
 
   //check if chat room already exists
@@ -245,8 +258,7 @@ function sendMessage(msg, temp) {
     if (count === 0) {
       console.log("creating new chat room");
       m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
-      var time = getTimestamp();
-      var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
+      var msgObj = {'from': sub, 'body': msg};
       m.messages.push(msgObj);
       m.save(function(err) {
         if (err) {
@@ -262,8 +274,7 @@ function sendMessage(msg, temp) {
       Message.findOne({ chat_name: chatName }, function (err, doc) {
         //doc is document for the chat room
         m = doc;
-        var time = getTimestamp();
-        var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
+        var msgObj = {'from': sub, 'body': msg};
         m.messages.push(msgObj);
         m.save(function(err) {
           if (err) {
@@ -280,21 +291,41 @@ function sendMessage(msg, temp) {
 
   var User = mongoose.model("User", userSchema);
   var username;
-  
-  User.findOne({ 'userID': sub }, 'fullName', function (err, user) {
+
+  User.findOne({ 'userID': sub }, 'userID fullName', function (err, user) {
     if (err) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
+
+    console.log("ID is: " + user.fullName);
   });
   console.log("variable is " + temp);
-  io.emit('chat message', (temp + ': ' + msg));
+  io.emit(chat_token, (temp + ': ' + msg));
+}
+
+function queryUsers(results) {
+  var id_array = [];
+  console.log(results);
+  results.forEach(function(value) {
+    id_array.push(value.from);
+  });
+  var User = mongoose.model("User", userSchema);
+  var query = User.findOne({ 'userID': id_array});
+  query.select('fullName');
+  query.exec(function (err, users) {
+    if (err) return handleError(err);
+    console.log(users);
+  });
 }
 
 var users = {};
 var keys = {};
+var chat_names = {};
+var chat_keys = {};
 //send from client to server
 var username;
+var temp_variable;
 io.on('connection', function(socket){
   users[username] = socket.id;
   keys[socket.id] = username;
@@ -308,29 +339,32 @@ io.on('connection', function(socket){
     }
     console.log(users);
   });
-  
+
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
+    //chat_names[chatName] = socket.id; //NEW LINE
+    //chat_keys[socket.id] = chatName; //NEW LINE
     console.log("chat name " + chatName);
     var destination = '/chat';
     io.emit('redirect', destination);
   });
-  
+
   io.emit('getChatName', chatName);
 
   socket.on('chat message', function(data){
     var msg = data.msg;
-    var time = data.timestamp;
-    console.log("message and time on server " + msg + ", " + time);
-    //console.log('msg: ' + msg);
-    //console.log("socket is " + socket.id);
+    var chat_token = data.chat_token;
+    console.log('msg: ' + msg);
+    console.log("token is: " + chat_token)
+    //console.log('token is: ' + socket.handshake.query.token);
+    console.log("socket is " + socket.id);
     if(socket.id in keys && keys[socket.id] in users) {
-      sendMessage(msg, keys[socket.id]);
+      sendMessage(msg, keys[socket.id], chat_token);
+      //sendMessage(msg, keys[socket.id]);
     }
     else {
       console.log("not logged in");
     }
-    var currentTime = getTimestamp();
   });
 
   socket.on('id token', function(id_token) {
@@ -355,12 +389,6 @@ io.on('connection', function(socket){
   });
 });
 
-function getTimestamp() {
-  var now = moment();
-  var time = now.format('YYYY-MM-DD hh:mm A');
-  return time;
-}
-
 function getUID(id_token) {
   var decoded = jwtDecode(id_token);
   var sub = decoded['sub'];
@@ -378,7 +406,7 @@ function getName(id_token) {
 function getEmail(id_token) {
     var decoded = jwtDecode(id_token);
     var email = decoded['email'];
-    
+
     return email;
 }
 
