@@ -226,7 +226,8 @@ function handleMessage(data) {
     msg += 'I am trying to communicate with you but something went wrong!';
   }
   console.log('I am now sending the message!');
-  sendMessage(msg, 'Chun-Han');
+  //sendMessage(msg, 'Chun-Han');
+  sendMessage('Chun-Han: ' + msg);
 }
 
 var sub;
@@ -266,7 +267,8 @@ function sendMessage(msg, temp, chat_token = 'test') {
     }
   });
   console.log("variable is " + temp);
-  io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
+  //io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
+  io.emit('chat message', { message: msg, chatRoomName: chat_token });
   //console.log("chat token is: " + chat_token);
 //  io.emit(chat_token, (temp + ': ' + msg));
   //io.emit(chat_token, msg);
@@ -307,13 +309,15 @@ io.on('connection', function(socket){
     console.log("message and time on server " + msg + ", " + time);
     //console.log('msg: ' + msg);
     //console.log("socket is " + socket.id);
+    /*
     if(socket.id in keys && keys[socket.id] in users) {
       sendMessage(msg, keys[socket.id], chat_token);
       //sendMessage(msg, keys[socket.id]);
     }
     else {
       console.log("not logged in");
-    }
+    }*/
+    sendMessage(msg, keys[socket.id], chat_token);
     var currentTime = getTimestamp();
   });
 
@@ -370,7 +374,7 @@ io.on('connection', function(socket){
   })
 
   socket.on('id token', function(id_token) {
-    var destination = '/chatroom';
+    var destination = '/chatroom?name=';
 
     client.verifyIdToken(
     id_token,
@@ -386,7 +390,7 @@ io.on('connection', function(socket){
     });
 
     username = getName(id_token);
-    io.emit('redirect', destination);
+    io.emit('redirect', destination + username);
     sendUserInfo(id_token);
   });
 });
