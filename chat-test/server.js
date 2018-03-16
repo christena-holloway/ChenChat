@@ -237,7 +237,7 @@ var dict = {};
 var m;
 var chatName;
 
-function sendMessage(msg, temp) {
+function sendMessage(msg, temp, chat_token = 'test') {
   //check if chat room already exists
   Message.findOne({ chat_name: chatName }, function (err, doc) {
     //doc is document for the chat room
