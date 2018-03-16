@@ -21,7 +21,7 @@
     // });
 
     // URL contains the name of the chatroom 
-    if(myURL.indexOf("?") > -1) {
+    if(window.location.href.indexOf("?") > -1) {
       var urlString = window.location.href;
       var url = new URL(urlString);
       var chatroom = url.searchParams.get("chatroom");
