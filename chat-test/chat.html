@@ -19,14 +19,18 @@
     /*
     socket.on('getChatName', function(rand) {
       document.getElementById('chat_name').innerHTML = chatName;
+
     });*/
     window.onload = function() {
       document.getElementById('chat_name').innerHTML = chatName;
     }
-    socket.on('getChatRoomFromDialogFlow', function(chatRoom) {
-      console.log('Redirecting to chat room page');
-      document.location.href = 'https://chenchat2.azurewebsites.net/chatroom';
-      socket.emit('insert chat room name', chatRoom);
+
+    socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
+      console.log('Redirecting  to chat room page');
+      window.location.href = '/chatroom';
+      console.log("Sending chat room to fill in the field now");
+      socket.emit('insertChatRoomName', chatRoom);
+
     });
 
     $(function () {

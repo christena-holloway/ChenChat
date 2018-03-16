@@ -288,7 +288,7 @@ function processV2Request (request, response) {
 
     var request = require('request');
 
-    var urlPath = 'https://chenchat2.azurewebsites.net/';
+    var urlPath = 'https://chenchat2.azurewebsites.net/chat';
     var options = {
       uri: urlPath,
       port: 80,

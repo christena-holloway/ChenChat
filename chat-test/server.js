@@ -133,7 +133,20 @@ app.post('/chat', function(req, res) {
     console.log('parameters are: ');
     console.log(req.body.queryResult.parameters);
 
-    handleMessage(req.body);
+    var jsonMessage = req.body;
+    var action = jsonMessage.queryResult.action;
+
+    if(action === "changeChatRoom") {
+      // send POST req to /chatroom
+      console.log("Switching chat rooms");
+      var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
+      console.log("Chat room is " + chatRoom);
+      io.emit('getChatRoomFromGoogleApi', chatRoom);
+    }
+    else {
+      // transferPostRequest(jsonMessage, 'chat');
+      handleMessage(req.body);
+    }
 
     // sends a response header to the request
     res.writeHead(200, {'Content-Type': 'application/json'});
