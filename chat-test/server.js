@@ -72,6 +72,9 @@ app.get("/chat", function(req, res) {
   var Message2 = mongoose.model("Message", messageSchema);
 
   function callback() {
+    console.log(100);
+    console.log(result_array1);
+    console.log(100);
     res.render(__dirname + '/chat.html', { messages: result_array1});
   }
 
@@ -275,7 +278,7 @@ function handleMessage(data) {
   }
   console.log('I am now sending the message!');
   //sendMessage(msg, 'Chun-Han');
-  sendMessage('Chun-Han: ' + msg);
+  sendMessage(msg, 'Chun-Han');
 }
 
 var sub;
@@ -316,7 +319,7 @@ function sendMessage(msg, temp, chat_token = 'test') {
   });
   console.log("variable is " + temp);
   //io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
-  io.emit('chat message', { message: msg, chatRoomName: chat_token });
+  io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
   //console.log("chat token is: " + chat_token);
 //  io.emit(chat_token, (temp + ': ' + msg));
   //io.emit(chat_token, msg);
@@ -352,7 +355,7 @@ io.on('connection', function(socket){
   socket.on('chat message', function(data){
     var msg = data.msg;
     var time = data.timestamp;
-
+    var sent_name = data.sent_name;
     var chat_token = data.chat_token;
     console.log("message and time on server " + msg + ", " + time);
     //console.log('msg: ' + msg);
@@ -365,7 +368,8 @@ io.on('connection', function(socket){
     else {
       console.log("not logged in");
     }*/
-    sendMessage(msg, keys[socket.id], chat_token);
+    //sendMessage(msg, keys[socket.id], chat_token);
+    sendMessage(msg, sent_name, chat_token);
     var currentTime = getTimestamp();
   });
 
