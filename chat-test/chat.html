@@ -65,7 +65,6 @@
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
         console.log('User signed out.');
-        //window.location.replace("/");
         document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://chenchat2.azurewebsites.net";
       });
     }
@@ -87,8 +86,10 @@
       </header>
 
       <div class="chat-content">
-        <ul id="messages"></ul>
+        <ul id="messages">
+        </ul>
       </div>
+      <li id="test"> testing </li>
       <div class="msg-box">
         <form class="flex-msg-form" method="post" action="/" enctype="application/json">
           <input id="m" name="message" autocomplete="off" />
