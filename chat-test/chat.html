@@ -14,32 +14,41 @@
   <script>
     //display chat room name
     var socket = io();
-    socket.on('getChatName', function(chatName) {
+    var chatName = <%- JSON.stringify(chatVar) %>;
+    var userName = <%- JSON.stringify(nameVar) %>;
+    /*
+    socket.on('getChatName', function(rand) {
       document.getElementById('chat_name').innerHTML = chatName;
-    });
-
+    });*/
+    window.onload = function() {
+      document.getElementById('chat_name').innerHTML = chatName;
+    }
     socket.on('getChatRoomFromDialogFlow', function(chatRoom) {
-      console.log('Redirecting  to chat room page');
+      console.log('Redirecting to chat room page');
       document.location.href = 'https://chenchat2.azurewebsites.net/chatroom';
       socket.emit('insert chat room name', chatRoom);
     });
-    
+
     $(function () {
       var now = moment();
       var time = now.format('YYYY-MM-DD hh:mm A');
       $('form').submit(function() {
-          socket.emit('chat message', { msg: $('#m').val(), timestamp: time });
+          socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chatName });
           $('#m').val('');
         return false;
       });
-      socket.on('chat message', function(msg) {     
+      socket.on(chatName, function(msg) {
+        if(msg.indexOf(':') < 0) {
+          //console.log("TRIGGERED");
+          msg = userName + ": " + msg;
+        }
         var listElt = $('<li>').text(msg);
         listElt = listElt.append($('<br>'));
         var whole = listElt.append($('<small>').text(time));
         $('#messages').append(whole);
       });
     });
-    
+
     function signOut() {
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
@@ -48,7 +57,7 @@
         document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://chenchat2.azurewebsites.net";
       });
     }
-    
+
     function onLoad() {
       gapi.load('auth2', function() {
         gapi.auth2.init();
