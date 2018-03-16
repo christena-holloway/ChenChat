@@ -24,7 +24,7 @@
     if(window.location.href.indexOf("?") > -1) {
       var urlString = window.location.href;
       var url = new URL(urlString);
-      var chatroom = url.searchParams.get("chatroom");
+      var chatRoom = url.searchParams.get("chatroom");
       console.log("Chatroom from url param is " + chatroom);
       document.getElementById("chat_id").value = chatRoom;
       document.getElementById("selectRoom").click();
