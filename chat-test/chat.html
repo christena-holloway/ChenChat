@@ -31,6 +31,8 @@
         var whole = listElt.append($('<small>').text(time));
         $('#messages').append(whole);
       });
+      // send chat room name to send message via google home
+      socket.emit('chatNameForGoogleMessage', chat_name);
     }
 
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
