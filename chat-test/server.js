@@ -115,7 +115,6 @@ app.post('/chatroom', function(req, res) {
   var chatRoom = req.body.queryResult.parameters.chatRoom;
   console.log("Chat room is " + chatRoom);
 
-  // changeChatRoom(chatRoom);
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
@@ -137,7 +136,6 @@ app.post('/chat', function(req, res) {
     var action = jsonMessage.queryResult.action;
 
     if(action === "changeChatRoom") {
-      // send POST req to /chatroom
       console.log("Switching chat rooms");
       var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
       console.log("Chat room is " + chatRoom);
