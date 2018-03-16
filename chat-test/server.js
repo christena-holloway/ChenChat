@@ -326,13 +326,13 @@ io.on('connection', function(socket){
   socket.on('chat message', function(data){
     var msg = data.msg;
     var time = data.timestamp;
-    var chat_token = data.chat_token;
+    //var chat_token = data.chat_token;
     console.log("message and time on server " + msg + ", " + time);
     //console.log('msg: ' + msg);
     //console.log("socket is " + socket.id);
     if(socket.id in keys && keys[socket.id] in users) {
-      sendMessage(msg, keys[socket.id], chat_token);
-      //sendMessage(msg, keys[socket.id]);
+      //sendMessage(msg, keys[socket.id], chat_token);
+      sendMessage(msg, keys[socket.id]);
     }
     else {
       console.log("not logged in");

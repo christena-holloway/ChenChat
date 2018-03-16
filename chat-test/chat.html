@@ -37,7 +37,7 @@
       var now = moment();
       var time = now.format('YYYY-MM-DD hh:mm A');
       $('form').submit(function() {
-          socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chatName });
+          socket.emit('chat message', { msg: $('#m').val(), timestamp: time});
           $('#m').val('');
         return false;
       });
