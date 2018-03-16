@@ -79,18 +79,20 @@ app.post('/', function(req, res) {
   console.log(req.body);
   console.log('action is ' + req.body.queryResult.action);
 
-  var action = req.body.queryResult.action;
-  if(action == 'changeChatRoom') {
+  var jsonMessage = req.body;
+  var action = jsonMessage.queryResult.action;
+
+  if(action === "changeChatRoom") {
     // send POST req to /chatroom
     console.log("Switching chat rooms");
-    // window.location.href = '/chatroom';
-    changeChatRoom();
-    transferPostRequest(req.body, 'chatroom');
+    var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
+    console.log("Chat room is " + chatRoom);
+    io.emit('getChatRoomFromGoogleApi', chatRoom);
   }
   else {
     // send POST req to /chat
     console.log("Sending message to /chat page");
-    transferPostRequest(req.body, 'chat');
+    transferPostRequest(jsonMessage, 'chat');
   }
 
   // sends a response header to the request
@@ -128,7 +130,21 @@ app.post('/chat', function(req, res) {
     console.log('parameters are: ');
     console.log(req.body.queryResult.parameters);
 
-    handleMessage(req.body);
+    var jsonMessage = req.body;
+    var action = jsonMessage.queryResult.action;
+
+    if(action === "changeChatRoom") {
+      // send POST req to /chatroom
+      console.log("Switching chat rooms");
+      var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
+      console.log("Chat room is " + chatRoom);
+      io.emit('getChatRoomFromGoogleApi', chatRoom);
+    }
+    else {
+      // transferPostRequest(jsonMessage, 'chat');
+      handleMessage(req.body);
+    }
+
     // sends a response header to the request
     res.writeHead(200, {'Content-Type': 'application/json'});
     // send a response in the format required by Dialogflow
@@ -166,14 +182,12 @@ function transferPostRequest(data, path) {
   return status;
 }
 
-function changeChatRoom() {
+function changeChatRoom(chatRoom, res) {
 
   // TODO: Use JS to set form values and to click submit button!
   console.log("Redirecting to a different chat room!");
-  window.location.href = '/chatroom';
-  // document.location.href= '/chatroom',true;
+
   // document.getElementById("chat_id").value = chatRoom;
-  return false;
   // document.getElementById("selectRoom").click();
 }
 
@@ -218,14 +232,14 @@ var dict = {};
 
 //message collection
 var m;
-
 var chatName;
 
 function sendMessage(msg, temp) {
   // TODO: add recipient's user id to db
 
   //check if chat room already exists
-  Message.count({ chat_name: chatName }, function (err, count) {
+/*   Message.count({ chat_name: chatName }, function (err, count) {
+    console.log("counting");
     //if this chat room does not exist yet, create it
     if (count === 0) {
       console.log("creating new chat room");
@@ -233,7 +247,6 @@ function sendMessage(msg, temp) {
       var time = getTimestamp();
       var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
       m.messages.push(msgObj);
-      
       m.save(function(err) {
         if (err) {
             console.log(err);
@@ -262,7 +275,7 @@ function sendMessage(msg, temp) {
         });
       });
     }
-  });
+  }); */
 
   var User = mongoose.model("User", userSchema);
   var username;
@@ -318,6 +331,68 @@ io.on('connection', function(socket){
     }
     var currentTime = getTimestamp();
   });
+  
+  /*socket.on('entered emails', function(emails) {
+    var stripped = emails.replace(/\s/g, "");
+    var emailArr = stripped.split(',');
+    console.log("chatName " + chatName);
+    m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
+    m.save();
+    //add email addresses to corresponding messages doc (chatName variable)
+    Message.findOne({ '': chatName }, function (err, chatRoom) {
+      if (err) return handleError(err);
+      var membersField = chatRoom.members;
+      m.update({ 'members': emailArr });
+    })
+  });*/
+  socket.on('entered emails', function(emails) {
+    var stripped = emails.replace(/\s/g, "");
+    var emailArr = stripped.split(',');
+    console.log(emailArr);
+    Message.count({ chat_name: chatName }, function (err, count) {
+    //if this chat room does not exist yet, create it
+      if (count === 0) {
+        console.log("creating new chat room");
+        m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
+        //add members
+        for (var i = 0; i < emailArr.length; ++i) {
+          m.members.push(emailArr[i]);
+        }
+        //m.update({ chat_name: chatName }, { $push: { messages: emailArr } });
+        console.log("after new message");
+        //var time = getTimestamp();
+        //var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
+        //m.messages.push(msgObj);
+        m.save(function(err) {
+          if (err) {
+              console.log(err);
+              res.status(400).send("Bad Request");
+          }
+          else {
+              console.log('successfully posted to db');
+          }
+        });
+      }
+      /*else {
+        Message.findOne({ chat_name: chatName }, function (err, doc) {
+          //doc is document for the chat room
+          m = doc;
+          var time = getTimestamp();
+          var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
+          m.messages.push(msgObj);
+          m.save(function(err) {
+            if (err) {
+                console.log(err);
+                res.status(400).send("Bad Request");
+            }
+            else {
+                console.log('successfully posted to db');
+            }
+          });
+        });
+      }*/
+    });
+  })
 
   socket.on('id token', function(id_token) {
     var destination = '/chatroom';
@@ -344,7 +419,6 @@ io.on('connection', function(socket){
 function getTimestamp() {
   var now = moment();
   var time = now.format('YYYY-MM-DD hh:mm A');
-  
   return time;
 }
 

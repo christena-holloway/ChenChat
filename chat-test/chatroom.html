@@ -12,12 +12,22 @@
     <title>Select a Chat Room</title>
   </head>
   <script>
+
+    var socket = io();
+    socket.on('insert chat room name', function(chatRoom) {
+      console.log('Filling in fields for chat room');
+      document.getElementById("chat_id").value = chatRoom;
+      document.getElementById("selectRoom").click();
+    });
+
     function chatRedirect() {
       // var input_vals = $(this).serialize();
       var inChatName = document.getElementById("chat_id").value;
+      var emails = document.getElementById("chat_mems").value;
       //console.log("VALUE IN: " + inChatName);
       var socket = io();
       socket.emit('chat name', inChatName);
+      socket.emit('entered emails', emails);
       //window.location.replace("/chat");//+ input_vals[0];
       socket.on('redirect', function(destination) {
         window.location.href = destination;
@@ -49,7 +59,8 @@
       <div class="chat-rm">
         <form class="chatrm-form" enctype="application/json">
           Group Name: <input required id="chat_id" type="text" placeholder="Chat group name" name="name" autocomplete="off" /><br><br>
-          Group Members: <input type="email" placeholder="Email addresses" id="chat_mems" name="members" autocomplete="off" multiple/><br><br>
+          Group Members: <input type="email" placeholder="Email addresses" id="chat_mems" name="members" autocomplete="off" multiple/><br>
+          <p>Please separate email addresses with a comma ','</p><br><br>
           <input id="selectRoom" type="button" onclick="chatRedirect();" value="Submit" />
         </form>
       </div>
