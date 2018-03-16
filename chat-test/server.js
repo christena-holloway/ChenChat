@@ -290,10 +290,10 @@ function sendMessage(msg, temp = '', chat_token = 'test') {
     }
   });
   console.log("variable is " + temp);
-  //io.emit('chat message', (temp + ': ' + msg));
+  io.emit('chat message', (temp + ': ' + msg));
 
   //io.emit(chat_token, (temp + ': ' + msg));
-  io.emit(chat_token, msg);
+  //io.emit(chat_token, msg);
 }
 
 var users = {};

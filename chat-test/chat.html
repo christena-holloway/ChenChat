@@ -14,16 +14,17 @@
   <script>
     //display chat room name
     var socket = io();
-    var chatName = <%- JSON.stringify(chatVar) %>;
-    var userName = <%- JSON.stringify(nameVar) %>;
-    /*
-    socket.on('getChatName', function(rand) {
+    //var chatName = <%- JSON.stringify(chatVar) %>;
+    //var userName = <%- JSON.stringify(nameVar) %>;
+
+    socket.on('getChatName', function(chatName) {
       document.getElementById('chat_name').innerHTML = chatName;
 
-    });*/
+    });
+    /*
     window.onload = function() {
       document.getElementById('chat_name').innerHTML = chatName;
-    }
+    }*/
 
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
       console.log('Redirecting  to chat room page');
@@ -41,11 +42,12 @@
           $('#m').val('');
         return false;
       });
-      socket.on(chatName, function(msg) {
+      socket.on('chat message', function(msg) {
+        /*
         if(msg.indexOf(':') < 0) {
           //console.log("TRIGGERED");
           msg = userName + ": " + msg;
-        }
+        }*/
         var listElt = $('<li>').text(msg);
         listElt = listElt.append($('<br>'));
         var whole = listElt.append($('<small>').text(time));
