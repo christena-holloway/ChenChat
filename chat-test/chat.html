@@ -22,7 +22,6 @@
     var username = url.searchParams.get("name");
 
     window.onload = function() {
-
       var chatRoom = url.searchParams.get("chatroom");
       document.getElementById('chat_name').innerHTML = chatRoom;
       chat_name = chatRoom;
@@ -34,12 +33,9 @@
       });
     }
 
-
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
       console.log('Redirecting  to chat room page');
       window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
-      // console.log("Sending chat room to fill in the field now");
-      // socket.emit('insertChatRoomName', chatRoom);
     });
 
     $(function () {
