@@ -25,21 +25,21 @@
       var chatRoom = url.searchParams.get("chatroom");
       document.getElementById('chat_name').innerHTML = chatRoom;
       chat_name = chatRoom;
-      /*
+      
       $.getJSON(urlString, function(data) {
         var listElt = $('<li>').text(msg);
         listElt = listElt.append($('<br>'));
         var whole = listElt.append($('<small>').text(time));
         $('#messages').append(whole);
-      });*/
+      });
 
-      var array =  <%- JSON.stringify(messages) %>;
+      /*var array =  <%- JSON.stringify(messages) %>;
       for (var i = 0; i < array.length; i++) {
         var listElt = $('<li>').text(array[i].body);
         listElt = listElt.append($('<br>'));
         var whole = listElt.append($('<small>').text(array[i].timestamp));
         $('#messages').append(whole);
-      }
+      }*/
     }
 
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
