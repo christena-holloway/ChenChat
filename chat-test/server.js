@@ -266,9 +266,9 @@ function sendMessage(msg, temp, chat_token = 'test') {
     }
   });
   console.log("variable is " + temp);
-  io.emit('chat message', (temp + ': ' + msg));
-
-  //io.emit(chat_token, (temp + ': ' + msg));
+  io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
+  //console.log("chat token is: " + chat_token);
+//  io.emit(chat_token, (temp + ': ' + msg));
   //io.emit(chat_token, msg);
 }
 
