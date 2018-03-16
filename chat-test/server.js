@@ -237,47 +237,23 @@ var dict = {};
 var m;
 var chatName;
 
-function sendMessage(msg, temp = '', chat_token = 'test') {
-  // TODO: add recipient's user id to db
-
+function sendMessage(msg, temp) {
   //check if chat room already exists
-  Message.count({ chat_name: chatName }, function (err, count) {
-    console.log("counting");
-    //if this chat room does not exist yet, create it
-    if (count === 0) {
-      console.log("creating new chat room");
-      m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
-      var time = getTimestamp();
-      var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
-      m.messages.push(msgObj);
-      m.save(function(err) {
-        if (err) {
-            console.log(err);
-            res.status(400).send("Bad Request");
-        }
-        else {
-            console.log('successfully posted to db');
-        }
-      });
-    }
-    else {
-      Message.findOne({ chat_name: chatName }, function (err, doc) {
-        //doc is document for the chat room
-        m = doc;
-        var time = getTimestamp();
-        var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
-        m.messages.push(msgObj);
-        m.save(function(err) {
-          if (err) {
-              console.log(err);
-              res.status(400).send("Bad Request");
-          }
-          else {
-              console.log('successfully posted to db');
-          }
-        });
-      });
-    }
+  Message.findOne({ chat_name: chatName }, function (err, doc) {
+    //doc is document for the chat room
+    m = doc;
+    var time = getTimestamp();
+    var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
+    m.messages.push(msgObj);
+    m.save(function(err) {
+      if (err) {
+          console.log(err);
+          res.status(400).send("Bad Request");
+      }
+      else {
+          console.log('successfully posted to db');
+      }
+    });
   });
 
   var User = mongoose.model("User", userSchema);
@@ -326,6 +302,7 @@ io.on('connection', function(socket){
   socket.on('chat message', function(data){
     var msg = data.msg;
     var time = data.timestamp;
+
     //var chat_token = data.chat_token;
     console.log("message and time on server " + msg + ", " + time);
     //console.log('msg: ' + msg);
@@ -339,6 +316,58 @@ io.on('connection', function(socket){
     }
     var currentTime = getTimestamp();
   });
+  
+  socket.on('entered emails', function(emails) {
+    var stripped = emails.replace(/\s/g, "");
+    var emailArr = stripped.split(',');
+    console.log(emailArr);
+    
+    //check if chatroom exists
+    Message.count({ chat_name: chatName }, function (err, count) {
+    //if this chat room does not exist yet, create it
+      if (count === 0) {
+        m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
+        //add members
+        for (var i = 0; i < emailArr.length; ++i) {
+          m.members.push(emailArr[i]);
+        }
+        console.log("after new message");
+
+        m.save(function(err) {
+          if (err) {
+              console.log(err);
+              res.status(400).send("Bad Request");
+          }
+          else {
+              console.log('successfully posted to db');
+          }
+        });
+      }
+      else {
+        Message.findOne({ chat_name: chatName }, function (err, doc) {
+          //doc is document for the chat room
+          m = doc;
+          for (var i = 0; i < emailArr.length; ++i) {
+            Message.count({ chat_name: chatName }, function (err, count) {
+              if (count == 0) {
+                            m.members.push(emailArr[i]);
+
+              }
+            });
+          }
+          m.save(function(err) {
+            if (err) {
+                console.log(err);
+                res.status(400).send("Bad Request");
+            }
+            else {
+                console.log('successfully posted to db');
+            }
+          });
+        });
+      }
+    });
+  })
 
   socket.on('id token', function(id_token) {
     var destination = '/chatroom';
