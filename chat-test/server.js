@@ -252,7 +252,7 @@ function handleMessage(data) {
   }
   console.log('I am now sending the message!');
   //sendMessage(msg, 'Chun-Han');
-  sendMessage('Chun-Han: ' + msg);
+  sendMessage(msg, 'Chun-Han');
 }
 
 var sub;
