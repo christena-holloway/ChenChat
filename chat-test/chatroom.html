@@ -26,8 +26,11 @@
       var url = new URL(urlString);
       var chatRoom = url.searchParams.get("chatroom");
       console.log("Chatroom from url param is " + chatRoom);
-      document.getElementById("chat_id").value = chatRoom;
-      document.getElementById("selectRoom").click();
+
+      window.onload = function() {
+        document.getElementById("chat_id").value = chatRoom;
+        document.getElementById("selectRoom").click();
+      }      
     }
 
     function chatRedirect() {
