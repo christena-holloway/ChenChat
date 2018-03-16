@@ -14,6 +14,7 @@
   <script>
     //display chat room name
     var socket = io();
+    var chat_name;
     //var chatName = <%- JSON.stringify(chatVar) %>;
     //var userName = <%- JSON.stringify(nameVar) %>;
 
@@ -30,6 +31,7 @@
       var url = new URL(urlString);
       var chatRoom = url.searchParams.get("chatroom");
       document.getElementById('chat_name').innerHTML = chatRoom;
+      chat_name = chatRoom;
     }
 
 
@@ -44,11 +46,11 @@
       var now = moment();
       var time = now.format('YYYY-MM-DD hh:mm A');
       $('form').submit(function() {
-          socket.emit('chat message', { msg: $('#m').val(), timestamp: time});
+          socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name });
           $('#m').val('');
         return false;
       });
-      socket.on('chat message', function(msg) {
+      socket.on(chat_name, function(msg) {
         /*
         if(msg.indexOf(':') < 0) {
           //console.log("TRIGGERED");

@@ -266,9 +266,9 @@ function sendMessage(msg, temp) {
     }
   });
   console.log("variable is " + temp);
-  io.emit('chat message', (temp + ': ' + msg));
+  //io.emit('chat message', (temp + ': ' + msg));
 
-  //io.emit(chat_token, (temp + ': ' + msg));
+  io.emit(chat_token, (temp + ': ' + msg));
   //io.emit(chat_token, msg);
 }
 
@@ -303,25 +303,25 @@ io.on('connection', function(socket){
     var msg = data.msg;
     var time = data.timestamp;
 
-    //var chat_token = data.chat_token;
+    var chat_token = data.chat_token;
     console.log("message and time on server " + msg + ", " + time);
     //console.log('msg: ' + msg);
     //console.log("socket is " + socket.id);
     if(socket.id in keys && keys[socket.id] in users) {
-      //sendMessage(msg, keys[socket.id], chat_token);
-      sendMessage(msg, keys[socket.id]);
+      sendMessage(msg, keys[socket.id], chat_token);
+      //sendMessage(msg, keys[socket.id]);
     }
     else {
       console.log("not logged in");
     }
     var currentTime = getTimestamp();
   });
-  
+
   socket.on('entered emails', function(emails) {
     var stripped = emails.replace(/\s/g, "");
     var emailArr = stripped.split(',');
     console.log(emailArr);
-    
+
     //check if chatroom exists
     Message.count({ chat_name: chatName }, function (err, count) {
     //if this chat room does not exist yet, create it
