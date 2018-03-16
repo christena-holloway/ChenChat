@@ -14,27 +14,53 @@
   <script>
     //display chat room name
     var socket = io();
+    //var chatName = <%- JSON.stringify(chatVar) %>;
+    //var userName = <%- JSON.stringify(nameVar) %>;
+
+    /*
     socket.on('getChatName', function(chatName) {
+
       document.getElementById('chat_name').innerHTML = chatName;
+
     });
-    //var time;
+    */
+
+    window.onload = function() {
+      var urlString = window.location.href;
+      var url = new URL(urlString);
+      var chatRoom = url.searchParams.get("chatroom");
+      document.getElementById('chat_name').innerHTML = chatRoom;
+    }
+
+
+    socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
+      console.log('Redirecting  to chat room page');
+      window.location.href = '/chatroom?chatroom=' + chatRoom;
+      // console.log("Sending chat room to fill in the field now");
+      // socket.emit('insertChatRoomName', chatRoom);
+    });
+
     $(function () {
       var now = moment();
       var time = now.format('YYYY-MM-DD hh:mm A');
-      console.log("time on client is: " + time);
       $('form').submit(function() {
-        socket.emit('chat message', { msg: $('#m').val(), timestamp: time });
-        $('#m').val('');
+          socket.emit('chat message', { msg: $('#m').val(), timestamp: time});
+          $('#m').val('');
         return false;
       });
-      socket.on('chat message', function(msg) {     
+      socket.on('chat message', function(msg) {
+        /*
+        if(msg.indexOf(':') < 0) {
+          //console.log("TRIGGERED");
+          msg = userName + ": " + msg;
+        }*/
         var listElt = $('<li>').text(msg);
         listElt = listElt.append($('<br>'));
         var whole = listElt.append($('<small>').text(time));
         $('#messages').append(whole);
-      })
+      });
     });
-    
+
     function signOut() {
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
@@ -42,7 +68,7 @@
         document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://chenchat2.azurewebsites.net";
       });
     }
-    
+
     function onLoad() {
       gapi.load('auth2', function() {
         gapi.auth2.init();
