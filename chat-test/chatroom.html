@@ -13,12 +13,22 @@
   </head>
   <script>
 
-    var socket = io();
-    socket.on('insertChatRoomName', function(chatRoom) {
-      console.log('Filling in fields for chat room');
+    // var socket = io();
+    // socket.on('insertChatRoomName', function(chatRoom) {
+    //   console.log('Filling in fields for chat room');
+    //   document.getElementById("chat_id").value = chatRoom;
+    //   document.getElementById("selectRoom").click();
+    // });
+
+    // URL contains the name of the chatroom 
+    if(myURL.indexOf("?") > -1) {
+      var urlString = window.location.href;
+      var url = new URL(urlString);
+      var chatroom = url.searchParams.get("chatroom");
+      console.log("Chatroom from url param is " + chatroom);
       document.getElementById("chat_id").value = chatRoom;
       document.getElementById("selectRoom").click();
-    });
+    }
 
     function chatRedirect() {
       // var input_vals = $(this).serialize();

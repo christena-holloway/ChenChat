@@ -20,9 +20,9 @@
 
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
       console.log('Redirecting  to chat room page');
-      window.location.href = '/chatroom';
-      console.log("Sending chat room to fill in the field now");
-      socket.emit('insertChatRoomName', chatRoom);
+      window.location.href = '/chatroom?chatroom=' + chatRoom;
+      // console.log("Sending chat room to fill in the field now");
+      // socket.emit('insertChatRoomName', chatRoom);
     });
     
     $(function () {
