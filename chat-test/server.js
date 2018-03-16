@@ -317,7 +317,7 @@ io.on('connection', function(socket){
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
     console.log("chat name " + chatName);
-    var destination = '/chat';
+    var destination = '/chat?chatroom=' + chatName;
     io.emit('redirect', destination);
   });
 

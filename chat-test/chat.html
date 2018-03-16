@@ -17,14 +17,21 @@
     //var chatName = <%- JSON.stringify(chatVar) %>;
     //var userName = <%- JSON.stringify(nameVar) %>;
 
+    /*
     socket.on('getChatName', function(chatName) {
+
       document.getElementById('chat_name').innerHTML = chatName;
 
     });
-    /*
+    */
+
     window.onload = function() {
-      document.getElementById('chat_name').innerHTML = chatName;
-    }*/
+      var urlString = window.location.href;
+      var url = new URL(urlString);
+      var chatRoom = url.searchParams.get("chatroom");
+      document.getElementById('chat_name').innerHTML = chatRoom;
+    }
+
 
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
       console.log('Redirecting  to chat room page');
