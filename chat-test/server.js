@@ -13,6 +13,8 @@ var url = "https://chenchat2.azurewebsites.net";
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
@@ -63,7 +65,8 @@ app.get("/chatroom", function(req, res){
 });
 
 app.get("/chat", function(req, res) {
-  res.sendFile(__dirname + '/chat.html');
+  //res.sendFile(__dirname + '/chat.html');
+  res.render(__dirname + '/chat.html', { chatVar: chatName, nameVar: username });
 });
 
 app.get('/contacts', function(req, res) {
@@ -234,7 +237,7 @@ var dict = {};
 var m;
 var chatName;
 
-function sendMessage(msg, temp) {
+function sendMessage(msg, temp = '', chat_token = 'test') {
   // TODO: add recipient's user id to db
 
   //check if chat room already exists
@@ -279,7 +282,7 @@ function sendMessage(msg, temp) {
 
   var User = mongoose.model("User", userSchema);
   var username;
-  
+
   User.findOne({ 'userID': sub }, 'fullName', function (err, user) {
     if (err) {
       console.log(err);
@@ -288,6 +291,9 @@ function sendMessage(msg, temp) {
   });
   console.log("variable is " + temp);
   io.emit('chat message', (temp + ': ' + msg));
+
+  //io.emit(chat_token, (temp + ': ' + msg));
+  //io.emit(chat_token, msg);
 }
 
 var users = {};
@@ -307,24 +313,26 @@ io.on('connection', function(socket){
     }
     console.log(users);
   });
-  
+
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
     console.log("chat name " + chatName);
     var destination = '/chat';
     io.emit('redirect', destination);
   });
-  
+
   io.emit('getChatName', chatName);
 
   socket.on('chat message', function(data){
     var msg = data.msg;
     var time = data.timestamp;
+    var chat_token = data.chat_token;
     console.log("message and time on server " + msg + ", " + time);
     //console.log('msg: ' + msg);
     //console.log("socket is " + socket.id);
     if(socket.id in keys && keys[socket.id] in users) {
-      sendMessage(msg, keys[socket.id]);
+      sendMessage(msg, keys[socket.id], chat_token);
+      //sendMessage(msg, keys[socket.id]);
     }
     else {
       console.log("not logged in");
@@ -377,7 +385,7 @@ function getName(id_token) {
 function getEmail(id_token) {
     var decoded = jwtDecode(id_token);
     var email = decoded['email'];
-    
+
     return email;
 }
 
