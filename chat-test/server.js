@@ -94,7 +94,6 @@ app.get("/chat", function(req, res) {
     }
     callback();
   });
-  //queryUsers(results);
 });
 
 app.get('/contacts', function(req, res) {
@@ -303,6 +302,7 @@ function sendMessage(msg, temp, chat_token = 'test') {
   console.log("variable is " + temp);
   io.emit(chat_token, (temp + ': ' + msg));
 }
+
 
 function queryUsers(results) {
   var id_array = [];

@@ -12,12 +12,17 @@
     <title>ChenChat</title>
   </head>
   <script>
-    //display chat room name
-    var socket = io();
-    socket.on('getChatName', function(chatName) {
-      document.getElementById('chat_name').innerHTML = chatName;
-    });
 
+    var profile;
+    var id_token;
+    var local_var = <%- JSON.stringify(testVar) %>;
+    function onSignIn(googleUser) {
+      // The ID token you need to pass to your backend:
+      id_token = googleUser.getAuthResponse().id_token;
+      console.log("ID Token: " + id_token);
+      var socket = io();
+      //socket.emit('id token', id_token);
+    };
     socket.on('getChatRoomFromDialogFlow', function(chatRoom) {
       console.log('Redirecting  to chat room page');
       document.location.href = 'https://chenchat2.azurewebsites.net/chatroom';
@@ -28,6 +33,7 @@
       var now = moment();
       var time = now.format('YYYY-MM-DD hh:mm A');
       $('form').submit(function() {
+
           socket.emit('chat message', { msg: $('#m').val(), timestamp: time });
           $('#m').val('');
         return false;
@@ -37,6 +43,13 @@
         listElt = listElt.append($('<br>'));
         var whole = listElt.append($('<small>').text(time));
         $('#messages').append(whole);
+
+        socket.emit('chat message', { msg: $('#m').val(), chat_token: local_var});
+        $('#m').val('');
+        return false;
+      });
+      socket.on(local_var, function(msg) {
+        $('#messages').append($('<li>').text(msg));
       });
     });
     
