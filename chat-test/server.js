@@ -234,10 +234,9 @@ function handleMessage(data) {
   var msg = '';
 
   if (action === 'sendHelp') {
-    var name = parameters.given-name;
     var state = parameters.state;
     var urgency = parameters.urgency;
-    msg += name + ', I need help ' + urgency + '.';
+    msg += 'I need help ' + urgency + '.';
   }
   else if (action === 'switchMode') {
     var mode = parameters.mode;
