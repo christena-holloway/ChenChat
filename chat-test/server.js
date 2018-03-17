@@ -135,29 +135,22 @@ app.post('/', function(req, res) {
 
 })
 
-app.post('/chatroom', function(req, res) {
-  console.log('POST to /chatroom');
-  console.log(req.body);
+// app.post('/chatroom', function(req, res) {
+//   console.log('POST to /chatroom');
+//   console.log(req.body);
 
-  var chatRoom = req.body.queryResult.parameters.chatRoom;
-  console.log("Chat room is " + chatRoom);
+//   var chatRoom = req.body.queryResult.parameters.chatRoom;
+//   console.log("Chat room is " + chatRoom);
 
-  // sends a response header to the request
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  // send a response in the format required by Dialogflow
-  let responseToAssistant = {
-    fulfillmentText: 'Your request to change chat rooms is being handled!' // displayed response
-  };
-  res.end(JSON.stringify(responseToAssistant));
+//   // sends a response header to the request
+//   res.writeHead(200, {'Content-Type': 'application/json'});
+//   // send a response in the format required by Dialogflow
+//   let responseToAssistant = {
+//     fulfillmentText: 'Your request to change chat rooms is being handled!' // displayed response
+//   };
+//   res.end(JSON.stringify(responseToAssistant));
 
-});
-
-var messagePath;
-io.on('chatNameForGoogleMessage', function(chatRoom) {
-  var messagePath = '?chatroom=' + chatRoom + '&name=' + 'Chun-Han';
-  // ?chatroom=testing%20atta&name=Attaullah%20Azim
-  console.log("Message path is " + messagePath);
-});
+// });
 
 app.post('/chat', function(req, res) {
 
@@ -171,14 +164,12 @@ app.post('/chat', function(req, res) {
 
   if(action === "changeChatRoom") {
     console.log("Switching chat rooms");
-    var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
+    var chatRoom = jsonMessage.queryResult.parameters.chatroom;
     console.log("Chat room is " + chatRoom);
     io.emit('getChatRoomFromGoogleApi', chatRoom);
   }
   else {
-    console.log("Transferring google message to the correct path");
-    transferPostRequest(jsonMessage, messagePath);
-    // handleMessage(req.body);
+    handleMessage(req.body);
   }
 
   // sends a response header to the request
@@ -190,20 +181,20 @@ app.post('/chat', function(req, res) {
   res.end(JSON.stringify(responseToAssistant));
 });
 
-app.post('/chat' + messagePath, function(req, res) {
-  console.log('POST /chat' + messagePath);
-  console.log(req.body);
+// app.post('/chat' + messagePath, function(req, res) {
+//   console.log('POST /chat' + messagePath);
+//   console.log(req.body);
 
-  handleMessage(req.body);
+//   handleMessage(req.body);
 
-  // sends a response header to the request
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  // send a response in the format required by Dialogflow
-  let responseToAssistant = {
-    fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
-  };
-  res.end(JSON.stringify(responseToAssistant));
-});
+//   // sends a response header to the request
+//   res.writeHead(200, {'Content-Type': 'application/json'});
+//   // send a response in the format required by Dialogflow
+//   let responseToAssistant = {
+//     fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
+//   };
+//   res.end(JSON.stringify(responseToAssistant));
+// });
 
 function transferPostRequest(data, path) {
   var request = require('request');
@@ -233,21 +224,13 @@ function transferPostRequest(data, path) {
   return status;
 }
 
-function changeChatRoom(chatRoom, res) {
-
-  // TODO: Use JS to set form values and to click submit button!
-  console.log("Redirecting to a different chat room!");
-
-  // document.getElementById("chat_id").value = chatRoom;
-  // document.getElementById("selectRoom").click();
-}
-
 // To handle sending a message in the chat
 function handleMessage(data) {
 
   var result = data.queryResult;
   var action = result.action;
   var parameters = result.parameters;
+  var chatRoom = parameters.chatroom;
   var msg = '';
 
   if (action === 'sendHelp') {
@@ -258,8 +241,7 @@ function handleMessage(data) {
   }
   else if (action === 'switchMode') {
     var mode = parameters.mode;
-    var name = parameters.given-name;
-    msg += name + ', I need help ' + mode + '!';
+    msg += 'I need help ' + mode + '!';
   }
   else if (action === 'reportState') {
     var state = parameters.state;
@@ -275,7 +257,7 @@ function handleMessage(data) {
   }
   console.log('I am now sending the message!');
   //sendMessage(msg, 'Chun-Han');
-  sendMessage(msg, 'Chun-Han');
+  sendMessage(msg, 'Chun-Han', chatRoom);
 }
 
 var sub;
