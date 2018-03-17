@@ -25,7 +25,7 @@
       var chatRoom = url.searchParams.get("chatroom");
       document.getElementById('chat_name').innerHTML = chatRoom;
       chat_name = chatRoom;
-      
+     
       var array =  <%- JSON.stringify(messages) %>;
       for (i = 0; i < array.length; i++) {
         var listElt = $('<li>').text(array[i].body);
@@ -33,6 +33,18 @@
         var whole = listElt.append($('<small>').text(array[i].timestamp));
         $('#messages').append(whole);
       }
+
+      // send chat room name to send message via google home
+      socket.emit('chatNameForGoogleMessage', chat_name);
+
+      /*var array =  <%- JSON.stringify(messages) %>;
+      for (var i = 0; i < array.length; i++) {
+        var listElt = $('<li>').text(array[i].body);
+        listElt = listElt.append($('<br>'));
+        var whole = listElt.append($('<small>').text(array[i].timestamp));
+        $('#messages').append(whole);
+      }*/
+
     }
 
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
@@ -44,7 +56,7 @@
       var now = moment();
       var time = now.format('YYYY-MM-DD hh:mm A');
       $('form').submit(function() {
-          socket.emit('chat message', { msg: username + ": " + $('#m').val(), timestamp: time, chat_token: chat_name });
+          socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
           $('#m').val('');
         return false;
       });
