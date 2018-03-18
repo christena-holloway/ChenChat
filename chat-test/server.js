@@ -229,7 +229,7 @@ function handleMessage(data) {
     console.log("Switching chat rooms");
     // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
     io.emit('getChatRoomFromGoogleApi', chatRoom);
-    msg += 'I just changed the chat room!';
+    return;
   }
   // default handler
   else {
