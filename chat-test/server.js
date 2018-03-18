@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var mailer = require('express-mailer');
 var http = require('http').Server(app);
 var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
@@ -15,8 +16,24 @@ var url = "https://localhost:" + port;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
-app.set('view engine', 'ejs');
+
+app.set('view engine', 'pug');
 app.engine('html', require('ejs').renderFile);
+
+//app.set('views', __dirname + '/views');
+//app.set('view engine', 'pug');
+
+mailer.extend(app, {
+  from: 'chenchat498@gmail.com',
+  host: 'smtp.gmail.com', // hostname 
+  secureConnection: true, // use SSL 
+  port: 465, // port for secure SMTP 
+  transportMethod: 'SMTP', // default is SMTP. Accepts anything that nodemailer accepts 
+  auth: {
+    user: 'chenchat498@gmail.com',
+    pass: 'a532tVhQ6vWq?kL-'
+  }
+});
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
@@ -24,8 +41,8 @@ var auth = new GoogleAuth;
 var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
 //End
 
-var currentChatroom;
-var name;
+//var currentChatroom;
+//var name;
 var email;
 
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
@@ -68,7 +85,7 @@ app.get("/chatroom", function(req, res){
   res.sendFile(__dirname + '/chatroom.html');
 });
 
-app.get("/chat", function(req, res) {
+app.get("/chat", function(req, res) {  
   var result_array1 = [];
   var Message2 = mongoose.model("Message", messageSchema);
 
@@ -92,14 +109,6 @@ app.get("/chat", function(req, res) {
     }
     callback();
   });
-});
-
-app.get('/contacts', function(req, res) {
-  res.sendFile(__dirname + '/contacts.html');
-});
-
-app.get('/signup', function(req, res) {
-  res.sendFile(__dirname + '/signup.html');
 });
 
 app.post('/', function(req, res) {
@@ -147,7 +156,6 @@ app.post('/chatroom', function(req, res) {
     fulfillmentText: 'Your request to change chat rooms is being handled!' // displayed response
   };
   res.end(JSON.stringify(responseToAssistant));
-
 });
 
 app.post('/chat', function(req, res) {
@@ -345,49 +353,29 @@ io.on('connection', function(socket){
   });
 
     socket.on('entered emails', function(emails) {
-    var stripped = emails.replace(/\s/g, "");
-    var emailArr = stripped.split(',');
-    console.log(emailArr);
+      var stripped = emails.replace(/\s/g, "");
+      var emailArr = stripped.split(',');
+      console.log(emailArr);
 
-    //check if chatroom exists
-    Message.count({ chat_name: chatName }, function (err, count) {
-    //if this chat room does not exist yet, create it
-      if (count === 0) {
-        m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
-        //!!!!TODO: make sure duplicate email addresses aren't entered
-        //push current user to members vector
-        m.members.push(email);
-        //add members
-        for (var i = 0; i < emailArr.length; ++i) {
-          console.log(emailArr[i]);
-          if (emailArr[i] !== "") {
-            m.members.push(emailArr[i]);
-          }
-        }
-        sendEmailInvite(emailArr, chatName);
-        console.log("after new message");
-
-        m.save(function(err) {
-          if (err) {
-              console.log(err);
-              res.status(400).send("Bad Request");
-          }
-          else {
-              console.log('successfully posted to db');
-          }
-        });
-      }
-      else {
-        Message.findOne({ chat_name: chatName }, function (err, doc) {
-          //doc is document for the chat room
-          m = doc;
+      //check if chatroom exists
+      Message.count({ chat_name: chatName }, function (err, count) {
+      //if this chat room does not exist yet, create it
+        if (count === 0) {
+          m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
+          //!!!!TODO: make sure duplicate email addresses aren't entered
+          //push current user to members vector
+          //let email = getEmail(token);
+          m.members.push(email);
+          //add members
           for (var i = 0; i < emailArr.length; ++i) {
-            Message.count({ chat_name: chatName }, function (err, count) {
-              if (count == 0) {
-                m.members.push(emailArr[i]);
-              }
-            });
+            console.log(emailArr[i]);
+            if (emailArr[i] !== "") {
+              m.members.push(emailArr[i]);
+            }
           }
+          sendInvite(emailArr, chatName, username);
+          console.log("after new message");
+
           m.save(function(err) {
             if (err) {
                 console.log(err);
@@ -397,6 +385,29 @@ io.on('connection', function(socket){
                 console.log('successfully posted to db');
             }
           });
+        }
+        else {
+          Message.findOne({ chat_name: chatName }, function (err, doc) {
+            //doc is document for the chat room
+            m = doc;
+            for (var i = 0; i < emailArr.length; ++i) {
+              Message.count({ chat_name: chatName }, function (err, count) {
+                if (count == 0) {
+                  m.members.push(emailArr[i]);
+                }
+              });
+            }
+            
+            sendInvite(emailArr, chatName, username);
+            m.save(function(err) {
+              if (err) {
+                  console.log(err);
+                  res.status(400).send("Bad Request");
+              }
+              else {
+                  console.log('successfully posted to db');
+              }
+            });
         });
       }
     });
@@ -424,32 +435,23 @@ io.on('connection', function(socket){
   });
 });
 
-function sendEmailInvite(emailArr, chatName) {
-  var nodemailer = require('nodemailer');
-
-  var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'chenchat498@gmail.com',
-      pass: 'a532tVhQ6vWq?kL-'
-    }
-  });
-  
-  //turn array into csv
+function sendInvite(emailArr, chatName, username) {
   var emailString = emailArr.join();
-
+  // Setup email data.
   var mailOptions = {
-    from: 'chenchat498@gmail.com',
-    to: emailString,
-    subject: 'You have been invited to ' + chatName + ' on ChenChat!',
-    text: 'test'
-  };
+    bcc: emailString,
+    subject: username + ' invited to the chatroom "' + chatName + '" on ChenChat!',
+    data: {  // data to view template, you can access as - user.name
+      chatname: chatName,
+      sender: username
+    }
+  }
 
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
+  // Send email
+  app.mailer.send('email', mailOptions, function (err, message) {
+    if (err) {
+      console.log("ERROR: couldn't send email " + err);
+      return;
     }
   });
 }
@@ -483,9 +485,9 @@ function getEmail(id_token) {
 
 var User = mongoose.model("User", userSchema);
 function sendUserInfo(token) {
-  sub = getUID(token);
-  name = getName(token);
-  email = getEmail(token);
+  let sub = getUID(token);
+  let name = getName(token);
+  let email = getEmail(token);
 
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
