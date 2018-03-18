@@ -27,6 +27,7 @@
     "koa-session": "^5.8.1",
     "koa-static": "^4.0.2",
     "method-override": "^2.3.10",
+    "mime": "^2.2.0",
     "moment": "^2.21.0",
     "mongoose": "^4.13.11",
     "node-notifier": "^5.2.1",
