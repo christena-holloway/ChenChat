@@ -14,6 +14,12 @@ h2 {
 body {
   background-color: #C5DDEB;
 }
+.title {
+  font: 50px "Comic Sans MS", cursive, sans-serif;
+  color: #374251;
+  font-weight: bold;
+  text-align: center;
+}
 .g-signin2 {
   width: 100%
 }
@@ -140,6 +146,7 @@ img {
   max-height: 320px;
   margin-bottom: 15px;
   margin-top: -1%;
+
 }
 /*#c-chat-img {
   position: absolute;
