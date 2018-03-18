@@ -1,0 +1,15 @@
+doctype html
+html
+    head
+    body
+      p #{data.sender} wants to chat with you on ChenChat!
+      p.
+        If you'd like to accept this invitation,
+        #[a(href='https://chenchat2.azurewebsites.net') Click here]
+      
+      p How to use ChenChat:
+      ol(type="1")
+        li Log in with your Google account by pressing the "sign in" button
+        li On the next page, enter "#{data.chatname}" in the "Group Name" fieldset
+        li Press the submit button
+        li Now you're ready to chat! Type messages into the box at the bottom of the page and press enter to send your message.
