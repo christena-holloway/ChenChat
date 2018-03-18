@@ -130,16 +130,7 @@ input[type=submit]:active {
     background-image: -moz-linear-gradient(top left 90deg, #6ec2e8 0%, #b6e2ff 100%);
     background-image: linear-gradient(top left 90deg, #6ec2e8 0%, #b6e2ff 100%);
 }
-/*img {
-  position: absolute;
-  display: block;
-  margin-left: 42.5%;
-  margin-right: -50%;
-  width: 14%;
-  margin-bottom: 15px;
-  margin-top: -1%;
-}*/
-#c-chat-img {
+img {
   position: absolute;
   display: block;
   margin-left: 26.0%;
@@ -150,6 +141,17 @@ input[type=submit]:active {
   margin-bottom: 15px;
   margin-top: -1%;
 }
+/*#c-chat-img {
+  position: absolute;
+  display: block;
+  margin-left: 26.0%;
+  margin-right: -50%;
+  width: 100%;
+  max-width: 400px;
+  max-height: 320px;
+  margin-bottom: 15px;
+  margin-top: -1%;
+}*/
 h4 {
   display: inline-block;
 }
