@@ -109,48 +109,31 @@ app.post('/', function(req, res) {
   console.log(req.body);
   console.log('action is ' + req.body.queryResult.action);
 
-  var jsonMessage = req.body;
-  var action = jsonMessage.queryResult.action;
+  // var jsonMessage = req.body;
+  // var action = jsonMessage.queryResult.action;
 
-  if(action === "changeChatRoom") {
-    // send POST req to /chatroom
-    console.log("Switching chat rooms");
-    var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
-    console.log("Chat room is " + chatRoom);
-    io.emit('getChatRoomFromGoogleApi', chatRoom);
-  }
-  else {
-    // send POST req to /chat
-    console.log("Sending message to /chat page");
-    transferPostRequest(jsonMessage, 'chat');
-  }
+  // if(action === "changeChatRoom") {
+  //   // send POST req to /chatroom
+  //   console.log("Switching chat rooms");
+  //   var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
+  //   console.log("Chat room is " + chatRoom);
+  //   io.emit('getChatRoomFromGoogleApi', chatRoom);
+  // }
+  // else {
+  //   // send POST req to /chat
+  //   console.log("Sending message to /chat page");
+  //   transferPostRequest(jsonMessage, 'chat');
+  // }
 
-  // sends a response header to the request
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  // send a response in the format required by Dialogflow
-  let responseToAssistant = {
-    fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
-  };
-  res.end(JSON.stringify(responseToAssistant));
+  // // sends a response header to the request
+  // res.writeHead(200, {'Content-Type': 'application/json'});
+  // // send a response in the format required by Dialogflow
+  // let responseToAssistant = {
+  //   fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
+  // };
+  // res.end(JSON.stringify(responseToAssistant));
 
 })
-
-// app.post('/chatroom', function(req, res) {
-//   console.log('POST to /chatroom');
-//   console.log(req.body);
-
-//   var chatRoom = req.body.queryResult.parameters.chatRoom;
-//   console.log("Chat room is " + chatRoom);
-
-//   // sends a response header to the request
-//   res.writeHead(200, {'Content-Type': 'application/json'});
-//   // send a response in the format required by Dialogflow
-//   let responseToAssistant = {
-//     fulfillmentText: 'Your request to change chat rooms is being handled!' // displayed response
-//   };
-//   res.end(JSON.stringify(responseToAssistant));
-
-// });
 
 app.post('/chat', function(req, res) {
 
@@ -162,15 +145,17 @@ app.post('/chat', function(req, res) {
   var jsonMessage = req.body;
   var action = jsonMessage.queryResult.action;
 
-  if(action === "changeChatRoom") {
-    console.log("Switching chat rooms");
-    var chatRoom = jsonMessage.queryResult.parameters.chatroom;
-    console.log("Chat room is " + chatRoom);
-    io.emit('getChatRoomFromGoogleApi', chatRoom);
-  }
-  else {
-    handleMessage(req.body);
-  }
+  // if (action === 'changeChatRoom') {
+  //   console.log("Switching chat rooms");
+  //   // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
+  //   console.log("Chat room is " + chatRoom);
+  //   io.emit('getChatRoomFromGoogleApi', chatRoom);
+  // }
+  // else {
+  //   handleMessage(req.body);
+  // }
+
+  handleMessage(req.body);
 
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
@@ -181,48 +166,33 @@ app.post('/chat', function(req, res) {
   res.end(JSON.stringify(responseToAssistant));
 });
 
-// app.post('/chat' + messagePath, function(req, res) {
-//   console.log('POST /chat' + messagePath);
-//   console.log(req.body);
-
-//   handleMessage(req.body);
-
-//   // sends a response header to the request
-//   res.writeHead(200, {'Content-Type': 'application/json'});
-//   // send a response in the format required by Dialogflow
-//   let responseToAssistant = {
-//     fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
+// function transferPostRequest(data, path) {
+//   var request = require('request');
+//   var urlPath = 'https://chenchat2.azurewebsites.net/chat' + path;
+//   var options = {
+//     uri: urlPath,
+//     port: 80,
+//     method: 'POST',
+//     json: true,
+//     body: data,
+//     headers: {
+//       'Accept': 'application/json',
+//       'Accept-Charset': 'utf-8',
+//     }
 //   };
-//   res.end(JSON.stringify(responseToAssistant));
-// });
 
-function transferPostRequest(data, path) {
-  var request = require('request');
-  var urlPath = 'https://chenchat2.azurewebsites.net/chat' + path;
-  var options = {
-    uri: urlPath,
-    port: 80,
-    method: 'POST',
-    json: true,
-    body: data,
-    headers: {
-      'Accept': 'application/json',
-      'Accept-Charset': 'utf-8',
-    }
-  };
+//   // Send POST request
+//   var status = request.post(options, function (error, response, body) {
+//     if (error) {
+//       console.error('Failed to transfer request to /' + path + '. Error:', error);
+//       return false;
+//     }
+//     console.log('Successfully transferred the request to /' + path + '. Server responded with:', body);
+//     return true;
+//   })
 
-  // Send POST request
-  var status = request.post(options, function (error, response, body) {
-    if (error) {
-      console.error('Failed to transfer request to /' + path + '. Error:', error);
-      return false;
-    }
-    console.log('Successfully transferred the request to /' + path + '. Server responded with:', body);
-    return true;
-  })
-
-  return status;
-}
+//   return status;
+// }
 
 // To handle sending a message in the chat
 function handleMessage(data) {
@@ -232,6 +202,9 @@ function handleMessage(data) {
   var parameters = result.parameters;
   var chatRoom = parameters.chatroom;
   var msg = '';
+
+  console.log("Action is " + action);
+  console.log("Chat room is " + chatRoom);
 
   if (action === 'sendHelp') {
     var state = parameters.state;
@@ -249,6 +222,15 @@ function handleMessage(data) {
   else if (action === 'whereIsMy') {
     var object = parameters.object;
     msg += 'Where is my ' + object + '?';
+  }
+  else if (action === 'sendCustomMessage') {
+    msg += parameters.customMessage;
+  }
+  else if (action === 'changeChatRoom') {
+    console.log("Switching chat rooms");
+    // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
+    io.emit('getChatRoomFromGoogleApi', chatRoom);
+    msg += 'I just changed the chat room!';
   }
   // default handler
   else {

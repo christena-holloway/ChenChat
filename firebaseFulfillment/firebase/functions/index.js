@@ -215,20 +215,22 @@ function processV2Request (request, response) {
     },
     // Handler for action to switch modes 
     'switchMode': () => {
-      forwardIntentFulfillment('chat');
+      forwardIntentFulfillment();
     },
     'sendHelp': () => {
-      forwardIntentFulfillment('chat');
+      forwardIntentFulfillment();
     },
     'reportState': () => {
-      forwardIntentFulfillment('chat');
+      forwardIntentFulfillment();
     },
     'whereIsMy': () => {
-      forwardIntentFulfillment('chat');
-    }
-    ,
+      forwardIntentFulfillment();
+    },
+    'sendCustomMessage': () => {
+      forwardIntentFulfillment();
+    },
     'changeChatRoom': () => {
-      forwardIntentFulfillment('chatroom');
+      forwardIntentFulfillment();
     }
   };
   // If undefined or unknown action use the default handler
