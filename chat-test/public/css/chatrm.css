@@ -18,6 +18,7 @@ h2 {
   text-align: center;
 }
 a.signOut {
+  font-family: Helvetica Neue, Arial;
   font-weight: bold;
   background-color: #E38968;
   border: none;
