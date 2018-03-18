@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+//var cors = require('cors');
 var http = require('http').Server(app);
 var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
@@ -8,8 +9,9 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
-//var url = "https://chenchat2.azurewebsites.net";
-var url = "https://localhost:" + port;
+var url = "https://chenchat2.azurewebsites.net";
+//var url = "https://localhost:" + port;
+//var router = new express.Router();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -72,10 +74,7 @@ app.get("/chat", function(req, res) {
   var Message2 = mongoose.model("Message", messageSchema);
 
   function callback() {
-    console.log(100);
-    console.log(result_array1);
-    console.log(100);
-    res.render(__dirname + '/chat.html', { messages: result_array1});
+    res.render(__dirname + '/chat.html', { messages: result_array1 });
   }
 
   var query = Message2.findOne({ 'chat_name': chatName });
