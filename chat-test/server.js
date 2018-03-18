@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var mailer = require('express-mailer');
+//var cors = require('cors');
 var http = require('http').Server(app);
 var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
@@ -9,9 +10,9 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
-//var url = "https://chenchat2.azurewebsites.net";
-var url = "https://localhost:" + port;
-//var mail = require('./mailer');
+var url = "https://chenchat2.azurewebsites.net";
+//var url = "https://localhost:" + port;
+//var router = new express.Router();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -90,7 +91,7 @@ app.get("/chat", function(req, res) {
   var Message2 = mongoose.model("Message", messageSchema);
 
   function callback() {
-    res.render(__dirname + '/chat.html', { messages: result_array1});
+    res.render(__dirname + '/chat.html', { messages: result_array1 });
   }
 
   var query = Message2.findOne({ 'chat_name': chatName });
@@ -114,116 +115,44 @@ app.get("/chat", function(req, res) {
 app.post('/', function(req, res) {
   console.log('POST to /');
   console.log(req.body);
-  console.log('action is ' + req.body.queryResult.action);
-
-  var jsonMessage = req.body;
-  var action = jsonMessage.queryResult.action;
-
-  if(action === "changeChatRoom") {
-    // send POST req to /chatroom
-    console.log("Switching chat rooms");
-    var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
-    console.log("Chat room is " + chatRoom);
-    io.emit('getChatRoomFromGoogleApi', chatRoom);
-  }
-  else {
-    // send POST req to /chat
-    console.log("Sending message to /chat page");
-    transferPostRequest(jsonMessage, 'chat');
-  }
-
-  // sends a response header to the request
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  // send a response in the format required by Dialogflow
-  let responseToAssistant = {
-    fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
-  };
-  res.end(JSON.stringify(responseToAssistant));
 
 })
 
-app.post('/chatroom', function(req, res) {
-  console.log('POST to /chatroom');
-  console.log(req.body);
+app.post('/chat', function(req, res) {
 
-  var chatRoom = req.body.queryResult.parameters.chatRoom;
-  console.log("Chat room is " + chatRoom);
+  console.log('POST /chat');
+  console.log(req.body);
+  console.log('parameters are: ');
+  console.log(req.body.queryResult.parameters);
+
+  handleMessage(req.body);
 
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
   let responseToAssistant = {
-    fulfillmentText: 'Your request to change chat rooms is being handled!' // displayed response
+    fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
   };
   res.end(JSON.stringify(responseToAssistant));
 });
 
 app.post('/chat', function(req, res) {
 
-    console.log('POST /chat');
-    console.log(req.body);
-    console.log('parameters are: ');
-    console.log(req.body.queryResult.parameters);
+  console.log('POST /chat');
+  console.log(req.body);
+  console.log('parameters are: ');
+  console.log(req.body.queryResult.parameters);
 
-    var jsonMessage = req.body;
-    var action = jsonMessage.queryResult.action;
+  handleMessage(req.body);
 
-    if(action === "changeChatRoom") {
-      console.log("Switching chat rooms");
-      var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
-      console.log("Chat room is " + chatRoom);
-      io.emit('getChatRoomFromGoogleApi', chatRoom);
-    }
-    else {
-      // transferPostRequest(jsonMessage, 'chat');
-      handleMessage(req.body);
-    }
-
-    // sends a response header to the request
-    res.writeHead(200, {'Content-Type': 'application/json'});
-    // send a response in the format required by Dialogflow
-    let responseToAssistant = {
-      fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
-    };
-    res.end(JSON.stringify(responseToAssistant));
-});
-
-function transferPostRequest(data, path) {
-  var request = require('request');
-  var urlPath = 'https://chenchat2.azurewebsites.net/' + path;
-  var options = {
-    uri: urlPath,
-    port: 80,
-    method: 'POST',
-    json: true,
-    body: data,
-    headers: {
-      'Accept': 'application/json',
-      'Accept-Charset': 'utf-8',
-    }
+  // sends a response header to the request
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  // send a response in the format required by Dialogflow
+  let responseToAssistant = {
+    fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
   };
-
-  // Send POST request
-  var status = request.post(options, function (error, response, body) {
-    if (error) {
-      console.error('Failed to transfer request to /' + path + '. Error:', error);
-      return false;
-    }
-    console.log('Successfully transferred the request to /' + path + '. Server responded with:', body);
-    return true;
-  })
-
-  return status;
-}
-
-function changeChatRoom(chatRoom, res) {
-
-  // TODO: Use JS to set form values and to click submit button!
-  console.log("Redirecting to a different chat room!");
-
-  // document.getElementById("chat_id").value = chatRoom;
-  // document.getElementById("selectRoom").click();
-}
+  res.end(JSON.stringify(responseToAssistant));
+});
 
 // To handle sending a message in the chat
 function handleMessage(data) {
@@ -231,18 +160,20 @@ function handleMessage(data) {
   var result = data.queryResult;
   var action = result.action;
   var parameters = result.parameters;
+  var chatRoom = parameters.chatroom;
   var msg = '';
 
+  console.log("Action is " + action);
+  console.log("Chat room is " + chatRoom);
+
   if (action === 'sendHelp') {
-    var contact = parameters.contact;
     var state = parameters.state;
     var urgency = parameters.urgency;
     msg += 'I need help ' + urgency + '.';
   }
   else if (action === 'switchMode') {
     var mode = parameters.mode;
-    var contact = parameters.contact;
-    msg += contact + ', I need help ' + mode + '!';
+    msg += 'I need help ' + mode + '!';
   }
   else if (action === 'reportState') {
     var state = parameters.state;
@@ -252,13 +183,22 @@ function handleMessage(data) {
     var object = parameters.object;
     msg += 'Where is my ' + object + '?';
   }
+  else if (action === 'sendCustomMessage') {
+    msg += parameters.customMessage;
+  }
+  else if (action === 'changeChatRoom') {
+    console.log("Switching chat rooms");
+    // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
+    io.emit('getChatRoomFromGoogleApi', chatRoom);
+    return;
+  }
   // default handler
   else {
     msg += 'I am trying to communicate with you but something went wrong!';
   }
   console.log('I am now sending the message!');
   //sendMessage(msg, 'Chun-Han');
-  sendMessage('Chun-Han: ' + msg);
+  sendMessage(msg, 'Chun-Han', chatRoom);
 }
 
 var sub;
@@ -299,7 +239,7 @@ function sendMessage(msg, temp, chat_token = 'test') {
   });
   console.log("variable is " + temp);
   //io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
-  io.emit('chat message', { message: msg, chatRoomName: chat_token });
+  io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
   //console.log("chat token is: " + chat_token);
 //  io.emit(chat_token, (temp + ': ' + msg));
   //io.emit(chat_token, msg);
@@ -335,7 +275,7 @@ io.on('connection', function(socket){
   socket.on('chat message', function(data){
     var msg = data.msg;
     var time = data.timestamp;
-
+    var sent_name = data.sent_name;
     var chat_token = data.chat_token;
     console.log("message and time on server " + msg + ", " + time);
     //console.log('msg: ' + msg);
@@ -348,7 +288,8 @@ io.on('connection', function(socket){
     else {
       console.log("not logged in");
     }*/
-    sendMessage(msg, keys[socket.id], chat_token);
+    //sendMessage(msg, keys[socket.id], chat_token);
+    sendMessage(msg, sent_name, chat_token);
     var currentTime = getTimestamp();
   });
 
