@@ -25,7 +25,7 @@ app.engine('html', require('ejs').renderFile);
 //app.set('view engine', 'pug');
 
 mailer.extend(app, {
-  from: 'chenchat498@gmail.com',
+  from: 'ChenChat <chenchat498@gmail.com>',
   host: 'smtp.gmail.com', // hostname 
   secureConnection: true, // use SSL 
   port: 465, // port for secure SMTP 
