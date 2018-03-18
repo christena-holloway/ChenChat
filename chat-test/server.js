@@ -106,31 +106,6 @@ app.get('/signup', function(req, res) {
 app.post('/', function(req, res) {
   console.log('POST to /');
   console.log(req.body);
-  console.log('action is ' + req.body.queryResult.action);
-
-  // var jsonMessage = req.body;
-  // var action = jsonMessage.queryResult.action;
-
-  // if(action === "changeChatRoom") {
-  //   // send POST req to /chatroom
-  //   console.log("Switching chat rooms");
-  //   var chatRoom = jsonMessage.queryResult.parameters.chatRoom;
-  //   console.log("Chat room is " + chatRoom);
-  //   io.emit('getChatRoomFromGoogleApi', chatRoom);
-  // }
-  // else {
-  //   // send POST req to /chat
-  //   console.log("Sending message to /chat page");
-  //   transferPostRequest(jsonMessage, 'chat');
-  // }
-
-  // // sends a response header to the request
-  // res.writeHead(200, {'Content-Type': 'application/json'});
-  // // send a response in the format required by Dialogflow
-  // let responseToAssistant = {
-  //   fulfillmentText: 'Your request is being fulfilled by ChenChat!' // displayed response
-  // };
-  // res.end(JSON.stringify(responseToAssistant));
 
 })
 
@@ -140,19 +115,6 @@ app.post('/chat', function(req, res) {
   console.log(req.body);
   console.log('parameters are: ');
   console.log(req.body.queryResult.parameters);
-
-  var jsonMessage = req.body;
-  var action = jsonMessage.queryResult.action;
-
-  // if (action === 'changeChatRoom') {
-  //   console.log("Switching chat rooms");
-  //   // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
-  //   console.log("Chat room is " + chatRoom);
-  //   io.emit('getChatRoomFromGoogleApi', chatRoom);
-  // }
-  // else {
-  //   handleMessage(req.body);
-  // }
 
   handleMessage(req.body);
 
@@ -164,34 +126,6 @@ app.post('/chat', function(req, res) {
   };
   res.end(JSON.stringify(responseToAssistant));
 });
-
-// function transferPostRequest(data, path) {
-//   var request = require('request');
-//   var urlPath = 'https://chenchat2.azurewebsites.net/chat' + path;
-//   var options = {
-//     uri: urlPath,
-//     port: 80,
-//     method: 'POST',
-//     json: true,
-//     body: data,
-//     headers: {
-//       'Accept': 'application/json',
-//       'Accept-Charset': 'utf-8',
-//     }
-//   };
-
-//   // Send POST request
-//   var status = request.post(options, function (error, response, body) {
-//     if (error) {
-//       console.error('Failed to transfer request to /' + path + '. Error:', error);
-//       return false;
-//     }
-//     console.log('Successfully transferred the request to /' + path + '. Server responded with:', body);
-//     return true;
-//   })
-
-//   return status;
-// }
 
 // To handle sending a message in the chat
 function handleMessage(data) {
