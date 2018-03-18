@@ -10,6 +10,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 //var url = "https://chenchat2.azurewebsites.net";
 var url = "https://localhost:" + port;
+//var mail = require('./mailer');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -363,6 +364,7 @@ io.on('connection', function(socket){
             m.members.push(emailArr[i]);
           }
         }
+        sendEmailInvite(emailArr, chatName);
         console.log("after new message");
 
         m.save(function(err) {
@@ -421,6 +423,36 @@ io.on('connection', function(socket){
     sendUserInfo(id_token);
   });
 });
+
+function sendEmailInvite(emailArr, chatName) {
+  var nodemailer = require('nodemailer');
+
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'chenchat498@gmail.com',
+      pass: 'a532tVhQ6vWq?kL-'
+    }
+  });
+  
+  //turn array into csv
+  var emailString = emailArr.join();
+
+  var mailOptions = {
+    from: 'chenchat498@gmail.com',
+    to: emailString,
+    subject: 'You have been invited to ' + chatName + ' on ChenChat!',
+    text: 'test'
+  };
+
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+}
 
 function getTimestamp() {
   var now = moment();
