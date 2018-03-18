@@ -25,8 +25,9 @@
       var chatRoom = url.searchParams.get("chatroom");
       document.getElementById('chat_name').innerHTML = chatRoom;
       chat_name = chatRoom;
-     
+
       var array =  <%- JSON.stringify(messages) %>;
+      console.log(array);
       for (i = 0; i < array.length; i++) {
         var listElt = $('<li>').text(array[i].body);
         listElt = listElt.append($('<br>'));
@@ -37,13 +38,6 @@
       // send chat room name to send message via google home
       socket.emit('chatNameForGoogleMessage', chat_name);
 
-      /*var array =  <%- JSON.stringify(messages) %>;
-      for (var i = 0; i < array.length; i++) {
-        var listElt = $('<li>').text(array[i].body);
-        listElt = listElt.append($('<br>'));
-        var whole = listElt.append($('<small>').text(array[i].timestamp));
-        $('#messages').append(whole);
-      }*/
 
     }
 
@@ -91,13 +85,18 @@
       });
     }
 
+    function goBack() {
+      window.location.href = '/chatroom?name=' + username;
+    }
+
   </script>
   <body>
     <div class="grid-container">
       <header>
         <h1 class="title" id="chat_name"> </h1>
         <!-- <a href="product.html" class="back-but ton"> Back </a> -->
-        <a href="/contacts" class="back-button" style="display: none;"> Back </a>
+        <!--<a href="/contacts" class="back-button" style="display: none;"> Back </a> -->
+        <button onclick="goBack();" class="back-button"> Back </button>
         <a href="/" class="signOut" onclick="signOut();"> Log out </a>
       </header>
 
