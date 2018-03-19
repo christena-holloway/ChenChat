@@ -23,10 +23,10 @@ app.engine('html', require('ejs').renderFile);
 
 mailer.extend(app, {
   from: 'ChenChat <chenchat498@gmail.com>',
-  host: 'smtp.gmail.com', // hostname 
-  secureConnection: true, // use SSL 
-  port: 465, // port for secure SMTP 
-  transportMethod: 'SMTP', // default is SMTP. Accepts anything that nodemailer accepts 
+  host: 'smtp.gmail.com', // hostname
+  secureConnection: true, // use SSL
+  port: 465, // port for secure SMTP
+  transportMethod: 'SMTP', // default is SMTP. Accepts anything that nodemailer accepts
   auth: {
     user: 'chenchat498@gmail.com',
     pass: 'a532tVhQ6vWq?kL-'
@@ -83,7 +83,7 @@ app.get("/chatroom", function(req, res){
   res.sendFile(__dirname + '/chatroom.html');
 });
 
-app.get("/chat", function(req, res) {  
+app.get("/chat", function(req, res) {
   var result_array1 = [];
   var Message2 = mongoose.model("Message", messageSchema);
 
@@ -214,7 +214,7 @@ function sendMessage(msg, sender, chat_token = 'test') {
     var msgObj = {'from': sender, 'body': msg, 'timestamp': time};
     m.messages.push(msgObj);
     m.save(function(err) {
-      if (err) {
+     if (err) {
           console.log(err);
           res.status(400).send("Bad Request");
       }
@@ -245,6 +245,7 @@ var users = {};
 var keys = {};
 //send from client to server
 var username;
+var sign_ins = {};
 io.on('connection', function(socket){
   users[username] = socket.id;
   keys[socket.id] = username;
@@ -257,6 +258,18 @@ io.on('connection', function(socket){
       delete keys[socket.id];
     }
     console.log(users);
+  });
+
+  socket.on('check login', function(username) {
+    var response;
+    if(username in sign_ins) {
+      response = "yes";
+      io.emit('login response', response);
+    }
+    else {
+      response = "no";
+      io.emit('login response', response);
+    }
   });
 
   socket.on('chat name', function(inChatName) {
@@ -286,7 +299,10 @@ io.on('connection', function(socket){
       console.log("not logged in");
     }*/
     //sendMessage(msg, keys[socket.id], chat_token);
-    sendMessage(msg, sent_name, chat_token);
+    // Ensure user is logged in
+    if (sent_name != null) {
+      sendMessage(msg, sent_name, chat_token);
+    }
     var currentTime = getTimestamp();
   });
 
@@ -335,7 +351,7 @@ io.on('connection', function(socket){
                 }
               });
             }
-            
+
             sendInvite(emailArr, chatName, username);
             m.save(function(err) {
               if (err) {
@@ -368,6 +384,7 @@ io.on('connection', function(socket){
     });
 
     username = getName(id_token);
+    sign_ins[username] = "logged_in";
     io.emit('redirect', destination + username);
     sendUserInfo(id_token);
   });

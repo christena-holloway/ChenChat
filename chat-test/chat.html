@@ -3,8 +3,10 @@
   <head>
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="css/mystyle.css" />
+    <link rel="stylesheet" type="text/css" href="css/mystyle.css" media="Screen" />
+    <link rel="stylesheet" type="text/css" href="css/mobilechat.css" media="handheld" />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -21,26 +23,43 @@
     var username = url.searchParams.get("name");
 
     window.onload = function() {
-      var chatRoom = url.searchParams.get("chatroom");
-      document.getElementById('chat_name').innerHTML = chatRoom;
-      chat_name = chatRoom;
-
-      var array =  <%- JSON.stringify(messages) %>;
-      //console.log("array of messages: " + array);
-      for (i = 0; i < array.length; i++) {
-        var listElt = $('<li>').text(array[i].from + ": " + array[i].body);
-        listElt = listElt.append($('<br>'));
-        var whole = listElt.append($('<small>').text(array[i].timestamp));
-        $('#messages').append(whole);
+      if (username == null) {
+        window.location.href = "/";
       }
+      else {
+        socket.emit('check login', username);
+        var chatRoom = url.searchParams.get("chatroom");
+        document.getElementById('chat_name').innerHTML = chatRoom;
+        chat_name = chatRoom;
 
-      // send chat room name to send message via google home
-      socket.emit('chatNameForGoogleMessage', chat_name);
+        var array =  <%- JSON.stringify(messages) %>;
+        //console.log("array of messages: " + array);
+        for (i = 0; i < array.length; i++) {
+          var listElt = $('<li>').text(array[i].from + ": " + array[i].body);
+          listElt = listElt.append($('<br>'));
+          var whole = listElt.append($('<small>').text(array[i].timestamp));
+          $('#messages').append(whole);
+        }
+  
+        // send chat room name to send message via google home
+        socket.emit('chatNameForGoogleMessage', chat_name);
+      }
     }
 
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
-      console.log('Redirecting  to chat room page');
-      window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
+      if (username == null) {
+        window.location.href = "/";
+      }
+      else {
+        console.log('Redirecting  to chat room page');
+        window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
+      }
+    });
+
+    socket.on('login response', function(response) {
+      if (response == "no") {
+        window.location.href = '/';
+      }
     });
 
     $(function () {
