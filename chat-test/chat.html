@@ -23,26 +23,36 @@
     var username = url.searchParams.get("name");
 
     window.onload = function() {
-      var chatRoom = url.searchParams.get("chatroom");
-      document.getElementById('chat_name').innerHTML = chatRoom;
-      chat_name = chatRoom;
-
-      var array =  <%- JSON.stringify(messages) %>;
-      //console.log("array of messages: " + array);
-      for (i = 0; i < array.length; i++) {
-        var listElt = $('<li>').text(array[i].from + ": " + array[i].body);
-        listElt = listElt.append($('<br>'));
-        var whole = listElt.append($('<small>').text(array[i].timestamp));
-        $('#messages').append(whole);
+      if (username == null) {
+        window.location.href = "/";
       }
+      else {
+        var chatRoom = url.searchParams.get("chatroom");
+        document.getElementById('chat_name').innerHTML = chatRoom;
+        chat_name = chatRoom;
 
-      // send chat room name to send message via google home
-      socket.emit('chatNameForGoogleMessage', chat_name);
+        var array =  <%- JSON.stringify(messages) %>;
+        //console.log("array of messages: " + array);
+        for (i = 0; i < array.length; i++) {
+          var listElt = $('<li>').text(array[i].from + ": " + array[i].body);
+          listElt = listElt.append($('<br>'));
+          var whole = listElt.append($('<small>').text(array[i].timestamp));
+          $('#messages').append(whole);
+        }
+  
+        // send chat room name to send message via google home
+        socket.emit('chatNameForGoogleMessage', chat_name);
+      }
     }
 
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
-      console.log('Redirecting  to chat room page');
-      window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
+      if (username == null) {
+        window.location.href = "/";
+      }
+      else {
+        console.log('Redirecting  to chat room page');
+        window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
+      }
     });
 
     $(function () {
