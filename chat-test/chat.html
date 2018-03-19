@@ -86,6 +86,15 @@
     function goBack() {
       window.location.href = '/chatroom?name=' + username;
     }
+    
+    function validate() {
+      if (document.getElementById("m").value.length == 0) {
+        document.getElementById("send-button").disabled = true;
+      }
+      else {
+        document.getElementById("send-button").disabled = false;
+      }
+    }
 
   </script>
   <body>
@@ -102,10 +111,9 @@
         <ul id="messages">
         </ul>
       </div>
-      <li id="test"> testing </li>
       <div class="msg-box">
         <form class="flex-msg-form" method="post" action="/" enctype="application/json">
-          <input id="m" name="message" autocomplete="off" />
+          <input id="m" name="message" autocomplete="off" onchange="validate()";/>
           <button id="send-button">Send</button>
         </form>
       </div>
