@@ -26,7 +26,7 @@
       chat_name = chatRoom;
 
       var array =  <%- JSON.stringify(messages) %>;
-      console.log("array of messages: " + array);
+      //console.log("array of messages: " + array);
       for (i = 0; i < array.length; i++) {
         var listElt = $('<li>').text(array[i].from + ": " + array[i].body);
         listElt = listElt.append($('<br>'));

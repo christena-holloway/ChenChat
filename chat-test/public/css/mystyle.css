@@ -39,6 +39,7 @@ html, body {
   width: 100%;
   font-family: Helvetica Neue, Arial;
   background-color: #C5DDEB;
+  overflow: hidden;
 }
 
 .grid-container {
