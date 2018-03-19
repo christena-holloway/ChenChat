@@ -164,31 +164,12 @@ form button {
   font-size: 10px;
 }
 
-@media handheld {
-  /* comes into effect for screens less than or equal to 736 pixels */
-  form button {
-    width: 100%;
-    height: 100;
-    color: blue;
-    font-size: 22px;
-    text-transform: uppercase;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    background: #E38968;
-    border-style: groove;
-
-    &:hover {
-      color: darken($blue, 7%);
-    }
+/* Use a media query to add a breakpoint at 800px: */
+@media screen and (max-width: 800px) {
+  #messages li {
+    font-size: 20px;
   }
-
-  form input {
-    width: 100%;
-    height: 100%;
-    font-size: 27px;
-    border-style: groove;
+  #messages li:nth-child(odd) {
+    font-size: 20px;
   }
-
-
 }
