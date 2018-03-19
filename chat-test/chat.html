@@ -23,6 +23,7 @@
     var username = url.searchParams.get("name");
 
     window.onload = function() {
+      socket.emit('check login', username);
       var chatRoom = url.searchParams.get("chatroom");
       document.getElementById('chat_name').innerHTML = chatRoom;
       chat_name = chatRoom;
@@ -43,6 +44,12 @@
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
       console.log('Redirecting  to chat room page');
       window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
+    });
+
+    socket.on('login response', function(response) {
+      if (response == "no") {
+        window.location.href = '/';
+      }
     });
 
     $(function () {
