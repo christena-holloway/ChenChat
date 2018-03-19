@@ -21,9 +21,6 @@ app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'pug');
 app.engine('html', require('ejs').renderFile);
 
-//app.set('views', __dirname + '/views');
-//app.set('view engine', 'pug');
-
 mailer.extend(app, {
   from: 'ChenChat <chenchat498@gmail.com>',
   host: 'smtp.gmail.com', // hostname 
@@ -96,15 +93,14 @@ app.get("/chat", function(req, res) {
 
   var query = Message2.findOne({ 'chat_name': chatName });
 
-  // selecting the `name` and `occupation` fields
   query.select('messages');
 
   // execute the query at a later time
   query.exec(function (err, result) {
     if (err) return handleError(err);
-    // Prints "Space Ghost is a talk show host."
     if (result != null) {
       result.messages.forEach(function(value) {
+        //console.log("value in query.exec: " + value.from);
         result_array1.push(value);
       });
     }
@@ -209,13 +205,13 @@ var dict = {};
 var m;
 var chatName;
 
-function sendMessage(msg, temp, chat_token = 'test') {
+function sendMessage(msg, sender, chat_token = 'test') {
   //check if chat room already exists
   Message.findOne({ chat_name: chatName }, function (err, doc) {
     //doc is document for the chat room
     m = doc;
     var time = getTimestamp();
-    var msgObj = {'from': sub, 'body': msg, 'timestamp': time};
+    var msgObj = {'from': sender, 'body': msg, 'timestamp': time};
     m.messages.push(msgObj);
     m.save(function(err) {
       if (err) {
@@ -237,9 +233,9 @@ function sendMessage(msg, temp, chat_token = 'test') {
       res.status(400).send("Bad Request");
     }
   });
-  console.log("variable is " + temp);
+  //console.log("variable is " + temp);
   //io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
-  io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
+  io.emit('chat message', { from: sender, message: msg, chatRoomName: chat_token });
   //console.log("chat token is: " + chat_token);
 //  io.emit(chat_token, (temp + ': ' + msg));
   //io.emit(chat_token, msg);
@@ -276,6 +272,7 @@ io.on('connection', function(socket){
     var msg = data.msg;
     var time = data.timestamp;
     var sent_name = data.sent_name;
+    console.log("sent name: " + sent_name);
     var chat_token = data.chat_token;
     console.log("message and time on server " + msg + ", " + time);
     //console.log('msg: ' + msg);
