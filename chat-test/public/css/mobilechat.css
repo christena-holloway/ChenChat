@@ -1,0 +1,186 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700);
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
+
+$green: #86BB71;
+$blue: #94C2ED;
+$orange: #E38968;
+$gray: #92959E;
+/*$messageBoxColor: #F3E9E6;*/
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 736px) {
+  /* comes into effect for screens less than or equal to 736 pixels */
+  form button {
+    width: 20%;
+    color: blue;
+    font-size: 22px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    background: #E38968;
+    border-style: groove;
+
+    &:hover {
+      color: darken($blue, 7%);
+    }
+  }
+
+
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  font-family: Helvetica Neue, Arial;
+  background-color: #C5DDEB;
+  overflow: hidden;
+}
+
+.grid-container {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-gap: 0;
+  grid-template-rows: 100px calc(100% - 170px) 70px;
+  grid-template-columns: 100%;
+}
+
+header {
+  grid-row: 1 / 2;
+  background-color: #374251;
+  border-bottom-style: groove;
+  height: 100px;
+}
+
+.title {
+  color: white;
+  text-align: center;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 40px;
+}
+
+.back-button {
+  font-family: Helvetica Neue, Arial;
+  background-color: #E38968;
+  border: none;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 40px;
+  height: 40px;
+  width: 60px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin-top: 30px;
+  margin-left: 12px;
+}
+
+.signOut {
+  font-family: Helvetica Neue, Arial;
+  background-color: #E38968;
+  border: none;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 40px;
+  height: 40px;
+  width: 70px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-top: 30px;
+  margin-right: 12px;
+}
+
+.chat-content {
+  grid-row: 2 / 3;
+  overflow-y: auto;
+}
+
+ul {
+  padding: 20px;
+  height: 770px;
+}
+
+.msg-box {
+  grid-row: 3;
+}
+
+.flex-msg-form {
+  display: flex;
+  flex-direction: row;
+  background: #000;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  color: white;
+
+}
+
+form input {
+  width: 100%;
+  height: 100%;
+  font-size: 27px;
+  border-style: groove;
+}
+
+form button {
+  width: 100%;
+  color: blue;
+  font-size: 22px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #E38968;
+  border-style: groove;
+
+  &:hover {
+    color: darken($blue, 7%);
+  }
+}
+
+#messages {
+  list-style-type: none;
+  line-height: 30px;
+  font-size: 20px;
+  /*border-radius: 7px;
+  margin-bottom: 30px;*/
+  /*position: relative;*/
+
+  &:after {
+    bottom: 100%;
+    left: 7%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-bottom-color: $green;
+    border-width: 10px;
+    margin-left: -10px;
+  }
+}
+#messages li {
+  padding: 5px 10px;
+  font-size: 30px;
+}
+#messages li:nth-child(odd) {
+  background: #eee;
+  color:rgb(128,128,128);
+  font:"Lato", Arial, sans-serif;
+  font-size: 30px;
+}
+#messages small {
+  font-size: 10px;
+}
