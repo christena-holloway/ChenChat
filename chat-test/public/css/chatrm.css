@@ -11,6 +11,23 @@ h1 {
   font-weight: bold;
   text-align: center;
 }
+.help-button {
+  font-family: Helvetica Neue, Arial;
+  background-color: #E38968;
+  border: none;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 40px;
+  height: 40px;
+  width: 60px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin-top: 30px;
+  margin-left: 12px;
+}
 h2 {
   font: 30px Helvetica, Arial;
   color: gray;
