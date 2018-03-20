@@ -58,6 +58,9 @@ ChenChat can also be used on any mobile device.  Your friends can navigate to th
 4. Ask for help finding objects
  	* “I need my straw.”
  	* “I can’t find my mouthpiece.”
+5. Switch to different tasks
+	* "Switch to the keyboard."
+	* "Mouse"
 5. Create a chat group or navigate to an existing one
  	* “Enter chat group <chat group name>.”
  	    - “Enter chat group ‘Food’.”
@@ -72,3 +75,4 @@ ChenChat can also be used on any mobile device.  Your friends can navigate to th
  	* “Leave chat."
  	* "I'm done chatting."
  	* "Close app.”
+	* "End chat."
