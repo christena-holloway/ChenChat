@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700);
+
 h1 {
   font: 50px "Comic Sans MS", cursive, sans-serif;
   color: #374251;
@@ -32,7 +34,7 @@ body {
   background-color: #C5DDEB;
 }
 .title {
-  font: 50px "Comic Sans MS", cursive, sans-serif !important;
+  font: 50px "Lato", Arial, sans-serif !important;
   color: #374251;
   font-weight: bold;
   text-align: center;
