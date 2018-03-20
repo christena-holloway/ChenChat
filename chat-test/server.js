@@ -273,11 +273,11 @@ io.on('connection', function(socket){
 
     if(username in sign_ins) {
       response = "yes";
-      io.emit('login response', response);
+      //io.emit('login response', response);
     }
     else {
       response = "no";
-      io.emit('login response', response);
+      //io.emit('login response', response);
     }
 
     /*
