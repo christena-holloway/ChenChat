@@ -103,7 +103,8 @@ header {
 
 .chat-content {
   grid-row: 2 / 3;
-  overflow-y: auto;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 ul {
