@@ -138,3 +138,9 @@ input[type=email]:focus {
   height: 69px;
   margin-top: 20px;
 }
+
+@media screen and (max-width: 800px) {
+  form input[type=button] {
+    width: 100%;
+  }
+}
