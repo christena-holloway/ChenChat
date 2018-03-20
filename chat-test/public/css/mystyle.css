@@ -181,12 +181,10 @@ button[disabled] {
 
   form input {
     width: 70%;
-    position: fixed;
   }
 
   form button {
     width: 30%;
-    position: fixed;
   }
 
 }
