@@ -3,6 +3,10 @@
 
 body {
   background-color: #C5DDEB;
+  font: 28px Helvetica, Arial;
+  color: #374251;
+  font-weight: normal;
+  text-align: left;
 }
 
 .help {
