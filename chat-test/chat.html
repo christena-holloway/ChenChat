@@ -27,7 +27,7 @@
         window.location.href = "/";
       }
       else {
-        //socket.emit('check login', username);
+        socket.emit('check login', username);
         var chatRoom = url.searchParams.get("chatroom");
         document.getElementById('chat_name').innerHTML = chatRoom;
         chat_name = chatRoom;
@@ -64,8 +64,10 @@
     });
 
     function updateScroll() {
-      var chatWindow = document.getElementsByClassName("chat-content")[0];
-      chatWindow.scrollTop = 999999;
+      //var chatWindow = document.getElementsByClassName("chat-content")[0];
+      //chatWindow.scrollTop = 999999;
+      var messageBox = document.getElementById("messages");
+      messageBox.scrollTop = 999999;
     }
 
     $(function () {
@@ -96,7 +98,6 @@
     });
 
     function signOut() {
-      //socket.emit("signing out", username);
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
         console.log('User signed out.');
@@ -113,7 +114,7 @@
     function goBack() {
       window.location.href = '/chatroom?name=' + username;
     }
-
+    
     function doCheck() {
       var txtboxFilled = true;
       $('#m').each(function () {
@@ -150,7 +151,7 @@
       <div class="msg-box">
         <form class="flex-msg-form" method="post" action="/" enctype="application/json">
           <input id="m" name="message" autocomplete="off" />
-          <button id="send-button" disabled>Send</button>
+          <button id="send-button" disable>Send</button>
         </form>
       </div>
     </div>
