@@ -113,14 +113,23 @@
       window.location.href = '/chatroom?name=' + username;
     }
     
-    function validate() {
-      if (document.getElementById("m").value.length == 0) {
-        document.getElementById("send-button").disabled = true;
-      }
-      else {
-        document.getElementById("send-button").disabled = false;
-      }
+    function doCheck() {
+      var txtboxFilled = true;
+      $('#m').each(function () {
+        if ($(this).val() != '') {
+          txtboxFilled = true;
+          return false;
+        }
+        else {
+          txtboxFilled = false;
+        }
+      });
+      $('#send-button').prop('disabled', !txtboxFilled);
     }
+
+    $(document).ready(function () {
+      $('#m').keyup(doCheck).focusout(doCheck);
+    });
 
   </script>
   <body>
@@ -139,8 +148,8 @@
       </div>
       <div class="msg-box">
         <form class="flex-msg-form" method="post" action="/" enctype="application/json">
-          <input id="m" name="message" autocomplete="off" onchange="validate()";/>
-          <button id="send-button">Send</button>
+          <input id="m" name="message" autocomplete="off" />
+          <button id="send-button" disable>Send</button>
         </form>
       </div>
     </div>
