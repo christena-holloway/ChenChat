@@ -83,6 +83,10 @@ app.get("/chatroom", function(req, res){
   res.sendFile(__dirname + '/chatroom.html');
 });
 
+app.get("/help", function(req, res) {
+  res.sendFile(__dirname + '/help.html');
+});
+
 app.get("/chat", function(req, res) {
   var result_array1 = [];
   var Message2 = mongoose.model("Message", messageSchema);
