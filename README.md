@@ -64,9 +64,9 @@ ChenChat can also be used on any mobile device.  Your friends can navigate to th
 	* Once you change the chat room using the Google home, the ChenChat server will automatically navigate all users to the same chatroom that was requested. Think of this as a convenience for users like Chun-Han. For example, when Chun-Han changes the chatroom to “fruits”, it will lead all users to the room “fruits”. In a way, all users are forced to follow Chun-Han’s needs. It ensures that there are users on the other end that are listening to Chun-Han’s requests.
 6. Send your own custom message
  	* “Send message <custom message>.”
- 	    - Example: “Send message ‘Come downstairs’.”
+ 	    - Example: “Send message ‘Come downstairs’.” (It will automatically sense the message to be "Come downstairs")
  	* “Send <custom message> to <chat room name>.”
- 	    - Example: “Send ‘What’s up’ to ‘Friends’.”
+ 	    - Example: “Send ‘What’s up’ to ‘Friends’.” (It will automatically capture "What's up" as the message to send and "Friends" as the room to send it in) 
  	* “Say <custom message> to <chat room name>.”
 7. End a conversation with the ChenChat app
  	* “Leave chat."
