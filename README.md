@@ -33,7 +33,7 @@ A chat group is defined by the name that you give it upon creation.  You can inv
 
 Upon invitation, the group members will receive an email asking them to join your chat.  Once they navigate to your chat group, all of the members will be able to send and receive messages along with the Google Home user.  
 
-After submitting your new chat group, you will be redirected to your group chat where you can see all messages that were previously sent as well as any new messages.  Now you can send your own messages! Try typing a message in the text box and hitting submit.  All of the group members will now see your message.  If you'd like change group chats or invite more people, click the "back" button in the upper left corner.
+After submitting your new chat group, you will be redirected to your group chat where you can see all messages that were previously sent as well as any new messages.  Now you can send your own messages! Try typing a message in the text box and hitting send.  All of the group members will now see your message.  If you'd like change group chats or invite more people, click the "back" button in the upper left corner.
 ChenChat can also be used on any mobile device.  Your friends can navigate to the url and send/receive messages from his or her phone.
 
 # Instructions for Using ChenChat with Google Home:
