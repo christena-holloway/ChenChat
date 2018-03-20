@@ -42,7 +42,7 @@ ChenChat can also be used on any mobile device.  Your friends can navigate to th
 3. Once you start ChenChat from the Google Home, the device will listen for your next command until you tell it to end the application.  Examples for commands to end the app are provided below.
 4. Once the application is started, you can give the application a variety of commands.  Following are a list of examples, but you can also try saying variations of these phrases.
 
-## List of Commands
+## List of Commands (For more details, refer to the Dialogflow console)
 1. Send for help
 	* "Help me."
 	* "Call for help!"
@@ -62,7 +62,7 @@ ChenChat can also be used on any mobile device.  Your friends can navigate to th
  	* “Enter chat group <chat group name>.”
  	    - “Enter chat group ‘Food’.”
 	* Once you change the chat room using the Google home, the ChenChat server will automatically navigate all users to the same chatroom that was requested. Think of this as a convenience for users like Chun-Han. For example, when Chun-Han changes the chatroom to “fruits”, it will lead all users to the room “fruits”. In a way, all users are forced to follow Chun-Han’s needs. It ensures that there are users on the other end that are listening to Chun-Han’s requests.
-6. Customize your own message
+6. Send your own custom message
  	* “Send message <custom message>.”
  	    - Example: “Send message ‘Come downstairs’.”
  	* “Send <custom message> to <chat room name>.”
