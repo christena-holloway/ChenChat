@@ -139,7 +139,9 @@ input[type=email]:focus {
   margin-top: 20px;
 }
 
+/* Use a media query to add a breakpoint at 800px: */
 @media screen and (max-width: 800px) {
+
   form input[type=button] {
     width: 100%;
     text-transform: uppercase;
