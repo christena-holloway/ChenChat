@@ -1,16 +1,17 @@
 # ChenChat
 
 # Google Home Setup Instructions:
-**Dialogflow** Link: [https://console.dialogflow.com/api-client/#/login](https://console.dialogflow.com/api-client/#/login)
-Steps to sign in:
-1. Go to the above link and sign in using your umich email address that was given permission to access Dialogflow for ChenChat
-2. In the “Try it now” field, enter a command to trigger one of the intents. To learn about how to use intents, select any one of the intents and take a look at the example training phrases and enter something similar!
 
 **Actions on Google link**: [https://developers.google.com/actions/](https://developers.google.com/actions/)
 Steps to sign in:
 1. Go to the above link and sign in using your umich email address that was given permission to access Actions on Google for ChenChat
 2. Click on the “Actions console” button and go to the Simulator
 3. You can toggle the “Surface” option to use speaker mode if you’re testing using the Google Home device
+
+**Dialogflow** Link: [https://console.dialogflow.com/api-client/#/login](https://console.dialogflow.com/api-client/#/login)
+Steps to sign in:
+1. Go to the above link and sign in using your umich email address that was given permission to access Dialogflow for ChenChat
+2. In the “Try it now” field, enter a command to trigger one of the intents. To learn about how to use intents, select any one of the intents and take a look at the example training phrases and enter something similar!
 
 ## Steps to test ChenChat on the Google Home:
 1. Download Google Home app from app store.
