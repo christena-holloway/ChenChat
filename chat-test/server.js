@@ -214,7 +214,7 @@ function sendMessage(msg, sender, chat_token = 'test') {
     var msgObj = {'from': sender, 'body': msg, 'timestamp': time};
     m.messages.push(msgObj);
     m.save(function(err) {
-      if (err) {
+     if (err) {
           console.log(err);
           res.status(400).send("Bad Request");
       }
@@ -326,7 +326,10 @@ io.on('connection', function(socket){
       console.log("not logged in");
     }*/
     //sendMessage(msg, keys[socket.id], chat_token);
-    sendMessage(msg, sent_name, chat_token);
+    // Ensure user is logged in
+    if (sent_name != null) {
+      sendMessage(msg, sent_name, chat_token);
+    }
     var currentTime = getTimestamp();
   });
 
