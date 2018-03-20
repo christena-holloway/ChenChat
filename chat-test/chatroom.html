@@ -26,7 +26,7 @@
       if(window.location.href.indexOf("chatroom=") > -1) {
         var chatRoom = url.searchParams.get("chatroom");
         console.log("Chatroom from url param is " + chatRoom);
-  
+
         window.onload = function() {
           document.getElementById("chat_id").value = chatRoom;
           document.getElementById("selectRoom").click();
@@ -73,7 +73,6 @@
       <header>
         <h1 class="title"> Find Your Chat Group </h1>
         <h2>Create a new group or specify a previous group to start chatting.</h2>
-        <a href="/" class="back-button" style="display: none;"> Back </a>
         <a href="/" class="signOut" onclick="signOut();"> Sign out </a>
       </header>
 
