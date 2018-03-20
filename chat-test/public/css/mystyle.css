@@ -177,4 +177,13 @@ button[disabled] {
   #messages li:nth-child(odd) {
     font-size: 20px;
   }
+
+  form input {
+    width: 70%;
+
+  }
+
+  form button {
+    width: 30%;
+  }
 }
