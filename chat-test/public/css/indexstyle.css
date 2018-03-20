@@ -1,8 +1,27 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700);
+
 h1 {
   font: 50px "Comic Sans MS", cursive, sans-serif;
   color: #374251;
   font-weight: bold;
   text-align: center;
+}
+.help-button {
+  font-family: Helvetica Neue, Arial;
+  background-color: #E38968;
+  border: none;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 40px;
+  height: 40px;
+  width: 60px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin-top: 30px;
+  margin-left: 12px;
 }
 h2 {
   font: 18px Helvetica, Arial;
@@ -15,7 +34,7 @@ body {
   background-color: #C5DDEB;
 }
 .title {
-  font: 50px "Comic Sans MS", cursive, sans-serif !important;
+  font: 50px "Lato", Arial, sans-serif !important;
   color: #374251;
   font-weight: bold;
   text-align: center;
@@ -42,6 +61,12 @@ body {
 form {
   margin: 0 auto;
   margin-top: 20px;
+}
+form button {
+  width: 9%;
+  background: rgb(130, 224, 255);
+  border: none;
+  padding: 10px;
 }
 label {
     color: #555;

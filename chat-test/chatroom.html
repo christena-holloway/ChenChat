@@ -67,12 +67,16 @@
         gapi.auth2.init();
       });
     }
+    function helppg() {
+      window.location.href = '/help';
+    }
 
   </script>
   <body>
     <div class="grid-container">
       <header>
         <h1 class="title"> Find Your Chat Group </h1>
+        <button class="help-button" onclick="helppg();"> Help </button>
         <h2>Create a new group or specify a previous group to start chatting.</h2>
         <a href="/" class="signOut" onclick="signOut();"> Sign out </a>
       </header>
