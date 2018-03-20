@@ -246,6 +246,7 @@ var keys = {};
 //send from client to server
 var username;
 var sign_ins = {};
+var total_sign_ins = {};
 io.on('connection', function(socket){
   users[username] = socket.id;
   keys[socket.id] = username;
@@ -258,10 +259,18 @@ io.on('connection', function(socket){
       delete keys[socket.id];
     }
     console.log(users);
+    //var token = socket.handshake.query.token;
+    //console.log("QUERY STRING ON DISCONNECT IS: " + token);
+    //delete sign_ins[token];
+  });
+
+  socket.on('signing out', function(username) {
+    delete sign_ins[username];
   });
 
   socket.on('check login', function(username) {
     var response;
+
     if(username in sign_ins) {
       response = "yes";
       io.emit('login response', response);
@@ -270,6 +279,24 @@ io.on('connection', function(socket){
       response = "no";
       io.emit('login response', response);
     }
+
+    /*
+    if(username in sign_ins) {
+      if(sign_ins[username] = 1) {
+        response = "yes";
+        //io.emit('login response', response);
+      }
+      else {
+        response = "no";
+        //io.emit('login response', response);
+      }
+    }
+    else {
+      response = "no";
+      //io.emit('login response', response);
+    }
+    */
+    //io.emit('login response', response);
   });
 
   socket.on('chat name', function(inChatName) {
@@ -381,7 +408,11 @@ io.on('connection', function(socket){
     });
 
     username = getName(id_token);
-    sign_ins[username] = "logged_in";
+    //sign_ins[username] = "logged_in";
+    if(!(username in sign_ins)) {
+      sign_ins[username] = 0;
+    }
+    sign_ins[username] = 1;
     io.emit('redirect', destination + username);
     sendUserInfo(id_token);
   });
