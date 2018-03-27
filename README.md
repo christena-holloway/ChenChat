@@ -24,7 +24,7 @@ Steps to sign in:
 5. Speak any of the prompts for the intents configured into the system and start chenchatting!
 
 # Instructions for Web Application Use:
-1. Navigate to website at [chenchat2.azurewebsites.net](chenchat2.azurewebsites.net)
+1. Navigate to website at [https://chenchat2.azurewebsites.net](chenchat2.azurewebsites.net)
 2. Start by clicking the sign in button, and enter your Google username and password in the pop-up window.
 3. After you've finished signing in to Google, you will be redirected to the "Find Your Chat Group" page. Here, you can enter an existing chat group or create a new one.  
 
