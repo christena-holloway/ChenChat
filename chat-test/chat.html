@@ -10,6 +10,7 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="jquery-scrollto/lib/jquery-scrollto.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <title>ChenChat</title>
   </head>
@@ -67,7 +68,8 @@
       //var chatWindow = document.getElementsByClassName("chat-content")[0];
       //chatWindow.scrollTop = 999999;
       var messageBox = document.getElementById("messages");
-      messageBox.scrollTop = 999999;
+      //messageBox.scrollTop = 999999;
+      $("#messages").scrollTop(999999);
     }
 
     $(function () {
@@ -151,7 +153,7 @@
       <div class="msg-box">
         <form class="flex-msg-form" method="post" action="/" enctype="application/json">
           <input id="m" name="message" autocomplete="off" />
-          <button id="send-button" disable>Send</button>
+          <button id="send-button" disabled>Send</button>
         </form>
       </div>
     </div>

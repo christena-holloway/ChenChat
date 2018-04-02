@@ -178,4 +178,20 @@ button[disabled] {
   #messages li:nth-child(odd) {
     font-size: 20px;
   }
+
+  form input {
+    width: 70%;
+    position: relative;
+  }
+
+  form button {
+    width: 30%;
+    position: relative;
+  }
+
+  .chat-content {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+
 }
