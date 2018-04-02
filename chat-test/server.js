@@ -150,8 +150,8 @@ function handleMessage(data) {
 
   if (action === 'sendHelp') {
     var state = parameters.state;
-    var urgency = parameters.urgency;
-    msg += 'I need help ' + urgency + '.';
+    var location = parameters.location;
+    msg += 'I need help now. My location is: ' + location + '.';
   }
   else if (action === 'switchMode') {
     var mode = parameters.mode;
