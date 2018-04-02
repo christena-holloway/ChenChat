@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
 var moment = require('moment');
+var validator = require('email-validator')
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
@@ -354,7 +355,7 @@ io.on('connection', function(socket){
           //add members
           for (var i = 0; i < emailArr.length; ++i) {
             console.log(emailArr[i]);
-            if (emailArr[i] !== "") {
+            if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
               m.members.push(emailArr[i]);
             }
           }
@@ -477,7 +478,8 @@ var User = mongoose.model("User", userSchema);
 function sendUserInfo(token) {
   let sub = getUID(token);
   let name = getName(token);
-  let email = getEmail(token);
+  //might wanna change email back to local variable? (global rn to add current user to chat members)
+  email = getEmail(token);
 
   User.count({ userID: sub }, function(err, count) {
     if (count === 0) {
