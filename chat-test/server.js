@@ -53,11 +53,11 @@ mongoose.set("debug", true);
 mongoose.Promise = Promise;
 
 //define message and user schemas
-var messageSchema = new mongoose.Schema({
+var chatRoomSchema = new mongoose.Schema({
     chat_name: String,
     members: [],
     messages: []
-}, {collection: "messages"});
+}, {collection: "ChatRoom"});
 
 var userSchema = new mongoose.Schema({
   userID: String,
@@ -65,7 +65,7 @@ var userSchema = new mongoose.Schema({
   email: String
 }, {collection: "users"});
 
-var Message = mongoose.model("Message", messageSchema);
+var ChatRoom = mongoose.model("ChatRoom", chatRoomSchema);
 
 //connect to db
 mongoose.connect(conString, function(err){
@@ -90,13 +90,13 @@ app.get("/help", function(req, res) {
 
 app.get("/chat", function(req, res) {
   var result_array1 = [];
-  var Message2 = mongoose.model("Message", messageSchema);
+  var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
 
   function callback() {
     res.render(__dirname + '/chat.html', { messages: result_array1 });
   }
 
-  var query = Message2.findOne({ 'chat_name': chatName });
+  var query = ChatRoom2.findOne({ 'chat_name': chatName });
 
   query.select('messages');
 
@@ -196,7 +196,7 @@ var chatName;
 
 function sendMessage(msg, sender, chat_token = 'test') {
   //check if chat room already exists
-  Message.findOne({ chat_name: chatName }, function (err, doc) {
+  ChatRoom.findOne({ chat_name: chatName }, function (err, doc) {
     //doc is document for the chat room
     m = doc;
     var time = getTimestamp();
@@ -328,10 +328,10 @@ io.on('connection', function(socket){
       console.log(emailArr);
 
       //check if chatroom exists
-      Message.count({ chat_name: chatName }, function (err, count) {
+      ChatRoom.count({ chat_name: chatName }, function (err, count) {
       //if this chat room does not exist yet, create it
         if (count === 0) {
-          m = new Message({ 'chat_name': chatName, 'members': [], 'messages': [] });
+          m = new ChatRoom({ 'chat_name': chatName, 'members': [], 'messages': [] });
           //!!!!TODO: make sure duplicate email addresses aren't entered
           //push current user to members vector
           //let email = getEmail(token);
@@ -357,11 +357,11 @@ io.on('connection', function(socket){
           });
         }
         else {
-          Message.findOne({ chat_name: chatName }, function (err, doc) {
+          ChatRoom.findOne({ chat_name: chatName }, function (err, doc) {
             //doc is document for the chat room
             m = doc;
             for (var i = 0; i < emailArr.length; ++i) {
-              Message.count({ chat_name: chatName }, function (err, count) {
+              ChatRoom.count({ chat_name: chatName }, function (err, count) {
                 if (count == 0) {
                   m.members.push(emailArr[i]);
                 }
