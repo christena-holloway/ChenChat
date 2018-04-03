@@ -33,13 +33,18 @@
         document.getElementById('chat_name').innerHTML = chatRoom;
         chat_name = chatRoom;
 
-        var array =  <%- JSON.stringify(messages) %>;
+        var messageArray =  <%- JSON.stringify(messages) %>
         //console.log("array of messages: " + array);
-        for (i = 0; i < array.length; i++) {
-          var listElt = $('<li>').text(array[i].from + ": " + array[i].body);
+        for (i = 0; i < messageArray.length; i++) {
+          var listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
           listElt = listElt.append($('<br>'));
-          var whole = listElt.append($('<small>').text(array[i].timestamp));
+          var whole = listElt.append($('<small>').text(messageArray[i].timestamp));
           $('#messages').append(whole);
+        }
+        
+        var memberArray = <%- JSON.stringify(members) %>
+        for (i = 0; i < memberArray.length; i++) {
+          $('#members').append(memberArray[i]);
         }
 
         updateScroll();
@@ -64,9 +69,13 @@
       }
     });
     
-    /*socket.on('getMembers', function(memberArr) {
-    
-    });*/
+    $(function () {
+      socket.on('getMembers', function(memberArr) {
+        for (var i = 0; i < memberArr.length; i++) {
+          $('#members').append(memberArr[i]);
+        }
+      });
+    });
 
     function updateScroll() {
       //var chatWindow = document.getElementsByClassName("chat-content")[0];
@@ -157,8 +166,6 @@
       
       <div class="member-list">
         <ul id="members">
-          <li> test1 </li>
-          <li> test2 </li>
         </ul>
       </div>
     

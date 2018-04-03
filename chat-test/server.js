@@ -5,6 +5,7 @@ var mailer = require('express-mailer');
 var http = require('http').Server(app);
 var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
+//var async = require('async');
 var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
 var moment = require('moment');
@@ -93,30 +94,19 @@ app.get("/chat", function(req, res) {
   var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
 
   function callback() {
-    res.render(__dirname + '/chat.html', { messages: result_array1 });
+    console.log("members: " + result_array1.members);
+    res.render(__dirname + '/chat.html', { messages: result_array1.messages, members: result_array1.members });
   }
-
-  var query = ChatRoom2.findOne({ 'chat_name': chatName });
-
-  query.select('messages');
-
-  // execute the query at a later time
-  query.exec(function (err, result) {
-    if (err) return handleError(err);
-    if (result != null) {
-      result.messages.forEach(function(value) {
-        //console.log("value in query.exec: " + value.from);
-        result_array1.push(value);
-      });
-    }
+  
+  ChatRoom2.findOne( { 'chat_name': chatName }, 'messages members', function(err, doc) {
+    result_array1 = doc;
     callback();
-  });
+  })
 });
 
 app.post('/', function(req, res) {
   console.log('POST to /');
   console.log(req.body);
-
 })
 
 app.post('/chat', function(req, res) {
