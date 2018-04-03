@@ -126,31 +126,13 @@ app.post('/chat', function(req, res) {
   console.log('parameters are: ');
   console.log(req.body.queryResult.parameters);
 
-  handleMessage(req.body);
+  var message = handleMessage(req.body);
 
   // sends a response header to the request
   res.writeHead(200, {'Content-Type': 'application/json'});
   // send a response in the format required by Dialogflow
   let responseToAssistant = {
-    fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
-  };
-  res.end(JSON.stringify(responseToAssistant));
-});
-
-app.post('/chat', function(req, res) {
-
-  console.log('POST /chat');
-  console.log(req.body);
-  console.log('parameters are: ');
-  console.log(req.body.queryResult.parameters);
-
-  handleMessage(req.body);
-
-  // sends a response header to the request
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  // send a response in the format required by Dialogflow
-  let responseToAssistant = {
-    fulfillmentText: 'Your message is being delivered by ChenChat!' // displayed response
+    fulfillmentText: 'The message: ' + message + ' is being delivered by ChenChat!' // displayed response
   };
   res.end(JSON.stringify(responseToAssistant));
 });
@@ -169,8 +151,8 @@ function handleMessage(data) {
 
   if (action === 'sendHelp') {
     var state = parameters.state;
-    var urgency = parameters.urgency;
-    msg += 'I need help ' + urgency + '.';
+    var location = parameters.location;
+    msg += 'I need help now. My location is: ' + location + '.';
   }
   else if (action === 'switchMode') {
     var mode = parameters.mode;
@@ -191,7 +173,7 @@ function handleMessage(data) {
     console.log("Switching chat rooms");
     // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
     io.emit('getChatRoomFromGoogleApi', chatRoom);
-    return;
+    return "Changed to room " + chatRoom;
   }
   // default handler
   else {
@@ -200,6 +182,8 @@ function handleMessage(data) {
   console.log('I am now sending the message!');
   //sendMessage(msg, 'Chun-Han');
   sendMessage(msg, 'Chun-Han', chatRoom);
+
+  return msg;
 }
 
 var sub;
