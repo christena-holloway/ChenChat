@@ -296,6 +296,10 @@ io.on('connection', function(socket){
   });
 
   io.emit('getChatName', chatName);
+  
+  
+  //TODO: query db for all members in chat room
+  //io.emit('getMembers', memberArr)
 
   socket.on('chat message', function(data){
     var msg = data.msg;

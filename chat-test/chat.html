@@ -63,6 +63,10 @@
         window.location.href = '/';
       }
     });
+    
+    /*socket.on('getMembers', function(memberArr) {
+    
+    });*/
 
     function updateScroll() {
       //var chatWindow = document.getElementsByClassName("chat-content")[0];
@@ -150,6 +154,14 @@
         <ul id="messages">
         </ul>
       </div>
+      
+      <div class="member-list">
+        <ul id="members">
+          <li> test1 </li>
+          <li> test2 </li>
+        </ul>
+      </div>
+    
       <div class="msg-box">
         <form class="flex-msg-form" method="post" action="/" enctype="application/json">
           <input id="m" name="message" autocomplete="off" />
