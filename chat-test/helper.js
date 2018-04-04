@@ -75,7 +75,7 @@ module.exports = {
 	      chatname: chatName,
 	      sender: username
 	    }
-	  }
+	  };
 
 	  // Send email
 	  app.mailer.send('email', mailOptions, function (err, message) {
@@ -94,19 +94,19 @@ module.exports = {
 
 	getUID: function(id_token) {
 		var decoded = jwtDecode(id_token);
-	  var sub = decoded['sub'];
+	  var sub = decoded.sub;
 	  return sub;
 	},
 
 	getName: function(id_token) {
 		var decoded = jwtDecode(id_token);
-	  var name = decoded['name'];
+	  var name = decoded.name;
 	  return name;
 	},
 
 	getEmail: function(id_token) {
 		var decoded = jwtDecode(id_token);
-    var email = decoded['email'];
+    var email = decoded.email;
     return email;
 	},
 
@@ -115,7 +115,6 @@ module.exports = {
 	  let name = this.getName(token);
 	  //might wanna change email back to local variable? (global rn to add current user to chat members)
 	  email = this.getEmail(token);
-
 	  UserCollection.count({ userID: sub }, function(err, count) {
 	    if (count === 0) {
 	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': email });
@@ -127,12 +126,11 @@ module.exports = {
 	        else {
 	          console.log("successfully posted user info to db");
 	        }
-	      })
+	      });
 	    }
 	    else {
 	      console.log("user is already in db");
 	    }
 	  });
 	}
-
-}
+};

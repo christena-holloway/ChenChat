@@ -5,7 +5,7 @@ var http = require('http').Server(app);
 var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
-var validator = require('email-validator')
+var validator = require('email-validator');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
@@ -23,13 +23,13 @@ app.engine('html', require('ejs').renderFile);
 
 //Authentication code
 var GoogleAuth = require('google-auth-library');
-var auth = new GoogleAuth;
+var auth = new GoogleAuth();
 var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
 //End
 
 var email;
 
-var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
+var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
 
 //comment/uncomment to show mongoose debug info (everything inserted into db) in the console
 mongoose.set("debug", true);
@@ -85,13 +85,13 @@ app.get("/chat", function(req, res) {
   ChatRoom2.findOne( { 'chat_name': chatName }, 'messages members', function(err, doc) {
     result_array1 = doc;
     callback();
-  })
+  });
 });
 
 app.post('/', function(req, res) {
   console.log('POST to /');
   console.log(req.body);
-})
+});
 
 app.post('/chat', function(req, res) {
 
@@ -239,7 +239,7 @@ io.on('connection', function(socket){
     }*/
     //sendMessage(msg, keys[socket.id], chat_token);
     // Ensure user is logged in
-    if (sent_name != null) {
+    if (sent_name !== null) {
       sendMessage(msg, sent_name, chat_token);
     }
     var currentTime = helper.getTimestamp();
@@ -285,7 +285,7 @@ io.on('connection', function(socket){
             m = doc;
             for (var i = 0; i < emailArr.length; ++i) {
               ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
-                if (count == 0) {
+                if (count === 0) {
                   m.members.push(emailArr[i]);
                 }
               });
@@ -316,8 +316,8 @@ io.on('connection', function(socket){
     //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3],
     function(e, login) {
       var payload = login.getPayload();
-      var userid = payload['sub'];
-      var name = payload['name'];
+      var userid = payload.sub;
+      var name = payload.name;
       // If request specified a G Suite domain:
       //var domain = payload['hd'];
     });
