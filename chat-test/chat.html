@@ -33,13 +33,18 @@
         document.getElementById('chat_name').innerHTML = chatRoom;
         chat_name = chatRoom;
 
-        var array =  <%- JSON.stringify(messages) %>;
+        var messageArray =  <%- JSON.stringify(messages) %>
         //console.log("array of messages: " + array);
-        for (i = 0; i < array.length; i++) {
-          var listElt = $('<li>').text(array[i].from + ": " + array[i].body);
+        for (i = 0; i < messageArray.length; i++) {
+          var listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
           listElt = listElt.append($('<br>'));
-          var whole = listElt.append($('<small>').text(array[i].timestamp));
+          var whole = listElt.append($('<small>').text(messageArray[i].timestamp));
           $('#messages').append(whole);
+        }
+        
+        var memberArray = <%- JSON.stringify(members) %>
+        for (i = 0; i < memberArray.length; i++) {
+          $('#members').append(memberArray[i]);
         }
 
         updateScroll();
@@ -62,6 +67,14 @@
       if (response == "no") {
         window.location.href = '/';
       }
+    });
+    
+    $(function () {
+      socket.on('getMembers', function(memberArr) {
+        for (var i = 0; i < memberArr.length; i++) {
+          $('#members').append(memberArr[i]);
+        }
+      });
     });
 
     function updateScroll() {
@@ -150,6 +163,12 @@
         <ul id="messages">
         </ul>
       </div>
+      
+      <div class="member-list">
+        <ul id="members">
+        </ul>
+      </div>
+    
       <div class="msg-box">
         <form class="flex-msg-form" method="post" action="/" enctype="application/json">
           <input id="m" name="message" autocomplete="off" />

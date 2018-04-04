@@ -27,11 +27,12 @@ html, body {
   display: grid;
   grid-gap: 0;
   grid-template-rows: 100px calc(100% - 170px) 70px;
-  grid-template-columns: 100%;
+  grid-template-columns: 80% 20%;
 }
 
 header {
   grid-row: 1 / 2;
+  /*grid-column: 1 / span 2;*/
   background-color: #374251;
   border-bottom-style: groove;
   height: 100px;
@@ -84,6 +85,11 @@ header {
   grid-row: 2 / 3;
 }
 
+.member-list {
+  grid-row: 2 / 3;
+  grid-column: 2 / 3
+}
+
 ul {
   padding: 20px;
   height: 770px;
@@ -101,7 +107,6 @@ ul {
   bottom: 0;
   width: 100%;
   color: white;
-
 }
 
 form input {
