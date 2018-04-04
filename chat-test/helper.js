@@ -20,7 +20,8 @@ mailer.extend(app, {
 });
 
 module.exports = {
-
+  email: "temp",
+  
 	handleMessage: function(data) {
 		var result = data.queryResult;
 		var action = result.action;
@@ -99,14 +100,14 @@ module.exports = {
 	},
 
 	getName: function(id_token) {
-		var decoded = jwtDecode(id_token);
-	  var name = decoded.name;
+		let decoded = jwtDecode(id_token);
+	  let name = decoded.name;
 	  return name;
 	},
 
 	getEmail: function(id_token) {
-		var decoded = jwtDecode(id_token);
-    var email = decoded.email;
+		let decoded = jwtDecode(id_token);
+    let email = decoded.email;
     return email;
 	},
 
@@ -114,7 +115,8 @@ module.exports = {
 		let sub = this.getUID(token);
 	  let name = this.getName(token);
 	  //might wanna change email back to local variable? (global rn to add current user to chat members)
-	  email = this.getEmail(token);
+	  this.email = this.getEmail(token);
+    console.log("EMAIL: " + email);
 	  UserCollection.count({ userID: sub }, function(err, count) {
 	    if (count === 0) {
 	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': email });
