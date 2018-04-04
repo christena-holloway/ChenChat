@@ -66,7 +66,19 @@ app.get('/', function(req, res){
 });
 
 app.get("/chatroom", function(req, res){
-  res.sendFile(__dirname + '/chatroom.html');
+  // res.sendFile(__dirname + '/chatroom.html');
+
+  // find all chatrooms for username's email
+  console.log("email is: " + email);
+  var userChatRooms = [];
+  // var chatRoomDocsForUser = ChatRoomCollection.find( { members: email } );
+  ChatRoomCollection.find( { members: email } ).map(function(doc) {
+    console.log("Pushing chatroom: " + doc.chat_name);
+    userChatRooms.push(doc.chat_name);
+  });
+
+  res.render(__dirname + '/chatroom.html', { myChatRooms: userChatRooms });
+
 });
 
 app.get("/help", function(req, res) {

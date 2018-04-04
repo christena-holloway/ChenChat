@@ -15,6 +15,7 @@
   </head>
   <body>
   <script>
+
     var urlString = window.location.href;
     var url = new URL(urlString);
     var username = url.searchParams.get("name");
@@ -35,26 +36,47 @@
       }
     }
 
+    window.onload = function() {
+      // Query db for chatrooms user has access to
+      var chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
+      for (var i = 0; i < chatRoomsWithPermission.length; i++) {
+        var listElt = $('<li id="my-chat-room" onclick="goToChatRoom(chatRoomsWithPermission[i]);">').text(chatRoomsWithPermission[i]);
+        listElt = listElt.append($('<br>'));
+        $(".list-of-chats").append(listElt);
+      }
+    }
+
     function chatRedirect() {
-      // var input_vals = $(this).serialize();
       if (username == null) {
         window.location.href = "/";
       }
       else {
         var inChatName = document.getElementById("chat_id").value;
         var emails = document.getElementById("chat_mems").value;
-        //console.log("VALUE IN: " + inChatName);
         var socket = io();
         socket.emit('chat name', inChatName);
         socket.emit('entered emails', emails);
-        //window.location.replace("/chat");//+ input_vals[0];
         socket.on('redirect', function(destination) {
           window.location.href = destination + "&name=" + username;
         });
       }
     }
+
+    function goToChatRoom(chatName) {
+      if (username == null) {
+        window.location.href = "/";
+      }
+      else {
+        console.log("Selected chatroom: " + chatName);
+        var socket = io();
+        socket.emit('chat name', chatName);
+        socket.on('redirect', function(destination) {
+          window.location.href = destination + "&name=" + username;
+        });
+      }
+    }
+
     function signOut() {
-      //socket.emit("signing out", username);
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(function () {
         console.log('User signed out.');
@@ -84,6 +106,11 @@
           <!--<p>Please enter only Google email addresses and separate them with a comma ','</p><br><br>-->
           <input id="selectRoom" type="button" onclick="chatRedirect();" value="Submit" />
         </form>
+
+        <div class="my-chatrooms">
+          <ul class="list-of-chats">
+          </ul>
+        </div>
       </div>
     </div>
     <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
