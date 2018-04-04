@@ -1,13 +1,10 @@
 var express = require('express');
 var app = express();
-// var mailer = require('express-mailer');
 //var cors = require('cors');
 var http = require('http').Server(app);
 var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
-// var jwtDecode = require('jwt-decode');
 var bodyParser = require('body-parser');
-// var moment = require('moment');
 var validator = require('email-validator')
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
@@ -24,26 +21,12 @@ app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'pug');
 app.engine('html', require('ejs').renderFile);
 
-// mailer.extend(app, {
-//   from: 'ChenChat <chenchat498@gmail.com>',
-//   host: 'smtp.gmail.com', // hostname
-//   secureConnection: true, // use SSL
-//   port: 465, // port for secure SMTP
-//   transportMethod: 'SMTP', // default is SMTP. Accepts anything that nodemailer accepts
-//   auth: {
-//     user: 'chenchat498@gmail.com',
-//     pass: 'a532tVhQ6vWq?kL-'
-//   }
-// });
-
 //Authentication code
 var GoogleAuth = require('google-auth-library');
 var auth = new GoogleAuth;
 var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
 //End
 
-//var currentChatroom;
-//var name;
 var email;
 
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
@@ -142,55 +125,6 @@ app.post('/chat', function(req, res) {
   res.end(JSON.stringify(responseToAssistant));
 });
 
-// // To handle sending a message in the chat
-// function handleMessage(data) {
-
-//   var result = data.queryResult;
-//   var action = result.action;
-//   var parameters = result.parameters;
-//   var chatRoom = parameters.chatroom;
-//   var msg = '';
-
-//   console.log("Action is " + action);
-//   console.log("Chat room is " + chatRoom);
-
-//   if (action === 'sendHelp') {
-//     var state = parameters.state;
-//     var location = parameters.location;
-//     msg += 'I need help now. My location is: ' + location + '.';
-//   }
-//   else if (action === 'switchMode') {
-//     var mode = parameters.mode;
-//     msg += 'I need help ' + mode + '!';
-//   }
-//   else if (action === 'reportState') {
-//     var state = parameters.state;
-//     msg += 'I ' + state + '!';
-//   }
-//   else if (action === 'whereIsMy') {
-//     var object = parameters.object;
-//     msg += 'Where is my ' + object + '?';
-//   }
-//   else if (action === 'sendCustomMessage') {
-//     msg += parameters.customMessage;
-//   }
-//   else if (action === 'changeChatRoom') {
-//     console.log("Switching chat rooms");
-//     // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
-//     io.emit('getChatRoomFromGoogleApi', chatRoom);
-//     return "Changed to room " + chatRoom;
-//   }
-//   // default handler
-//   else {
-//     msg += 'I am trying to communicate with you but something went wrong!';
-//   }
-//   console.log('I am now sending the message!');
-//   //sendMessage(msg, 'Chun-Han');
-//   sendMessage(msg, 'Chun-Han', chatRoom);
-
-//   return msg;
-// }
-
 var sub;
 
 //message collection
@@ -228,7 +162,7 @@ function sendMessage(msg, sender, chat_token = 'test') {
   //io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
   io.emit('chat message', { from: sender, message: msg, chatRoomName: chat_token });
   //console.log("chat token is: " + chat_token);
-//  io.emit(chat_token, (temp + ': ' + msg));
+  //  io.emit(chat_token, (temp + ': ' + msg));
   //io.emit(chat_token, msg);
 }
 
@@ -411,79 +345,6 @@ io.on('connection', function(socket){
     helper.sendUserInfo(id_token, email, UserCollection);
   });
 });
-
-// function sendInvite(emailArr, chatName, username) {
-//   var emailString = emailArr.join();
-//   // Setup email data.
-//   var mailOptions = {
-//     bcc: emailString,
-//     subject: username + ' invited to the chatroom "' + chatName + '" on ChenChat!',
-//     data: {  // data to view template, you can access as - user.name
-//       chatname: chatName,
-//       sender: username
-//     }
-//   }
-
-//   // Send email
-//   app.mailer.send('email', mailOptions, function (err, message) {
-//     if (err) {
-//       console.log("ERROR: couldn't send email " + err);
-//       return;
-//     }
-//   });
-// }
-
-// function getTimestamp() {
-//   var now = moment();
-//   var time = now.format('YYYY-MM-DD hh:mm A');
-//   return time;
-// }
-
-// function getUID(id_token) {
-//   var decoded = jwtDecode(id_token);
-//   var sub = decoded['sub'];
-
-//   return sub;
-// }
-
-// function getName(id_token) {
-//   var decoded = jwtDecode(id_token);
-//   var name = decoded['name'];
-
-//   return name;
-// }
-
-// function getEmail(id_token) {
-//     var decoded = jwtDecode(id_token);
-//     var email = decoded['email'];
-
-//     return email;
-// }
-
-// function sendUserInfo(token) {
-//   let sub = helper.getUID(token);
-//   let name = helper.getName(token);
-//   //might wanna change email back to local variable? (global rn to add current user to chat members)
-//   email = helper.getEmail(token);
-
-//   UserCollection.count({ userID: sub }, function(err, count) {
-//     if (count === 0) {
-//       var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': email });
-//       u.save(function(err) {
-//         if (err) {
-//           console.log(err);
-//           res.status(400).send("Bad Request");
-//         }
-//         else {
-//           console.log("successfully posted user info to db");
-//         }
-//       })
-//     }
-//     else {
-//       console.log("user is already in db");
-//     }
-//   });
-// }
 
 //listen to the server
 http.listen(port, function(){
