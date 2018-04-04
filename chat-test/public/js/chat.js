@@ -1,9 +1,8 @@
 var socket = io();
-    var chat_name;
-
-    var urlString = window.location.href;
-    var url = new URL(urlString);
-    var username = url.searchParams.get("name");
+var chat_name;
+var urlString = window.location.href;
+var url = new URL(urlString);
+var username = url.searchParams.get("name");
 
 socket.on('login response', function(response) {
   if (response == "no") {
@@ -11,19 +10,20 @@ socket.on('login response', function(response) {
   }
 });
 
+
+/*TODO: FIXXXXXXXXX!*/
 $(function () {
   socket.on('getMembers', function(memberArr) {
+    console.log("
     for (var i = 0; i < memberArr.length; i++) {
       $('#members').append(memberArr[i]);
     }
   });
 });
+//good for rest
 
 function updateScroll() {
-  //var chatWindow = document.getElementsByClassName("chat-content")[0];
-  //chatWindow.scrollTop = 999999;
   var messageBox = document.getElementById("messages");
-  //messageBox.scrollTop = 999999;
   $("#messages").scrollTop(999999);
 }
 

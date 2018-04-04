@@ -6,7 +6,7 @@ if (username == null) {
   window.location.href = "/";
 }
 else {
-// URL contains the name of the chatroom
+  // URL contains the name of the chatroom
   if(window.location.href.indexOf("chatroom=") > -1) {
     var chatRoom = url.searchParams.get("chatroom");
     console.log("Chatroom from url param is " + chatRoom);
@@ -26,6 +26,8 @@ function chatRedirect() {
   else {
     var inChatName = document.getElementById("chat_id").value;
     var emails = document.getElementById("chat_mems").value;
+        console.log("emails in chatSelect" + emails);
+
     //console.log("VALUE IN: " + inChatName);
     var socket = io();
     socket.emit('chat name', inChatName);
