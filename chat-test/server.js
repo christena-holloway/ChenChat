@@ -27,7 +27,6 @@ var auth = new GoogleAuth();
 var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
 //End
 
-var email;
 
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
 
@@ -65,7 +64,7 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get("/chatroom", function(req, res){
+app.get("/chatSelect", function(req, res){
   // res.sendFile(__dirname + '/chatroom.html');
 
   // find all chatrooms for username's email
@@ -77,8 +76,7 @@ app.get("/chatroom", function(req, res){
     userChatRooms.push(doc.chat_name);
   });
 
-  res.render(__dirname + '/chatroom.html', { myChatRooms: userChatRooms });
-
+  res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 });
 
 app.get("/help", function(req, res) {
@@ -88,15 +86,11 @@ app.get("/help", function(req, res) {
 app.get("/chat", function(req, res) {
   var result_array1 = [];
   var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
-
-  function callback() {
-    console.log("members: " + result_array1.members);
-    res.render(__dirname + '/chat.html', { messages: result_array1.messages, members: result_array1.members });
-  }
   
   ChatRoom2.findOne( { 'chat_name': chatName }, 'messages members', function(err, doc) {
     result_array1 = doc;
-    callback();
+    console.log("result array: " + result_array1);
+    res.render(__dirname + '/chat.html', { messages: result_array1.messages, members: result_array1.members });
   });
 });
 
@@ -179,9 +173,6 @@ io.on('connection', function(socket){
       delete keys[socket.id];
     }
     console.log(users);
-    //var token = socket.handshake.query.token;
-    //console.log("QUERY STRING ON DISCONNECT IS: " + token);
-    //delete sign_ins[token];
   });
 
   socket.on('signing out', function(username) {
@@ -199,31 +190,16 @@ io.on('connection', function(socket){
       response = "no";
       //io.emit('login response', response);
     }
-
-    /*
-    if(username in sign_ins) {
-      if(sign_ins[username] = 1) {
-        response = "yes";
-        //io.emit('login response', response);
-      }
-      else {
-        response = "no";
-        //io.emit('login response', response);
-      }
-    }
-    else {
-      response = "no";
-      //io.emit('login response', response);
-    }
-    */
-    //io.emit('login response', response);
   });
-
+  var callback;
+  
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
     console.log("chat name " + chatName);
-    var destination = '/chat?chatroom=' + chatName;
-    io.emit('redirect', destination);
+    var destination = '/chat?chatSelect=' + chatName;
+    callback = function() {
+      io.emit('redirect', destination);
+    }
   });
 
   io.emit('getChatName', chatName);
@@ -236,21 +212,7 @@ io.on('connection', function(socket){
     var msg = data.msg;
     var time = data.timestamp;
     var sent_name = data.sent_name;
-    console.log("sent name: " + sent_name);
     var chat_token = data.chat_token;
-    console.log("message and time on server " + msg + ", " + time);
-    //console.log('msg: ' + msg);
-    //console.log("socket is " + socket.id);
-    /*
-    if(socket.id in keys && keys[socket.id] in users) {
-      sendMessage(msg, keys[socket.id], chat_token);
-      //sendMessage(msg, keys[socket.id]);
-    }
-    else {
-      console.log("not logged in");
-    }*/
-    //sendMessage(msg, keys[socket.id], chat_token);
-    // Ensure user is logged in
     if (sent_name !== null) {
       sendMessage(msg, sent_name, chat_token);
     }
@@ -269,8 +231,9 @@ io.on('connection', function(socket){
           m = new ChatRoomCollection({ 'chat_name': chatName, 'members': [], 'messages': [] });
           //!!!!TODO: make sure duplicate email addresses aren't entered
           //push current user to members vector
-          //let email = getEmail(token);
-          m.members.push(email);
+          //let email = helper.getEmail(token);
+          console.log("current user's email: " + helper.email);
+          m.members.push(helper.email);
           //add members
           for (var i = 0; i < emailArr.length; ++i) {
             console.log(emailArr[i]);
@@ -283,11 +246,12 @@ io.on('connection', function(socket){
 
           m.save(function(err) {
             if (err) {
-                console.log(err);
-                res.status(400).send("Bad Request");
+              console.log(err);
+              res.status(400).send("Bad Request");
             }
             else {
-                console.log('successfully posted to db');
+              console.log('successfully posted to db');
+              callback();
             }
           });
         }
@@ -311,6 +275,7 @@ io.on('connection', function(socket){
               }
               else {
                   console.log('successfully posted to db');
+                  callback();
               }
             });
         });
@@ -319,7 +284,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
-    var destination = '/chatroom?name=';
+    var destination = '/chatSelect?name=';
 
     client.verifyIdToken(
     id_token,
@@ -341,7 +306,7 @@ io.on('connection', function(socket){
     }
     sign_ins[username] = 1;
     io.emit('redirect', destination + username);
-    helper.sendUserInfo(id_token, email, UserCollection);
+    helper.sendUserInfo(id_token, helper.email, UserCollection);
   });
 });
 
