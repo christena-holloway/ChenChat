@@ -65,8 +65,8 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get("/chatroom", function(req, res){
-  res.sendFile(__dirname + '/chatroom.html');
+app.get("/chatSelect", function(req, res){
+  res.sendFile(__dirname + '/chatSelect.html');
 });
 
 app.get("/help", function(req, res) {
@@ -216,7 +216,7 @@ io.on('connection', function(socket){
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
     console.log("chat name " + chatName);
-    var destination = '/chat?chatroom=' + chatName;
+    var destination = '/chat?chatSelect=' + chatName;
     io.emit('redirect', destination);
   });
 
@@ -313,7 +313,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('id token', function(id_token) {
-    var destination = '/chatroom?name=';
+    var destination = '/chatSelect?name=';
 
     client.verifyIdToken(
     id_token,
