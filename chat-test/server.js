@@ -139,20 +139,14 @@ function sendMessage(msg, sender, chat_token = 'test') {
     });
   });
 
-  var username;
-
   UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
     if (err) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
   });
-  //console.log("variable is " + temp);
-  //io.emit('chat message', { message: (temp + ': ' + msg), chatRoomName: chat_token });
+
   io.emit('chat message', { from: sender, message: msg, chatRoomName: chat_token });
-  //console.log("chat token is: " + chat_token);
-  //  io.emit(chat_token, (temp + ': ' + msg));
-  //io.emit(chat_token, msg);
 }
 
 var users = {};
