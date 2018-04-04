@@ -15,17 +15,12 @@
     <script src="jquery-scrollto/lib/jquery-scrollto.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/chat.js"></script>
     <title>ChenChat</title>
   </head>
-  <script>
-    //display chat room name
-    var socket = io();
-    var chat_name;
 
-    var urlString = window.location.href;
-    var url = new URL(urlString);
-    var username = url.searchParams.get("name");
-
+  <body>
+    <script>
     window.onload = function() {
       if (username == null) {
         window.location.href = "/";
@@ -36,13 +31,18 @@
         document.getElementById('chat_name').innerHTML = chatRoom;
         chat_name = chatRoom;
 
-        var array =  <%- JSON.stringify(messages) %>;
+        var messageArray =  <%- JSON.stringify(messages) %>
         //console.log("array of messages: " + array);
-        for (i = 0; i < array.length; i++) {
-          var listElt = $('<li>').text(array[i].from + ": " + array[i].body);
+        for (i = 0; i < messageArray.length; i++) {
+          var listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
           listElt = listElt.append($('<br>'));
-          var whole = listElt.append($('<small>').text(array[i].timestamp));
+          var whole = listElt.append($('<small>').text(messageArray[i].timestamp));
           $('#messages').append(whole);
+        }
+        
+        var memberArray = <%- JSON.stringify(members) %>
+        for (i = 0; i < memberArray.length; i++) {
+          $('#members').append(memberArray[i]);
         }
 
         updateScroll();
@@ -52,109 +52,7 @@
       }
     }
 
-    socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
-      if (username == null) {
-        window.location.href = "/";
-      }
-      else {
-        console.log('Redirecting  to chat room page');
-        window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
-      }
-    });
-
-    socket.on('login response', function(response) {
-      if (response == "no") {
-        window.location.href = '/';
-      }
-    });
-
-    function updateScroll() {
-      //var chatWindow = document.getElementsByClassName("chat-content")[0];
-      //chatWindow.scrollTop = 999999;
-      var messageBox = document.getElementById("messages");
-      //messageBox.scrollTop = 999999;
-      $("#messages").scrollTop(999999);
-    }
-
-    $(function () {
-      var now = moment();
-      var time = now.format('YYYY-MM-DD hh:mm A');
-      $('form').submit(function() {
-          socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
-          $('#m').val('');
-        return false;
-      });
-      socket.on('chat message', function(data) {
-        /*
-        if(msg.indexOf(':') < 0) {
-          //console.log("TRIGGERED");
-          msg = userName + ": " + msg;
-        }*/
-        var sender = data.from;
-        var msg = data.message;
-        var chatRoomName = data.chatRoomName;
-        if (chat_name == chatRoomName) {
-          var listElt = $('<li>').text(sender + ": " + msg);
-          listElt = listElt.append($('<br>'));
-          var whole = listElt.append($('<small>').text(time));
-          $('#messages').append(whole);
-          updateScroll();
-        }
-      });
-    });
-
-    function signOut() {
-      var auth2 = gapi.auth2.getAuthInstance();
-      auth2.signOut().then(function () {
-        console.log('User signed out.');
-        document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://chenchat2.azurewebsites.net";
-      });
-    }
-
-    function openMod() {
-      // display text box for email address input
-      window.location.href = '#openModal';
-    }
-
-    function addMembers() {
-      var emails = document.getElementById("chat_mems").value;
-      var socket = io();
-      socket.emit('chat name', chat_name);
-      socket.emit('entered emails', emails);
-
-      window.location.href = '#close';
-    }
-
-    function onLoad() {
-      gapi.load('auth2', function() {
-        gapi.auth2.init();
-      });
-    }
-
-    function goBack() {
-      window.location.href = '/chatroom?name=' + username;
-    }
-    
-    function doCheck() {
-      var txtboxFilled = true;
-      $('#m').each(function () {
-        if ($(this).val() != '') {
-          txtboxFilled = true;
-          return false;
-        }
-        else {
-          txtboxFilled = false;
-        }
-      });
-      $('#send-button').prop('disabled', !txtboxFilled);
-    }
-
-    $(document).ready(function () {
-      $('#m').keyup(doCheck).focusout(doCheck);
-    });
-
   </script>
-  <body>
     <div class="grid-container">
       <header>
         <h1 class="title" id="chat_name"> </h1>
@@ -181,6 +79,12 @@
         <ul id="messages">
         </ul>
       </div>
+      
+      <div class="member-list">
+        <ul id="members">
+        </ul>
+      </div>
+    
       <div class="msg-box">
         <form class="flex-msg-form" method="post" action="/" enctype="application/json">
           <input id="m" name="message" autocomplete="off" />
