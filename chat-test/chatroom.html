@@ -13,8 +13,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <title>Select a Chat Room</title>
   </head>
+  <body>
   <script>
-
     var urlString = window.location.href;
     var url = new URL(urlString);
     var username = url.searchParams.get("name");
@@ -62,7 +62,6 @@
       });
     }
     function onLoad() {
-
       gapi.load('auth2', function() {
         gapi.auth2.init();
       });
@@ -70,9 +69,7 @@
     function helppg() {
       window.location.href = '/help';
     }
-
   </script>
-  <body>
     <div class="grid-container">
       <header>
         <h1 class="title"> Find Your Chat Group </h1>
@@ -80,7 +77,6 @@
         <h2>Create a new group or specify a previous group to start chatting.</h2>
         <a href="/" class="signOut" onclick="signOut();"> Sign out </a>
       </header>
-
       <div class="chat-rm">
         <form class="chatrm-form" enctype="application/json">
           Group Name: <input required id="chat_id" type="text" placeholder="Chat group name" autocomplete="off" /><br><br>
