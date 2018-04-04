@@ -1,4 +1,9 @@
 var socket = io();
+    var chat_name;
+
+    var urlString = window.location.href;
+    var url = new URL(urlString);
+    var username = url.searchParams.get("name");
 
 socket.on('login response', function(response) {
   if (response == "no") {
@@ -53,6 +58,38 @@ function doCheck() {
   });
   $('#send-button').prop('disabled', !txtboxFilled);
 }
+
+socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
+      if (username == null) {
+        window.location.href = "/";
+      }
+      else {
+        console.log('Redirecting  to chat room page');
+        window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
+      }
+    });
+    
+$(function () {
+  var now = moment();
+  var time = now.format('YYYY-MM-DD hh:mm A');
+  $('form').submit(function() {
+      socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
+      $('#m').val('');
+    return false;
+  });
+  socket.on('chat message', function(data) {
+    var sender = data.from;
+    var msg = data.message;
+    var chatRoomName = data.chatRoomName;
+    if (chat_name == chatRoomName) {
+      var listElt = $('<li>').text(sender + ": " + msg);
+      listElt = listElt.append($('<br>'));
+      var whole = listElt.append($('<small>').text(time));
+      $('#messages').append(whole);
+      updateScroll();
+    }
+  });
+});
 
 $(document).ready(function () {
   $('#m').keyup(doCheck).focusout(doCheck);
