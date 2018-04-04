@@ -20,7 +20,7 @@ else {
 
 window.onload = function() {
   // Query db for chatrooms user has access to
-  var chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
+  var chatRoomsWithPermission =  JSON.stringify(myChatRooms);
   for (var i = 0; i < chatRoomsWithPermission.length; i++) {
     var listElt = $('<li id="my-chat-room" onclick="goToChatRoom(chatRoomsWithPermission[i]);">').text(chatRoomsWithPermission[i]);
     listElt = listElt.append($('<br>'));

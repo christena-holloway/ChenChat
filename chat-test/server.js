@@ -68,12 +68,16 @@ app.get("/chatSelect", function(req, res){
   // res.sendFile(__dirname + '/chatroom.html');
 
   // find all chatrooms for username's email
-  console.log("email is: " + email);
+  console.log("email is: " + helper.email);
   var userChatRooms = [];
-  // var chatRoomDocsForUser = ChatRoomCollection.find( { members: email } );
-  ChatRoomCollection.find( { members: email } ).map(function(doc) {
-    console.log("Pushing chatroom: " + doc.chat_name);
-    userChatRooms.push(doc.chat_name);
+  ChatRoomCollection.find( { members: helper.email }, function(docs) {
+    console.log("DOCS: " + docs);
+    if(docs) {
+      docs.forEach(function(myDoc) {
+        console.log("Pushing chatroom: " + myDoc.chat_name);
+        userChatRooms.push(myDoc.chat_name);
+      });
+    }
   });
 
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
