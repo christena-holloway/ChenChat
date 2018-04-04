@@ -81,7 +81,7 @@ app.get("/chat", function(req, res) {
     console.log("members: " + result_array1.members);
     res.render(__dirname + '/chat.html', { messages: result_array1.messages, members: result_array1.members });
   }
-  
+
   ChatRoom2.findOne( { 'chat_name': chatName }, 'messages members', function(err, doc) {
     result_array1 = doc;
     callback();
@@ -139,7 +139,7 @@ function sendMessage(msg, sender, chat_token = 'test') {
     });
   });
 
-  var username;
+  //var username;
 
   UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
     if (err) {
@@ -221,8 +221,8 @@ io.on('connection', function(socket){
   });
 
   io.emit('getChatName', chatName);
-  
-  
+
+
   //TODO: query db for all members in chat room
   //io.emit('getMembers', memberArr)
 
@@ -251,16 +251,34 @@ io.on('connection', function(socket){
     var currentTime = helper.getTimestamp();
   });
 
-    socket.on('entered emails', function(emails) {
+  socket.on('creator check', function(data) {
+    var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
+    var response = "false";
+    function callback() {
+      socket.emit('creator check receive', response);
+    }
+
+    ChatRoom2.findOne( { 'chat_name': data.chatroomName, 'creator': data.user }, 'creator', function(err, doc) {
+      if(doc != null ) {
+        resonse = "true";
+      }
+      callback();
+    });
+  });
+
+    socket.on('entered emails', function(data) {
+      var emails = data.emails;
+      var creator = data.creator;
       var stripped = emails.replace(/\s/g, "");
       var emailArr = stripped.split(',');
+
       console.log(emailArr);
 
       //check if chatroom exists
       ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
       //if this chat room does not exist yet, create it
         if (count === 0) {
-          m = new ChatRoomCollection({ 'chat_name': chatName, 'members': [], 'messages': [] });
+          m = new ChatRoomCollection({ 'chat_name': chatName, 'creator': creator, 'members': [], 'messages': []  });
           //!!!!TODO: make sure duplicate email addresses aren't entered
           //push current user to members vector
           //let email = getEmail(token);

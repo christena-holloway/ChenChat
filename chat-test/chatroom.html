@@ -42,11 +42,11 @@
       }
       else {
         var inChatName = document.getElementById("chat_id").value;
-        var emails = document.getElementById("chat_mems").value;
+        var emailNames = document.getElementById("chat_mems").value;
         //console.log("VALUE IN: " + inChatName);
         var socket = io();
         socket.emit('chat name', inChatName);
-        socket.emit('entered emails', emails);
+        socket.emit('entered emails', {emails: emailNames, creator:username});
         //window.location.replace("/chat");//+ input_vals[0];
         socket.on('redirect', function(destination) {
           window.location.href = destination + "&name=" + username;

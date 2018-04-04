@@ -20,7 +20,7 @@
     //display chat room name
     var socket = io();
     var chat_name;
-
+    var is_creator = "false";
     var urlString = window.location.href;
     var url = new URL(urlString);
     var username = url.searchParams.get("name");
@@ -43,7 +43,7 @@
           var whole = listElt.append($('<small>').text(messageArray[i].timestamp));
           $('#messages').append(whole);
         }
-        
+
         var memberArray = <%- JSON.stringify(members) %>
         for (i = 0; i < memberArray.length; i++) {
           $('#members').append(memberArray[i]);
@@ -52,8 +52,20 @@
         updateScroll();
         // send chat room name to send message via google home
         socket.emit('chatNameForGoogleMessage', chat_name);
+
+        //check if the current user is the creator of the chatroom
+        socket.emit('creator check', {user: username, chatroomName: chat_name});
+
       }
     }
+
+    socket.on('creator check receive', function(response) {
+      is_creator = response;
+      if(is_creator == "true") {
+        console.log("YES, IT IS I WHO MADE IT");
+      }
+    });
+
 
     socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
       if (username == null) {
@@ -70,7 +82,7 @@
         window.location.href = '/';
       }
     });
-    
+
     $(function () {
       socket.on('getMembers', function(memberArr) {
         for (var i = 0; i < memberArr.length; i++) {
@@ -131,7 +143,7 @@
     function goBack() {
       window.location.href = '/chatroom?name=' + username;
     }
-    
+
     function doCheck() {
       var txtboxFilled = true;
       $('#m').each(function () {
@@ -164,12 +176,12 @@
         <ul id="messages">
         </ul>
       </div>
-      
+
       <div class="member-list">
         <ul id="members">
         </ul>
       </div>
-    
+
       <div class="msg-box">
         <form class="flex-msg-form" method="post" action="/" enctype="application/json">
           <input id="m" name="message" autocomplete="off" />
