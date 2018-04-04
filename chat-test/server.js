@@ -75,16 +75,11 @@ app.get("/help", function(req, res) {
 app.get("/chat", function(req, res) {
   var result_array1 = [];
   var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
-
-  function callback() {
-    console.log("members: " + result_array1.members);
-    res.render(__dirname + '/chat.html', { messages: result_array1.messages, members: result_array1.members });
-  }
   
   ChatRoom2.findOne( { 'chat_name': chatName }, 'messages members', function(err, doc) {
     result_array1 = doc;
     console.log("result array: " + result_array1);
-    callback();
+    res.render(__dirname + '/chat.html', { messages: result_array1.messages, members: result_array1.members });
   });
 });
 
@@ -186,12 +181,15 @@ io.on('connection', function(socket){
       //io.emit('login response', response);
     }
   });
-
+  var callback;
+  
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
     console.log("chat name " + chatName);
     var destination = '/chat?chatSelect=' + chatName;
-    io.emit('redirect', destination);
+    callback = function() {
+      io.emit('redirect', destination);
+    }
   });
 
   io.emit('getChatName', chatName);
@@ -238,11 +236,12 @@ io.on('connection', function(socket){
 
           m.save(function(err) {
             if (err) {
-                console.log(err);
-                res.status(400).send("Bad Request");
+              console.log(err);
+              res.status(400).send("Bad Request");
             }
             else {
-                console.log('successfully posted to db');
+              console.log('successfully posted to db');
+              callback();
             }
           });
         }
@@ -266,6 +265,7 @@ io.on('connection', function(socket){
               }
               else {
                   console.log('successfully posted to db');
+                  callback();
               }
             });
         });
@@ -296,7 +296,7 @@ io.on('connection', function(socket){
     }
     sign_ins[username] = 1;
     io.emit('redirect', destination + username);
-    helper.sendUserInfo(id_token, email, UserCollection);
+    helper.sendUserInfo(id_token, helper.email, UserCollection);
   });
 });
 

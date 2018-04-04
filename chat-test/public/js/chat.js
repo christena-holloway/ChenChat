@@ -14,7 +14,7 @@ socket.on('login response', function(response) {
 /*TODO: FIXXXXXXXXX!*/
 $(function () {
   socket.on('getMembers', function(memberArr) {
-    console.log("
+    console.log("members in chat.js: " + memberArr);
     for (var i = 0; i < memberArr.length; i++) {
       $('#members').append(memberArr[i]);
     }
@@ -42,7 +42,7 @@ function onLoad() {
 }
 
 function goBack() {
-  window.location.href = '/chatroom?name=' + username;
+  window.location.href = '/chatSelect?name=' + username;
 }
 
 function doCheck() {
