@@ -70,7 +70,7 @@ app.get("/chatSelect", function(req, res){
   // find all chatrooms for username's email
   console.log("email is: " + helper.email);
   var userChatRooms = [];
-  ChatRoomCollection.find( { members: { $in: [helper.email] } }, function(docs) {
+  ChatRoomCollection.find( { 'members': { $in: [helper.email] } }, "chat_name", function(docs) {
     console.log("DOCS: " + docs);
     if(docs) {
       docs.forEach(function(myDoc) {
