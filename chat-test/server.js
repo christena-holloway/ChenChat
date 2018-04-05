@@ -70,12 +70,15 @@ app.get("/chatSelect", function(req, res){
   // find all chatrooms for username's email
   console.log("email is: " + helper.email);
   var userChatRooms = [];
-  ChatRoomCollection.find( { members: helper.email }, function(docs) {
+  ChatRoomCollection.find( { members: { $in: [helper.email] } }, function(docs) {
     console.log("DOCS: " + docs);
     if(docs) {
       docs.forEach(function(myDoc) {
-        console.log("Pushing chatroom: " + myDoc.chat_name);
-        userChatRooms.push(myDoc.chat_name);
+        // email of user is in the members array for the chatroom
+        if(myDoc.members.indexOf(helper.email) > -1) {
+          console.log("Pushing chatroom: " + myDoc.chat_name);
+          userChatRooms.push(myDoc.chat_name);
+        }
       });
     }
   });
