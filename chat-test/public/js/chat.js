@@ -10,7 +10,6 @@ socket.on('login response', function(response) {
   }
 });
 
-/*TODO: FIXXXXXXXXX!*/
 $(function () {
   socket.on('getMembers', function(memberArr) {
     console.log("members in chat.js: " + memberArr);
@@ -19,7 +18,6 @@ $(function () {
     }
   });
 });
-//good for rest
 
 function updateScroll() {
   var messageBox = document.getElementById("messages");
@@ -41,6 +39,13 @@ function openMod() {
 
 function addMembers() {
   var emails = document.getElementById("chat_mems").value;
+  var stripped = emails.replace(/\s/g, "");
+  var memberArr = stripped.split(',');
+  
+  for (i = 0; i < memberArr.length; i++) {
+    $('#members').append(memberArr[i]);
+  }
+  
   var socket = io();
   socket.emit('chat name', chat_name);
   socket.emit('entered emails', emails);
