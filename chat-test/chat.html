@@ -18,39 +18,38 @@
     <link rel="stylesheet" type="text/css" href="css/mobilechat.css" media="handheld" />
     <title>ChenChat</title>
   </head>
-
   <body>
     <script>
-      window.onload = function() {
-        if (username == null) {
-          window.location.href = "/";
+    window.onload = function() {
+      if (username == null) {
+        window.location.href = "/";
+      }
+      else {
+        socket.emit('check login', username);
+        var chatRoom = url.searchParams.get("chatSelect");
+        document.getElementById('chat_name').innerHTML = chatRoom;
+        chat_name = chatRoom;
+
+        var messageArray =  <%- JSON.stringify(messages) %>
+        //console.log("array of messages: " + array);
+        for (i = 0; i < messageArray.length; i++) {
+          var listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
+          listElt = listElt.append($('<br>'));
+          var whole = listElt.append($('<small>').text(messageArray[i].timestamp));
+          $('#messages').append(whole);
         }
-        else {
-          socket.emit('check login', username);
-          var chatRoom = url.searchParams.get("chatroom");
-          document.getElementById('chat_name').innerHTML = chatRoom;
-          chat_name = chatRoom;
-
-          var messageArray =  <%- JSON.stringify(messages) %>
-          //console.log("array of messages: " + array);
-          for (i = 0; i < messageArray.length; i++) {
-            var listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
-            listElt = listElt.append($('<br>'));
-            var whole = listElt.append($('<small>').text(messageArray[i].timestamp));
-            $('#messages').append(whole);
-          }
-          
-          var memberArray = <%- JSON.stringify(members) %>
-          for (i = 0; i < memberArray.length; i++) {
-            $('#members').append(memberArray[i]);
-          }
-
+        
+        var memberArray = <%- JSON.stringify(members) %>
+        for (i = 0; i < memberArray.length; i++) {
+          var listElt = $('<li>').text(memberArray[i]);
+          $('#members').append(listElt);
           updateScroll();
           // send chat room name to send message via google home
           socket.emit('chatNameForGoogleMessage', chat_name);
 
         }
       }
+    }
 
     </script>
 
