@@ -65,7 +65,22 @@ app.get('/', function(req, res){
 });
 
 app.get("/chatSelect", function(req, res){
-  res.sendFile(__dirname + '/chatSelect.html');
+  // res.sendFile(__dirname + '/chatroom.html');
+
+  // find all chatrooms for username's email
+  console.log("email is: " + helper.email);
+  var userChatRooms = [];
+  ChatRoomCollection.find( { members: helper.email }, function(docs) {
+    console.log("DOCS: " + docs);
+    if(docs) {
+      docs.forEach(function(myDoc) {
+        console.log("Pushing chatroom: " + myDoc.chat_name);
+        userChatRooms.push(myDoc.chat_name);
+      });
+    }
+  });
+
+  res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 });
 
 app.get("/help", function(req, res) {
@@ -134,14 +149,13 @@ function sendMessage(msg, sender, chat_token = 'test') {
     });
   });
 
-  var username;
-
   UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
     if (err) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
   });
+
   io.emit('chat message', { from: sender, message: msg, chatRoomName: chat_token });
 }
 

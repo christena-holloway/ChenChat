@@ -18,6 +18,16 @@ else {
   }
 }
 
+window.onload = function() {
+  // Query db for chatrooms user has access to
+  var chatRoomsWithPermission =  JSON.stringify(myChatRooms);
+  for (var i = 0; i < chatRoomsWithPermission.length; i++) {
+    var listElt = $('<li id="my-chat-room" onclick="goToChatRoom(chatRoomsWithPermission[i]);">').text(chatRoomsWithPermission[i]);
+    listElt = listElt.append($('<br>'));
+    $(".list-of-chats").append(listElt);
+  }
+}
+
 function chatRedirect() {
   // var input_vals = $(this).serialize();
   if (username == null) {
@@ -38,6 +48,21 @@ function chatRedirect() {
     });
   }
 }
+
+function goToChatRoom(chatName) {
+  if (username == null) {
+    window.location.href = "/";
+  }
+  else {
+    console.log("Selected chatroom: " + chatName);
+    var socket = io();
+    socket.emit('chat name', chatName);
+    socket.on('redirect', function(destination) {
+      window.location.href = destination + "&name=" + username;
+    });
+  }
+}
+
 function signOut() {
   //socket.emit("signing out", username);
   var auth2 = gapi.auth2.getAuthInstance();
