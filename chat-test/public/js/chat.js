@@ -35,6 +35,19 @@ function signOut() {
   });
 }
 
+function openMod() {
+  // display text box for email address input
+  window.location.href = '#openModal';
+}
+
+function addMembers() {
+  var emails = document.getElementById("chat_mems").value;
+  var socket = io();
+  socket.emit('chat name', chat_name);
+  socket.emit('entered emails', emails);
+  window.location.href = '#close';
+}
+
 function onLoad() {
   gapi.load('auth2', function() {
     gapi.auth2.init();
