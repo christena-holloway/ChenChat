@@ -15,7 +15,6 @@
     <script src="js/chat.js"></script>
     <title>ChenChat</title>
   </head>
-
   <body>
     <script>
     window.onload = function() {
@@ -24,7 +23,7 @@
       }
       else {
         socket.emit('check login', username);
-        var chatRoom = url.searchParams.get("chatroom");
+        var chatRoom = url.searchParams.get("chatSelect");
         document.getElementById('chat_name').innerHTML = chatRoom;
         chat_name = chatRoom;
 
@@ -39,7 +38,8 @@
         
         var memberArray = <%- JSON.stringify(members) %>
         for (i = 0; i < memberArray.length; i++) {
-          $('#members').append(memberArray[i]);
+          var listElt = $('<li>').text(memberArray[i]);
+          $('#members').append(listElt);
         }
 
         updateScroll();

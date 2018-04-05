@@ -10,7 +10,6 @@ socket.on('login response', function(response) {
   }
 });
 
-
 /*TODO: FIXXXXXXXXX!*/
 $(function () {
   socket.on('getMembers', function(memberArr) {
@@ -68,7 +67,7 @@ socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
         window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
       }
     });
-    
+
 $(function () {
   var now = moment();
   var time = now.format('YYYY-MM-DD hh:mm A');

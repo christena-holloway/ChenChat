@@ -175,6 +175,15 @@ button[disabled] {
   font-size: 10px;
 }
 
+#members {
+  list-style-type: none;
+  div.border { border-left: 1px solid #eee }
+}
+
+#members li {
+  padding: 5px 10px;
+}
+
 /* Use a media query to add a breakpoint at 800px: */
 @media screen and (max-width: 800px) {
   #messages li {
