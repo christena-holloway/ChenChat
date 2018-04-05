@@ -43,15 +43,15 @@
         for (i = 0; i < memberArray.length; i++) {
           var listElt = $('<li>').text(memberArray[i]);
           $('#members').append(listElt);
+          updateScroll();
+          // send chat room name to send message via google home
+          socket.emit('chatNameForGoogleMessage', chat_name);
+
         }
-
-        updateScroll();
-        // send chat room name to send message via google home
-        socket.emit('chatNameForGoogleMessage', chat_name);
-
       }
-    }
-  </script>
+
+    </script>
+
     <div class="grid-container">
       <header>
         <h1 class="title" id="chat_name"> </h1>
