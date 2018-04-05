@@ -81,6 +81,131 @@ header {
   margin-right: 12px;
 }
 
+.btn-plus {
+  font-family: Helvetica Neue, Arial;
+  background-color: #E38968;
+  border: none;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 40px;
+  height: 40px;
+  width: 70px;
+  position: absolute;
+  right: 0;
+  top: 0.07%;
+  left: 85%;
+  margin-top: 30px;
+  margin-right: 12px;
+}
+
+.modalDialog {
+  position: fixed;
+  font-family: 'Ubuntu', sans-serif;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 99999;
+  opacity:0;
+  -webkit-transition: opacity 400ms ease-in;
+  -moz-transition: opacity 400ms ease-in;
+  transition: opacity 400ms ease-in;
+  pointer-events: none;
+}
+
+.modalDialog:target {
+  opacity:1;
+  pointer-events: auto;
+}
+
+.modalDialog > div {
+  width: 500px;
+  position: relative;
+  margin: 10% auto;
+  padding: 5px 20px 13px 20px;
+  border-radius: 30px;
+  background: -moz-linear-gradient(#fff, #999);
+  background: -webkit-linear-gradient(#fff, #999);
+  background: -o-linear-gradient(#fff, #999);
+}
+
+.close {
+  background: #E38968;
+  color: #FFFFFF;
+  line-height: 25px;
+  position: absolute;
+  right: -12px;
+  text-align: center;
+  top: -10px;
+  width: 24px;
+  text-decoration: none;
+  font-weight: bold;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  border-radius: 12px;
+  -moz-box-shadow: 1px 1px 3px #000;
+  -webkit-box-shadow: 1px 1px 3px #000;
+  box-shadow: 1px 1px 3px #000;
+}
+
+.close:hover { background: #E38968; }
+
+form input[type=button] {
+  width: 20%;
+  color: white;
+  font-size: 15px;
+  text-transform: uppercase;
+  border: 4px white;
+  cursor: pointer;
+  font-weight: bold;
+  background: #E38968;
+  border-radius: 10px;
+
+  &:hover {
+    color: darken($blue, 7%);
+  }
+}
+input[type=text],
+input[type=email] {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 13px;
+  outline: none;
+  color: #777;
+  padding-left: 10px;
+  margin: 10px;
+  margin-top: 12px;
+  margin-left: 18px;
+  width: 350px;
+  height: 35px;
+  border: 1px solid #c7d0d2;
+  border-radius: 2px;
+  box-shadow: inset 0 1.5px 3px rgba(190, 190, 190, .4), 0 0 0 5px #f5f7f8;
+  box-shadow: inset 0 1.5px 3px rgba(190, 190, 190, .4), 0 0 0 5px #f5f7f8;
+  -webkit-transition: all .4s ease;
+  -moz-transition: all .4s ease;
+  transition: all .4s ease;
+}
+input[type=text]:hover,
+input[type=email]:hover {
+    border: 1px solid #b6bfc0;
+    box-shadow: inset 0 1.5px 3px rgba(190, 190, 190, .7), 0 0 0 5px #f5f7f8;
+}
+input[type=text]:focus,
+input[type=email]:focus {
+    border: 1px solid #a8c9e4;
+    box-shadow: inset 0 1.5px 3px rgba(190, 190, 190, .4), 0 0 0 5px #e6f2f9;
+}
+#lower {
+  background: #ecf2f5;
+  width: 100%;
+  height: 69px;
+  margin-top: 20px;
+}
+
+
 .chat-content {
   grid-row: 2 / 3;
 }
@@ -113,6 +238,7 @@ form input {
   width: 80%;
   height: 70px;
   font-size: 27px;
+  color: black;
   border-style: groove;
 }
 
@@ -175,6 +301,15 @@ button[disabled] {
   font-size: 10px;
 }
 
+#members {
+  list-style-type: none;
+  div.border { border-left: 1px solid #eee }
+}
+
+#members li {
+  padding: 5px 10px;
+}
+
 /* Use a media query to add a breakpoint at 800px: */
 @media screen and (max-width: 800px) {
   #messages li {
@@ -198,5 +333,6 @@ button[disabled] {
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
   }
+
 
 }

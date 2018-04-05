@@ -65,7 +65,25 @@ app.get('/', function(req, res){
 });
 
 app.get("/chatSelect", function(req, res){
-  res.sendFile(__dirname + '/chatSelect.html');
+  // res.sendFile(__dirname + '/chatroom.html');
+
+  // find all chatrooms for username's email
+  console.log("email is: " + helper.email);
+  var userChatRooms = [];
+  ChatRoomCollection.find( { 'members': { $in: [helper.email] } }, "chat_name", function(docs) {
+    console.log("DOCS: " + docs);
+    if(docs) {
+      docs.forEach(function(myDoc) {
+        // email of user is in the members array for the chatroom
+        if(myDoc.members.indexOf(helper.email) > -1) {
+          console.log("Pushing chatroom: " + myDoc.chat_name);
+          userChatRooms.push(myDoc.chat_name);
+        }
+      });
+    }
+  });
+
+  res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 });
 
 app.get("/help", function(req, res) {
@@ -76,15 +94,10 @@ app.get("/chat", function(req, res) {
   var result_array1 = [];
   var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
 
-  function callback() {
-    console.log("members: " + result_array1.members);
-    res.render(__dirname + '/chat.html', { messages: result_array1.messages, members: result_array1.members });
-  }
-
   ChatRoom2.findOne( { 'chat_name': chatName }, 'messages members', function(err, doc) {
     result_array1 = doc;
     console.log("result array: " + result_array1);
-    callback();
+    res.render(__dirname + '/chat.html', { messages: result_array1.messages, members: result_array1.members });
   });
 });
 
@@ -139,14 +152,13 @@ function sendMessage(msg, sender, chat_token = 'test') {
     });
   });
 
-  //var username;
-
   UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
     if (err) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
   });
+
   io.emit('chat message', { from: sender, message: msg, chatRoomName: chat_token });
 }
 
@@ -186,12 +198,15 @@ io.on('connection', function(socket){
       //io.emit('login response', response);
     }
   });
+  var callback;
 
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
     console.log("chat name " + chatName);
     var destination = '/chat?chatSelect=' + chatName;
-    io.emit('redirect', destination);
+    callback = function() {
+      io.emit('redirect', destination);
+    }
   });
 
   io.emit('getChatName', chatName);
@@ -256,11 +271,12 @@ io.on('connection', function(socket){
 
           m.save(function(err) {
             if (err) {
-                console.log(err);
-                res.status(400).send("Bad Request");
+              console.log(err);
+              res.status(400).send("Bad Request");
             }
             else {
-                console.log('successfully posted to db');
+              console.log('successfully posted to db');
+              callback();
             }
           });
         }
@@ -284,6 +300,7 @@ io.on('connection', function(socket){
               }
               else {
                   console.log('successfully posted to db');
+                  callback();
               }
             });
         });
@@ -314,7 +331,7 @@ io.on('connection', function(socket){
     }
     sign_ins[username] = 1;
     io.emit('redirect', destination + username);
-    helper.sendUserInfo(id_token, email, UserCollection);
+    helper.sendUserInfo(id_token, helper.email, UserCollection);
   });
 });
 

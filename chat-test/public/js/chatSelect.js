@@ -39,6 +39,7 @@ function chatRedirect() {
     });
   }
 }
+
 function signOut() {
   //socket.emit("signing out", username);
   var auth2 = gapi.auth2.getAuthInstance();

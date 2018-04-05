@@ -18,17 +18,14 @@ socket.on('login response', function(response) {
   }
 });
 
-
-/*TODO: FIXXXXXXXXX!*/
 $(function () {
   socket.on('getMembers', function(memberArr) {
-    console.log("
+    console.log("members in chat.js: " + memberArr);
     for (var i = 0; i < memberArr.length; i++) {
       $('#members').append(memberArr[i]);
     }
   });
 });
-//good for rest
 
 function updateScroll() {
   var messageBox = document.getElementById("messages");
@@ -43,6 +40,26 @@ function signOut() {
   });
 }
 
+function openMod() {
+  // display text box for email address input
+  window.location.href = '#openModal';
+}
+
+function addMembers() {
+  var emails = document.getElementById("chat_mems").value;
+  var stripped = emails.replace(/\s/g, "");
+  var memberArr = stripped.split(',');
+  
+  for (i = 0; i < memberArr.length; i++) {
+    $('#members').append(memberArr[i]);
+  }
+  
+  var socket = io();
+  socket.emit('chat name', chat_name);
+  socket.emit('entered emails', emails);
+  window.location.href = '#close';
+}
+
 function onLoad() {
   gapi.load('auth2', function() {
     gapi.auth2.init();
@@ -50,7 +67,7 @@ function onLoad() {
 }
 
 function goBack() {
-  window.location.href = '/chatroom?name=' + username;
+  window.location.href = '/chatSelect?name=' + username;
 }
 
 function doCheck() {
