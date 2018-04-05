@@ -5,14 +5,17 @@
     <meta name="google-signin-client_id" content="533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="css/mystyle.css" media="Screen" />
-    <link rel="stylesheet" type="text/css" href="css/mobilechat.css" media="handheld" />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="jquery-scrollto/lib/jquery-scrollto.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="js/chat.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/mystyle.css" media="Screen" />
+    <link rel="stylesheet" type="text/css" href="css/mobilechat.css" media="handheld" />
     <title>ChenChat</title>
   </head>
   <body>
@@ -45,18 +48,31 @@
         updateScroll();
         // send chat room name to send message via google home
         socket.emit('chatNameForGoogleMessage', chat_name);
+
       }
     }
-
   </script>
     <div class="grid-container">
       <header>
         <h1 class="title" id="chat_name"> </h1>
-        <!-- <a href="product.html" class="back-but ton"> Back </a> -->
-        <!--<a href="/contacts" class="back-button" style="display: none;"> Back </a> -->
         <button class="back-button" onclick="goBack();"> Back </button>
         <a href="/" class="signOut" onclick="signOut();"> Log out </a>
       </header>
+
+      <button type="button" class="btn-plus" onclick="openMod();">
+          <span class="glyphicon glyphicon-plus"></span> Add </button>
+
+
+      <div id="openModal" class="modalDialog">
+        <div>
+          <a href="#close" title="Close" class="close">X</a>
+          <h2>Add New Members</h2>
+          <form class="mem-form" enctype="application/json">
+          <input type="email" placeholder="Gmail addresses, separated by commas" id="chat_mems" name="members" autocomplete="off" multiple/><br><br><br>
+          <input id="selectRoom" type="button" onclick="addMembers();" value="Submit" />
+        </form>
+        </div>
+      </div>
 
       <div class="chat-content">
         <ul id="messages">
@@ -75,6 +91,6 @@
         </form>
       </div>
     </div>
-    <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
   </body>
+  <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
 </html>
