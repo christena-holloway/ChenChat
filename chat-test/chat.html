@@ -21,37 +21,39 @@
 
   <body>
     <script>
-    window.onload = function() {
-      if (username == null) {
-        window.location.href = "/";
-      }
-      else {
-        socket.emit('check login', username);
-        var chatRoom = url.searchParams.get("chatroom");
-        document.getElementById('chat_name').innerHTML = chatRoom;
-        chat_name = chatRoom;
-
-        var messageArray =  <%- JSON.stringify(messages) %>
-        //console.log("array of messages: " + array);
-        for (i = 0; i < messageArray.length; i++) {
-          var listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
-          listElt = listElt.append($('<br>'));
-          var whole = listElt.append($('<small>').text(messageArray[i].timestamp));
-          $('#messages').append(whole);
+      window.onload = function() {
+        if (username == null) {
+          window.location.href = "/";
         }
-        
-        var memberArray = <%- JSON.stringify(members) %>
-        for (i = 0; i < memberArray.length; i++) {
-          $('#members').append(memberArray[i]);
+        else {
+          socket.emit('check login', username);
+          var chatRoom = url.searchParams.get("chatroom");
+          document.getElementById('chat_name').innerHTML = chatRoom;
+          chat_name = chatRoom;
+
+          var messageArray =  <%- JSON.stringify(messages) %>
+          //console.log("array of messages: " + array);
+          for (i = 0; i < messageArray.length; i++) {
+            var listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
+            listElt = listElt.append($('<br>'));
+            var whole = listElt.append($('<small>').text(messageArray[i].timestamp));
+            $('#messages').append(whole);
+          }
+          
+          var memberArray = <%- JSON.stringify(members) %>
+          for (i = 0; i < memberArray.length; i++) {
+            $('#members').append(memberArray[i]);
+          }
+
+          updateScroll();
+          // send chat room name to send message via google home
+          socket.emit('chatNameForGoogleMessage', chat_name);
+
         }
-
-        updateScroll();
-        // send chat room name to send message via google home
-        socket.emit('chatNameForGoogleMessage', chat_name);
-
       }
-    }
-  </script>
+
+    </script>
+
     <div class="grid-container">
       <header>
         <h1 class="title" id="chat_name"> </h1>
