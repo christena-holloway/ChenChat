@@ -3,6 +3,7 @@ var app = express();
 var jwtDecode = require('jwt-decode');
 var mailer = require('express-mailer');
 var moment = require('moment');
+var mongoose = require('mongoose');
 
 app.set('view engine', 'pug');
 app.engine('html', require('ejs').renderFile);
@@ -18,6 +19,16 @@ mailer.extend(app, {
     pass: 'a532tVhQ6vWq?kL-'
   }
 });
+
+var userSchema = new mongoose.Schema({
+  userID: String,
+  fullName: String,
+  email: String,
+  chats: []
+}, {collection: "users"});
+
+var UserCollection = mongoose.model("User", userSchema);
+
 
 module.exports = {
   email: "temp",
@@ -85,7 +96,53 @@ module.exports = {
 	      return;
 	    }
 	  });
-	},
+    
+    // add user to db if they're not already in
+    console.log("EMAILARR: " + emailArr);
+    for (let i = 0; i < emailArr.length; i++) {
+      UserCollection.count({ email: emailArr[i] }, function(err, count) {
+        // if user is not in db
+        if (count === 0) {
+          var u = new UserCollection({ 'userID': '', 'fullName': '', 'email': emailArr[i], 'chats': [] });
+          //append new chat to chats array
+          u.chats.push(chatName);
+          u.save(function(err) {
+            if (err) {
+              console.log(err);
+              res.status(400).send("Bad Request");
+            }
+            else {
+              console.log("successfully posted user info to db");
+            }
+          });
+        }
+        else {
+          // update chats array in user's doc
+          console.log("user is already in db");
+          // find user's doc
+          UserCollection.findOne({ 'email': emailArr[i] }, 'fullName', function (err, user) {
+            /*probably need to account for user already being 
+            in this chat room (maybe just do when displaying 
+            rooms on chatSelect*/
+            if (err) {
+              console.log(err);
+              res.status(400).send("Bad Request");
+            }
+            user.chats.push(chatName);
+            user.save(function(err) {
+              if (err) {
+                console.log(err);
+                res.status(400).send("Bad Request");
+              }
+              else {
+                console.log("successfully added to user's chats array");
+              }
+            });
+          });
+        }
+      });
+    }
+  },
 
 	getTimestamp: function() {
 		var now = moment();
@@ -111,15 +168,16 @@ module.exports = {
     return email;
 	},
 
-	sendUserInfo: function(token, email, UserCollection) {
+  // only runs on index when user logs in (so chats array doesn't need to change)
+	sendUserInfo: function(token) {
 		let sub = this.getUID(token);
 	  let name = this.getName(token);
 	  //might wanna change email back to local variable? (global rn to add current user to chat members)
 	  this.email = this.getEmail(token);
-    console.log("EMAIL: " + email);
+    console.log("EMAIL: " + this.email);
 	  UserCollection.count({ userID: sub }, function(err, count) {
 	    if (count === 0) {
-	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': email });
+	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': this.email, 'chats': [] });
 	      u.save(function(err) {
 	        if (err) {
 	          console.log(err);
