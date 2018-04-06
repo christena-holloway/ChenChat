@@ -39,6 +39,7 @@ mongoose.Promise = Promise;
 //define chatroom and user schemas
 var chatRoomSchema = new mongoose.Schema({
     chat_name: String,
+    creator: String,
     members: [],
     messages: []
 }, {collection: "ChatRoom"});
@@ -227,6 +228,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('creator check', function(data) {
+    console.log('I AM DOING THE CREATOR CHECK');
     var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
     var response = "false";
     function callback() {
@@ -235,7 +237,7 @@ io.on('connection', function(socket){
 
     ChatRoom2.findOne( { 'chat_name': data.chatroomName, 'creator': data.user }, 'creator', function(err, doc) {
       if(doc != null ) {
-        resonse = "true";
+        response = "true";
       }
       callback();
     });

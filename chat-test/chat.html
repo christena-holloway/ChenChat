@@ -41,7 +41,11 @@
 
         var memberArray = <%- JSON.stringify(members) %>
         for (i = 0; i < memberArray.length; i++) {
-          var listElt = $('<li>').text(memberArray[i]);
+          //var listElt = $('<li>').text(memberArray[i]);
+          //$('#members').append(listElt);
+          var arrayElement = $("<p>HELLO</p>");
+          var listElt = $('<li>').text("HELLO");
+          //$('#members').append(memberArr[i]);
           $('#members').append(listElt);
           updateScroll();
           // send chat room name to send message via google home
@@ -57,6 +61,7 @@
 
       }
     }
+  }
   </script>
 
     <div class="grid-container">

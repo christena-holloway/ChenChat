@@ -22,7 +22,25 @@ $(function () {
   socket.on('getMembers', function(memberArr) {
     console.log("members in chat.js: " + memberArr);
     for (var i = 0; i < memberArr.length; i++) {
-      $('#members').append(memberArr[i]);
+      
+      //SAMPLE CODE
+      /*
+      function addBagToCart(deg, bagID, numItems) {
+      // check if this color bag exists in cart
+      var bagElement = $("<div class='item' id=bagID></div>");
+      var bagImgElement = $("<img class='prod-img' src='img/bp1.jpg'>");
+      var bagTitleElement = $("<div class='desc'>Rugged 493 Backpack</div>");
+      var bagInfoElement = $("<div class='info'>Quantity: " + numItems + "<br>Cost: $" + (493.00*numItems) + "</div>");
+      var colorRotate = "hue-rotate(" + deg + ")";
+      bagImgElement.css("filter", colorRotate);
+      // Add delete button
+      var deleteItem = $("<a href='#' id='deleteItem' style='color:black;'> Delete item </a>");
+      bagElement.append(bagImgElement).append(bagTitleElement).append(bagInfoElement).append(deleteItem);
+      $("#bag-open").append(bagElement);
+  }*/
+      var arrayElement = $("<p>HELLO</p>");
+      //$('#members').append(memberArr[i]);
+      $('#members').append(arrayElement);
     }
   });
 });
