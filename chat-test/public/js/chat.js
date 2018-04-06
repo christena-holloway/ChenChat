@@ -50,6 +50,11 @@ function addMembers() {
   socket.emit('chat name', chat_name);
   socket.emit('entered emails', emails);
   window.location.href = '#close';
+  document.forms[0].reset();
+  //document.mems-form.chat_mems.value = "";
+  //document.getElementById('members').value = "";
+  //oForm.members.value = "";
+  //oForm.mems-form.value = '';
 }
 
 function onLoad() {
