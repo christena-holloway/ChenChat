@@ -271,7 +271,7 @@ button[disabled] {
   line-height: 30px;
   font-size: 20px;
   overflow: auto;
-  height: 500px;
+  /*height: 500px;*/
   /*max-height: 500px;*/
   height: 100%;
   grid-row: 2 / span 1;
