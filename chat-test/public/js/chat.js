@@ -49,8 +49,8 @@ function addMembers() {
   var socket = io();
   socket.emit('chat name', chat_name);
   socket.emit('entered emails', emails);
-  window.location.href = '#close';
   document.forms[0].reset();
+  window.location.href = '#close';
 }
 
 function onLoad() {
