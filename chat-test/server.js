@@ -44,14 +44,9 @@ var chatRoomSchema = new mongoose.Schema({
     messages: []
 }, {collection: "ChatRoom"});
 
-var userSchema = new mongoose.Schema({
-  userID: String,
-  fullName: String,
-  email: String
-}, {collection: "users"});
+
 
 var ChatRoomCollection = mongoose.model("ChatRoom", chatRoomSchema);
-var UserCollection = mongoose.model("User", userSchema);
 //connect to db
 mongoose.connect(conString, function(err){
     if (err) throw err;
@@ -143,22 +138,23 @@ function sendMessage(msg, sender, chat_token = 'test') {
     var msgObj = {'from': sender, 'body': msg, 'timestamp': time};
     m.messages.push(msgObj);
     m.save(function(err) {
-     if (err) {
-          console.log(err);
-          res.status(400).send("Bad Request");
+      if (err) {
+        console.log(err);
+        res.status(400).send("Bad Request");
       }
       else {
-          console.log('successfully posted to db');
+        console.log('successfully posted to db');
       }
     });
   });
 
-  UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
+  // What's this for? (move to helper if still needed)
+  /*UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
     if (err) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
-  });
+  });*/
 
   io.emit('chat message', { from: sender, message: msg, chatRoomName: chat_token });
 }
@@ -316,14 +312,10 @@ io.on('connection', function(socket){
     client.verifyIdToken(
     id_token,
     "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
-    // Or, if multiple clients access the backend:
-    //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3],
     function(e, login) {
       var payload = login.getPayload();
       var userid = payload.sub;
       var name = payload.name;
-      // If request specified a G Suite domain:
-      //var domain = payload['hd'];
     });
 
     username = helper.getName(id_token);
@@ -333,7 +325,7 @@ io.on('connection', function(socket){
     }
     sign_ins[username] = 1;
     io.emit('redirect', destination + username);
-    helper.sendUserInfo(id_token, helper.email, UserCollection);
+    helper.sendUserInfo(id_token);
   });
 });
 
