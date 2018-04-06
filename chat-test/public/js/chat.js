@@ -51,7 +51,7 @@ function addMembers() {
   socket.emit('entered emails', emails);
   //document.forms['mememail'].reset();
   window.location.href = '#close';
-  document.getElementById('chat_mems').value = "";
+  //document.getElementById('chat_mems').value = "";
 }
 
 function onLoad() {
