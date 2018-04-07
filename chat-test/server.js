@@ -128,6 +128,19 @@ var sub;
 var m;
 var chatName;
 
+/*function saveMessage(m) {
+  m.save(function(err) {
+    if (err) {
+      console.log(err);
+      res.status(400).send("Bad Request");
+    }
+    else {
+      console.log('successfully posted to db');
+      callback();
+    }
+  });
+}*/
+
 function sendMessage(msg, sender, chat_token = 'test') {
   //check if chat room already exists
   ChatRoomCollection.findOne({ chat_name: chatName }, function (err, doc) {
@@ -143,9 +156,9 @@ function sendMessage(msg, sender, chat_token = 'test') {
       }
       else {
         console.log('successfully posted to db');
+        //callback();
       }
-    });
-  });
+    });  });
 
   // What's this for? (move to helper if still needed)
   /*UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
@@ -223,8 +236,9 @@ io.on('connection', function(socket){
   });
 
     socket.on('entered emails', function(emails) {
-      var stripped = emails.replace(/\s/g, "");
-      var emailArr = stripped.split(',');
+      let stripped = emails.replace(/\s/g, "");
+      let splitArr = stripped.split(',');
+      let emailArr = splitArr.filter(item => item.trim() !== '');
       console.log(emailArr);
 
       //check if chatroom exists
@@ -238,30 +252,35 @@ io.on('connection', function(socket){
           console.log("current user's email: " + helper.email);
           m.members.push(helper.email);
           //add members
-          for (var i = 0; i < emailArr.length; ++i) {
+          for (var i = 0; i < emailArr.length; i++) {
             console.log(emailArr[i]);
             if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
               m.members.push(emailArr[i]);
             }
           }
-          helper.sendInvite(emailArr, chatName, username);
-          console.log("after new message");
-
-          m.save(function(err) {
-            if (err) {
-              console.log(err);
-              res.status(400).send("Bad Request");
-            }
-            else {
-              console.log('successfully posted to db');
-              callback();
-            }
-          });
-        }
+          console.log("length of emailArr: " + emailArr.length);
+          if (emailArr.length > 0) {
+            console.log("sending invites to: " + emailArr);
+            helper.sendInvite(emailArr, chatName, username);
+          }
+          else {
+            console.log("will add chat to current user's chat array");
+          }
+m.save(function(err) {
+    if (err) {
+      console.log(err);
+      res.status(400).send("Bad Request");
+    }
+    else {
+      console.log('successfully posted to db');
+      callback();
+    }
+  });        }
         else {
           ChatRoomCollection.findOne({ chat_name: chatName }, function (err, doc) {
             //doc is document for the chat room
             m = doc;
+            m.members.push(helper.email);
             for (var i = 0; i < emailArr.length; ++i) {
               ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
                 if (count === 0) {
@@ -269,19 +288,24 @@ io.on('connection', function(socket){
                 }
               });
             }
-
-            helper.sendInvite(emailArr, chatName, username);
-            m.save(function(err) {
-              if (err) {
-                  console.log(err);
-                  res.status(400).send("Bad Request");
-              }
-              else {
-                  console.log('successfully posted to db');
-                  callback();
-              }
-            });
-        });
+            console.log("length of emailArr: " + emailArr.length);
+            if (emailArr.length > 0){
+              console.log("sending invites to: " + emailArr);
+              helper.sendInvite(emailArr, chatName, username);
+            }
+            else {
+              console.log("will add chat to current user's chat array");
+            }
+m.save(function(err) {
+    if (err) {
+      console.log(err);
+      res.status(400).send("Bad Request");
+    }
+    else {
+      console.log('successfully posted to db');
+      callback();
+    }
+  });        });
       }
     });
   });

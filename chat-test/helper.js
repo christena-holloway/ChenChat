@@ -77,6 +77,7 @@ module.exports = {
 	  return msg;
 	},
 
+  // run only if there is something in the email array!
 	sendInvite: function(emailArr, chatName, username) {
 		var emailString = emailArr.join();
 	  // Setup email data.
@@ -99,6 +100,7 @@ module.exports = {
     
     // add user to db if they're not already in
     console.log("EMAILARR: " + emailArr);
+    emailArr.push(this.email);
     for (let i = 0; i < emailArr.length; i++) {
       UserCollection.count({ email: emailArr[i] }, function(err, count) {
         // if user is not in db
@@ -106,38 +108,24 @@ module.exports = {
           var u = new UserCollection({ 'userID': '', 'fullName': '', 'email': emailArr[i], 'chats': [] });
           //append new chat to chats array
           u.chats.push(chatName);
-          u.save(function(err) {
-            if (err) {
-              console.log(err);
-              res.status(400).send("Bad Request");
-            }
-            else {
-              console.log("successfully posted user info to db");
-            }
-          });
+          saveUserToDB(u);
         }
         else {
           // update chats array in user's doc
           console.log("user is already in db");
           // find user's doc
-          UserCollection.findOne({ 'email': emailArr[i] }, 'fullName', function (err, user) {
+          UserCollection.findOne({ 'email': emailArr[i] }, function (err, doc) {
             /*probably need to account for user already being 
             in this chat room (maybe just do when displaying 
             rooms on chatSelect*/
+            let user = doc;
+            console.log("USER DOC IS: " + user);
             if (err) {
               console.log(err);
               res.status(400).send("Bad Request");
             }
             user.chats.push(chatName);
-            user.save(function(err) {
-              if (err) {
-                console.log(err);
-                res.status(400).send("Bad Request");
-              }
-              else {
-                console.log("successfully added to user's chats array");
-              }
-            });
+            saveUserToDB(user);
           });
         }
       });
@@ -173,20 +161,14 @@ module.exports = {
 		let sub = this.getUID(token);
 	  let name = this.getName(token);
 	  //might wanna change email back to local variable? (global rn to add current user to chat members)
-	  this.email = this.getEmail(token);
-    console.log("EMAIL: " + this.email);
+	  email = this.getEmail(token);
+    this.email = email;
+    //console.log("This.EMAIL: " + this.email);
+    //console.log("EMAIL: " + email);
 	  UserCollection.count({ userID: sub }, function(err, count) {
 	    if (count === 0) {
-	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': this.email, 'chats': [] });
-	      u.save(function(err) {
-	        if (err) {
-	          console.log(err);
-	          res.status(400).send("Bad Request");
-	        }
-	        else {
-	          console.log("successfully posted user info to db");
-	        }
-	      });
+	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': email, 'chats': [] });
+	      saveUserToDB(u);
 	    }
 	    else {
 	      console.log("user is already in db");
@@ -194,3 +176,15 @@ module.exports = {
 	  });
 	}
 };
+
+function saveUserToDB(userColl) {
+  userColl.save(function(err) {
+    if (err) {
+      console.log(err);
+      res.status(400).send("Bad Request");
+    }
+    else {
+      console.log("successfully posted user info to db");
+    }
+  });
+}
