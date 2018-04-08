@@ -202,7 +202,7 @@ module.exports = {
 	getChatsForUser: function(userEmail) {
 		console.log("User's email is: " + userEmail);
 		UserCollection.findOne({ email: userEmail }, function (err, doc) {
-			if(doc.chats) {
+			if(doc.chats != NULL) {
 				console.log("User's chats are: " + doc.chats);
 				return doc.chats;
 			}
