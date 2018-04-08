@@ -39,18 +39,20 @@ function openMod() {
 
 function addMembers() {
   let emails = document.getElementById("chat_mems").value;
+
   let stripped = emails.replace(/\s/g, "");
-  let memberArr = stripped.split(',');
-  
-  for (i = 0; i < memberArr.length; i++) {
-    $('#members').append(memberArr[i]);
-  }
-  //let socket = io();
+  let splitArr = stripped.split(',');
+  let emailArr = splitArr.filter(item => item.trim() !== '');
+
+  for (i = 0; i < emailArr.length; i++) {
+    let memlist = $('<li>').append(emailArr[i]);
+    memlist = memlist.append($('<br>'));
+    $('#members').append(memlist);
+
   socket.emit('chat name', chat_name);
   socket.emit('entered emails', emails);
-  //document.forms['mememail'].reset();
+
   window.location.href = '#close';
-  //document.getElementById('chat_mems').value = "";
 }
 
 function onLoad() {

@@ -27,7 +27,7 @@ var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
 
 //comment/uncomment to show mongoose debug info (everything inserted into db) in the console
-mongoose.set("debug", true);
+//mongoose.set("debug", true);
 
 //not sure if we need this
 mongoose.Promise = Promise;
@@ -59,6 +59,7 @@ app.get("/chatSelect", function(req, res){
   // find all chatrooms for username's email
   let userChatRooms = helper.getChatsForUser(helper.email);
   console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
+  
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 });
 
@@ -175,7 +176,7 @@ io.on('connection', function(socket){
 
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
-    console.log("chat name " + chatName);
+    //console.log("chat name " + chatName);
     let destination = '/chat?chatSelect=' + chatName;
     callback = function() {
       io.emit('redirect', destination);
@@ -202,7 +203,7 @@ io.on('connection', function(socket){
     let stripped = emails.replace(/\s/g, "");
     let splitArr = stripped.split(',');
     let emailArr = splitArr.filter(item => item.trim() !== '');
-    console.log(emailArr);
+    //console.log(emailArr);
 
     //check if chatroom exists
     ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
@@ -212,18 +213,18 @@ io.on('connection', function(socket){
         //!!!!TODO: make sure duplicate email addresses aren't entered
         //push current user to members vector
         //let email = helper.getEmail(token);
-        console.log("current user's email: " + helper.email);
+        //console.log("current user's email: " + helper.email);
         m.members.push(helper.email);
         //add members
         for (let i = 0; i < emailArr.length; i++) {
-          console.log(emailArr[i]);
+          //console.log(emailArr[i]);
           if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
             m.members.push(emailArr[i]);
           }
         }
         //console.log("length of emailArr: " + emailArr.length);
         if (emailArr.length > 0) {
-          console.log("sending invites to: " + emailArr);
+          //console.log("sending invites to: " + emailArr);
           helper.sendInvite(emailArr, chatName, username);
         }
         // add chat to current user's chat array
@@ -251,9 +252,9 @@ io.on('connection', function(socket){
               }
             });
           }
-          console.log("length of emailArr: " + emailArr.length);
+          //console.log("length of emailArr: " + emailArr.length);
           if (emailArr.length > 0){
-            console.log("sending invites to: " + emailArr);
+            //console.log("sending invites to: " + emailArr);
             helper.sendInvite(emailArr, chatName, username);
           }
           m.save(function(err) {
