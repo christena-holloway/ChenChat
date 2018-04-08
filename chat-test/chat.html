@@ -21,26 +21,31 @@
   <body>
     <script>
     window.onload = function() {
+      console.log("BEGIN OF ONLOAD");
       if (username == null) {
         window.location.href = "/";
       }
       else {
         socket.emit('check login', username);
+
         socket.emit('get email', username);
-        var chatRoom = url.searchParams.get("chatSelect");
+
+        let chatRoom = url.searchParams.get("chatSelect");
+
         document.getElementById('chat_name').innerHTML = chatRoom;
         chat_name = chatRoom;
 
-        var messageArray =  <%- JSON.stringify(messages) %>
+        let messageArray =  <%- JSON.stringify(messages) %>
         //console.log("array of messages: " + array);
-        for (i = 0; i < messageArray.length; i++) {
-          var listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
+        for (let i = 0; i < messageArray.length; i++) {
+          let listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
           listElt = listElt.append($('<br>'));
-          var whole = listElt.append($('<small>').text(messageArray[i].timestamp));
+          let whole = listElt.append($('<small>').text(messageArray[i].timestamp));
           $('#messages').append(whole);
         }
 
         var memberArray = <%- JSON.stringify(members) %>
+
         for (i = 0; i < memberArray.length; i++) {
           //var listElt = $('<li>').text(memberArray[i]);
           //$('#members').append(listElt);
@@ -51,6 +56,7 @@
           else {
             listElt = $("<li><p>" + memberArray[i] + "</p></li>");
           }
+
           $('#members').append(listElt);
           updateScroll();
           // send chat room name to send message via google home
@@ -64,7 +70,9 @@
 
 
       }
+      console.log("END OF ONLOAD");
     }
+
     //check if the current user is the creator of the chatroom
     socket.emit('creator check', {user: username, chatroomName: chat_name});
   }
@@ -76,17 +84,14 @@
         <button class="back-button" onclick="goBack();"> Back </button>
         <a href="/" class="signOut" onclick="signOut();"> Log out </a>
       </header>
-
       <!-- TODO: Add this button to the header like the back/sign out button -->
-
-
-
+      
       <div id="openModal" class="modalDialog">
         <div>
           <a href="#close" title="Close" class="close">X</a>
           <h2>Add New Members</h2>
           <form id="mememail" class="mem-form" name="mememail" enctype="application/json">
-          <input type="email" placeholder="Gmail addresses, separated by commas" id="chat_mems" name="members" autocomplete="off" multiple/><br><br><br>
+          <input type="email" placeholder="Gmail addresses (separated by commas)" id="chat_mems" name="members" autocomplete="off" multiple/><br><br><br>
           <input id="selectRoom" type="button" onclick="addMembers(); this.form.reset();" value="Submit" />
         </form>
         </div>

@@ -22,10 +22,10 @@
         }
         else {
           // Query db for chatrooms user has access to
-          var chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
+          let chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
           console.log("User's chat rooms include: " + chatRoomsWithPermission);
-          for (var i = 0; i < chatRoomsWithPermission.length; i++) {
-            var listElt = $('<li id="my-chat-room" onclick="goToChatRoom(chatRoomsWithPermission[i]);">').text(chatRoomsWithPermission[i]);
+          for (let i = 0; i < chatRoomsWithPermission.length; i++) {
+            let listElt = $('<li id="my-chat-room" onclick="goToChatRoom(chatRoomsWithPermission[i]);">').text(chatRoomsWithPermission[i]);
             listElt = listElt.append($('<br>'));
             $(".list-of-chats").append(listElt);
           }
@@ -38,7 +38,7 @@
         }
         else {
           console.log("Selected chatroom: " + chatName);
-          var socket = io();
+          let socket = io();
           socket.emit('chat name', chatName);
           socket.on('redirect', function(destination) {
             window.location.href = destination + "&name=" + username;
@@ -46,7 +46,6 @@
         }
       }
     </script>
-
     <div class="grid-container">
       <header>
         <h1 class="title"> Find Your Chat Group </h1>
@@ -58,7 +57,6 @@
         <form class="chatrm-form" enctype="application/json">
           Group Name: <input required id="chat_id" type="text" placeholder="Chat name" autocomplete="off" /><br><br>
           Group Members: <input required type="email" placeholder="Gmail addresses (separated by commas)" id="chat_mems" name="members" autocomplete="off" multiple/><br>
-          <!--<p>Please enter only Google email addresses and separate them with a comma ','</p><br><br>-->
           <input id="selectRoom" type="button" onclick="chatRedirect();" value="Submit" />
         </form>
 

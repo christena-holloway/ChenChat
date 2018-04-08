@@ -1,6 +1,8 @@
 var socket = io();
+
 var chat_name;
 var is_creator = "false";
+
 var urlString = window.location.href;
 var url = new URL(urlString);
 var username = url.searchParams.get("name");
@@ -22,37 +24,21 @@ socket.on('login response', function(response) {
 $(function () {
   socket.on('getMembers', function(memberArr) {
     console.log("members in chat.js: " + memberArr);
-    for (var i = 0; i < memberArr.length; i++) {
 
-      //SAMPLE CODE
-      /*
-      function addBagToCart(deg, bagID, numItems) {
-      // check if this color bag exists in cart
-      var bagElement = $("<div class='item' id=bagID></div>");
-      var bagImgElement = $("<img class='prod-img' src='img/bp1.jpg'>");
-      var bagTitleElement = $("<div class='desc'>Rugged 493 Backpack</div>");
-      var bagInfoElement = $("<div class='info'>Quantity: " + numItems + "<br>Cost: $" + (493.00*numItems) + "</div>");
-      var colorRotate = "hue-rotate(" + deg + ")";
-      bagImgElement.css("filter", colorRotate);
-      // Add delete button
-      var deleteItem = $("<a href='#' id='deleteItem' style='color:black;'> Delete item </a>");
-      bagElement.append(bagImgElement).append(bagTitleElement).append(bagInfoElement).append(deleteItem);
-      $("#bag-open").append(bagElement);
-  }*/
-      var arrayElement = $("<p>HELLO</p>");
-      //$('#members').append(memberArr[i]);
-      $('#members').append(arrayElement);
+    for (let i = 0; i < memberArr.length; i++) {
+      $('#members').append(memberArr[i]);
+
     }
   });
 });
 
 function updateScroll() {
-  var messageBox = document.getElementById("messages");
+  let messageBox = document.getElementById("messages");
   $("#messages").scrollTop(999999);
 }
 
 function signOut() {
-  var auth2 = gapi.auth2.getAuthInstance();
+  let auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut().then(function () {
     console.log('User signed out.');
     document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://chenchat2.azurewebsites.net";
@@ -65,20 +51,23 @@ function openMod() {
 }
 
 function addMembers() {
-  var emails = document.getElementById("chat_mems").value;
-  var stripped = emails.replace(/\s/g, "");
-  var memberArr = stripped.split(',');
 
-  for (i = 0; i < memberArr.length; i++) {
-    $('#members').append(memberArr[i]);
-  }
+  let emails = document.getElementById("chat_mems").value;
 
-  var socket = io();
+  let stripped = emails.replace(/\s/g, "");
+  let splitArr = stripped.split(',');
+  let emailArr = splitArr.filter(item => item.trim() !== '');
+
+  for (i = 0; i < emailArr.length; i++) {
+    let memlist = $('<li>').append(emailArr[i]);
+    memlist = memlist.append($('<br>'));
+    $('#members').append(memlist);
+
+
   socket.emit('chat name', chat_name);
   socket.emit('entered emails', emails);
-  //document.forms['mememail'].reset();
+
   window.location.href = '#close';
-  //document.getElementById('chat_mems').value = "";
 }
 
 function onLoad() {
@@ -92,7 +81,7 @@ function goBack() {
 }
 
 function doCheck() {
-  var txtboxFilled = true;
+  let txtboxFilled = true;
   $('#m').each(function () {
     if ($(this).val() != '') {
       txtboxFilled = true;
@@ -106,31 +95,31 @@ function doCheck() {
 }
 
 socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
-      if (username == null) {
-        window.location.href = "/";
-      }
-      else {
-        console.log('Redirecting  to chat room page');
-        window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
-      }
-    });
+  if (username == null) {
+    window.location.href = "/";
+  }
+  else {
+    console.log('Redirecting  to chat room page');
+    window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
+  }
+});
 
 $(function () {
-  var now = moment();
-  var time = now.format('YYYY-MM-DD hh:mm A');
+  let now = moment();
+  let time = now.format('YYYY-MM-DD hh:mm A');
   $('form').submit(function() {
       socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
       $('#m').val('');
     return false;
   });
   socket.on('chat message', function(data) {
-    var sender = data.from;
-    var msg = data.message;
-    var chatRoomName = data.chatRoomName;
+    let sender = data.from;
+    let msg = data.message;
+    let chatRoomName = data.chatRoomName;
     if (chat_name == chatRoomName) {
-      var listElt = $('<li>').text(sender + ": " + msg);
+      let listElt = $('<li>').text(sender + ": " + msg);
       listElt = listElt.append($('<br>'));
-      var whole = listElt.append($('<small>').text(time));
+      let whole = listElt.append($('<small>').text(time));
       $('#messages').append(whole);
       updateScroll();
     }
