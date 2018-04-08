@@ -42,8 +42,11 @@ function addMembers() {
   let stripped = emails.replace(/\s/g, "");
   let memberArr = stripped.split(',');
   
-  for (i = 0; i < memberArr.length; i++) {
-    $('#members').append(memberArr[i]);
+  console.log("MEMBER ARR IN CHAT CLIENT: " + memberArr);
+  
+  for (let i = 0; i < memberArr.length; i++) {
+    let listElt = $('<li>').text(memberArr[i]);
+    $('#members').append(listElt);
   }
   //let socket = io();
   socket.emit('chat name', chat_name);

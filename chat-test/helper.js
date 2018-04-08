@@ -99,7 +99,7 @@ module.exports = {
 	  });
     
     // add user to db if they're not already in
-    console.log("EMAILARR: " + emailArr);
+    //console.log("EMAILARR: " + emailArr);
     emailArr.push(this.email);
     for (let i = 0; i < emailArr.length; i++) {
       UserCollection.count({ email: emailArr[i] }, function(err, count) {
@@ -119,7 +119,7 @@ module.exports = {
             in this chat room (maybe just do when displaying 
             rooms on chatSelect*/
             let user = doc;
-            console.log("USER DOC IS: " + user);
+            //console.log("USER DOC IS: " + user);
             if (err) {
               console.log(err);
               res.status(400).send("Bad Request");
