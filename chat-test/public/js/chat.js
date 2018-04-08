@@ -62,6 +62,7 @@ function addMembers() {
     let memlist = $('<li>').append(emailArr[i]);
     memlist = memlist.append($('<br>'));
     $('#members').append(memlist);
+  }
 
 
   socket.emit('chat name', chat_name);
