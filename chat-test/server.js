@@ -9,7 +9,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 
-var helper = require( './helper.js' );
+var helper = require('./helper.js');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -57,20 +57,8 @@ app.get("/chatSelect", function(req, res){
   // res.sendFile(__dirname + '/chatroom.html');
 
   // find all chatrooms for username's email
-  console.log("email is: " + helper.email);
-  let userChatRooms = [];
-  ChatRoomCollection.find( { 'members': { $in: [helper.email] } }, "chat_name", function(docs) {
-    console.log("DOCS: " + docs);
-    if(docs) {
-      docs.forEach(function(myDoc) {
-        // email of user is in the members array for the chatroom
-        if(myDoc.members.indexOf(helper.email) > -1) {
-          console.log("Pushing chatroom: " + myDoc.chat_name);
-          userChatRooms.push(myDoc.chat_name);
-        }
-      });
-    }
-  });
+  let userChatRooms = helper.getChatsForUser(helper.email);
+  console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 });
 
