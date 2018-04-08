@@ -26,6 +26,7 @@
       }
       else {
         socket.emit('check login', username);
+        socket.emit('get email', username);
         var chatRoom = url.searchParams.get("chatSelect");
         document.getElementById('chat_name').innerHTML = chatRoom;
         chat_name = chatRoom;
@@ -43,9 +44,13 @@
         for (i = 0; i < memberArray.length; i++) {
           //var listElt = $('<li>').text(memberArray[i]);
           //$('#members').append(listElt);
-          var arrayElement = $("<p>HELLO</p>");
-          var listElt = $('<li>').text("HELLO");
-          //$('#members').append(memberArr[i]);
+          var listElt;
+          if(is_creator == "true" &&  my_email != memberArray[i]) {
+            listElt = $("<li><p>" + memberArray[i] + "</p> <button onclick=deleteUser(\'"+ memberArray[i] +"\')>DELETE</button></li>");
+          }
+          else {
+            listElt = $("<li><p>" + memberArray[i] + "</p></li>");
+          }
           $('#members').append(listElt);
           updateScroll();
           // send chat room name to send message via google home
@@ -56,11 +61,12 @@
         // send chat room name to send message via google home
         socket.emit('chatNameForGoogleMessage', chat_name);
 
-        //check if the current user is the creator of the chatroom
-        socket.emit('creator check', {user: username, chatroomName: chat_name});
+
 
       }
     }
+    //check if the current user is the creator of the chatroom
+    socket.emit('creator check', {user: username, chatroomName: chat_name});
   }
   </script>
 
@@ -72,7 +78,7 @@
       </header>
 
       <!-- TODO: Add this button to the header like the back/sign out button -->
-      
+
 
 
       <div id="openModal" class="modalDialog">
@@ -90,11 +96,11 @@
         <ul id="messages">
         </ul>
       </div>
-      
+
       <div class="member-list">
         <button type="button" class="btn-plus" onclick="openMod();">
-          <span class="glyphicon glyphicon-plus"></span> 
-          Add 
+          <span class="glyphicon glyphicon-plus"></span>
+          Add
         </button>
         <ul id="members">
         </ul>

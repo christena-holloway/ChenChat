@@ -4,6 +4,7 @@ var is_creator = "false";
 var urlString = window.location.href;
 var url = new URL(urlString);
 var username = url.searchParams.get("name");
+var my_email = "";
 
 socket.on('creator check receive', function(response) {
   is_creator = response;
@@ -22,7 +23,7 @@ $(function () {
   socket.on('getMembers', function(memberArr) {
     console.log("members in chat.js: " + memberArr);
     for (var i = 0; i < memberArr.length; i++) {
-      
+
       //SAMPLE CODE
       /*
       function addBagToCart(deg, bagID, numItems) {
@@ -67,11 +68,11 @@ function addMembers() {
   var emails = document.getElementById("chat_mems").value;
   var stripped = emails.replace(/\s/g, "");
   var memberArr = stripped.split(',');
-  
+
   for (i = 0; i < memberArr.length; i++) {
     $('#members').append(memberArr[i]);
   }
-  
+
   var socket = io();
   socket.emit('chat name', chat_name);
   socket.emit('entered emails', emails);
@@ -139,3 +140,9 @@ $(function () {
 $(document).ready(function () {
   $('#m').keyup(doCheck).focusout(doCheck);
 });
+
+function deleteUser(emailAddress) {
+  socket.emit('chatroom delete user', emailAddress);
+
+  alert(emailAddress.toString() + ', You been deleted from this chatroom ');
+}

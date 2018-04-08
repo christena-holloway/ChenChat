@@ -32,7 +32,7 @@ var UserCollection = mongoose.model("User", userSchema);
 
 module.exports = {
   email: "temp",
-  
+
 	handleMessage: function(data) {
 		var result = data.queryResult;
 		var action = result.action;
@@ -96,7 +96,7 @@ module.exports = {
 	      return;
 	    }
 	  });
-    
+
     // add user to db if they're not already in
     console.log("EMAILARR: " + emailArr);
     for (let i = 0; i < emailArr.length; i++) {
@@ -121,8 +121,8 @@ module.exports = {
           console.log("user is already in db");
           // find user's doc
           UserCollection.findOne({ 'email': emailArr[i] }, 'fullName', function (err, user) {
-            /*probably need to account for user already being 
-            in this chat room (maybe just do when displaying 
+            /*probably need to account for user already being
+            in this chat room (maybe just do when displaying
             rooms on chatSelect*/
             if (err) {
               console.log(err);
@@ -192,5 +192,13 @@ module.exports = {
 	      console.log("user is already in db");
 	    }
 	  });
-	}
+	},
+
+  getUserEmail: function(username) {
+    UserCollection.find({fullName:username}, "email", function(err, result) {
+      console.log("RESULT FROM EMAIL FIND: " + result);
+    });
+
+    return "test email";
+  }
 };

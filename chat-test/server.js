@@ -223,6 +223,10 @@ io.on('connection', function(socket){
     var currentTime = helper.getTimestamp();
   });
 
+  socket.on('get email', function(data) {
+    let local_email = helper.getUserEmail(data);
+  });
+
   socket.on('creator check', function(data) {
     console.log('I AM DOING THE CREATOR CHECK');
     var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
