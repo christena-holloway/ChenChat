@@ -110,9 +110,8 @@ module.exports = {
 	    }
 	  });
 
-    // add user to db if they're not already in
     console.log("EMAILARR: " + emailArr);
-    emailArr.push(this.email);
+    emailArr.push(email);
     for (let i = 0; i < emailArr.length; i++) {
       UserCollection.count({ email: emailArr[i] }, function(err, count) {
         // if user is not in db
@@ -191,18 +190,20 @@ module.exports = {
 
 
 
-  getUserEmail: function(username) {
+  /*getUserEmail: function(username) {
     UserCollection.find({fullName:username}, "email", function(err, result) {
       console.log("RESULT FROM EMAIL FIND: " + result);
     });
 
     return "test email";
-  },
+  },*/
 
 	getChatsForUser: function(userEmail) {
 		console.log("User's email is: " + userEmail);
-		UserCollection.findOne({ email: userEmail }, function (err, doc) {
-			if(doc.chats != NULL) {
+
+		UserCollection.findOne({ "email": userEmail }, 'chats', function (err, doc) {
+			if(doc.chats) {
+
 				console.log("User's chats are: " + doc.chats);
 				return doc.chats;
 			}

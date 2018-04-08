@@ -60,7 +60,7 @@ app.get("/chatSelect", function(req, res){
   // find all chatrooms for username's email
   let userChatRooms = helper.getChatsForUser(helper.email);
   console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
-  
+
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 });
 
@@ -224,7 +224,8 @@ io.on('connection', function(socket){
     });
   });
 
-  socket.on('entered emails', function(emails) {
+  socket.on('entered emails', function(data) {
+    let emails = data.emails;
     let stripped = emails.replace(/\s/g, "");
     let splitArr = stripped.split(',');
     let emailArr = splitArr.filter(item => item.trim() !== '');
@@ -234,7 +235,7 @@ io.on('connection', function(socket){
     ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
     //if this chat room does not exist yet, create it
       if (count === 0) {
-        m = new ChatRoomCollection({ 'chat_name': chatName, 'members': [], 'messages': [] });
+        m = new ChatRoomCollection({ 'chat_name': chatName, 'creator': data.creator, 'members': [], 'messages': [] });
         //!!!!TODO: make sure duplicate email addresses aren't entered
         //push current user to members vector
         //let email = helper.getEmail(token);
