@@ -29,6 +29,18 @@ var userSchema = new mongoose.Schema({
 
 var UserCollection = mongoose.model("User", userSchema);
 
+function saveUserToDB(userColl) {
+  userColl.save(function(err) {
+    if (err) {
+      console.log(err);
+      res.status(400).send("Bad Request");
+    }
+    else {
+      console.log("successfully posted user " + userColl.fullName + " to db");
+    }
+  });
+}
+
 
 module.exports = {
   email: "temp",
@@ -108,7 +120,7 @@ module.exports = {
           let u = new UserCollection({ 'userID': '', 'fullName': '', 'email': emailArr[i], 'chats': [] });
           //append new chat to chats array
           u.chats.push(chatName);
-          this.saveUserToDB(u);
+          saveUserToDB(u);
         }
         else {
           // update chats array in user's doc
@@ -126,7 +138,7 @@ module.exports = {
               res.status(400).send("Bad Request");
             }
             user.chats.push(chatName);
-            this.saveUserToDB(user);
+            saveUserToDB(user);
           });
         }
       });
@@ -169,13 +181,14 @@ module.exports = {
 	  UserCollection.count({ userID: sub }, function(err, count) {
 	    if (count === 0) {
 	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': email, 'chats': [] });
-	      this.saveUserToDB(u);
+	      saveUserToDB(u);
 	    }
 	    else {
 	      console.log("user is already in db");
 	    }
 	  });
 	},
+
 
 
   getUserEmail: function(username) {
@@ -186,16 +199,18 @@ module.exports = {
     return "test email";
   },
 
-	saveUserToDB: function(userColl) {
-	  userColl.save(function(err) {
-	    if (err) {
-	      console.log(err);
-	      res.status(400).send("Bad Request");
-	    }
-	    else {
-	      console.log("successfully posted user info to db");
-	    }
-	  });
+	getChatsForUser: function(userEmail) {
+		console.log("User's email is: " + userEmail);
+		UserCollection.findOne({ email: userEmail }, function (err, doc) {
+			if(doc.chats) {
+				console.log("User's chats are: " + doc.chats);
+				return doc.chats;
+			}
+			else {
+				return [];
+			}
+		});
+
 	}
 
 };
