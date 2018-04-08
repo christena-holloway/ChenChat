@@ -1,6 +1,5 @@
 var express = require('express');
 var app = express();
-//var cors = require('cors');
 var http = require('http').Server(app);
 var io = require('socket.io').listen(http);
 var mongoose = require('mongoose');
@@ -11,8 +10,6 @@ var port = process.env.PORT || 3000;
 var url = "https://chenchat2.azurewebsites.net";
 
 var helper = require( './helper.js' );
-//var url = "https://localhost:" + port;
-//var router = new express.Router();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -26,7 +23,6 @@ var GoogleAuth = require('google-auth-library');
 var auth = new GoogleAuth();
 var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com", '', '');
 //End
-
 
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
 
@@ -42,8 +38,6 @@ var chatRoomSchema = new mongoose.Schema({
     members: [],
     messages: []
 }, {collection: "ChatRoom"});
-
-
 
 var ChatRoomCollection = mongoose.model("ChatRoom", chatRoomSchema);
 //connect to db
@@ -64,7 +58,7 @@ app.get("/chatSelect", function(req, res){
 
   // find all chatrooms for username's email
   console.log("email is: " + helper.email);
-  var userChatRooms = [];
+  let userChatRooms = [];
   ChatRoomCollection.find( { 'members': { $in: [helper.email] } }, "chat_name", function(docs) {
     console.log("DOCS: " + docs);
     if(docs) {
@@ -77,7 +71,6 @@ app.get("/chatSelect", function(req, res){
       });
     }
   });
-
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 });
 
@@ -86,9 +79,9 @@ app.get("/help", function(req, res) {
 });
 
 app.get("/chat", function(req, res) {
-  var result_array1 = [];
-  var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
-  
+  let result_array1 = [];
+  let ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
+
   ChatRoom2.findOne( { 'chat_name': chatName }, 'messages members', function(err, doc) {
     result_array1 = doc;
     console.log("result array: " + result_array1);
@@ -108,8 +101,8 @@ app.post('/chat', function(req, res) {
   console.log('parameters are: ');
   console.log(req.body.queryResult.parameters);
 
-  var chatRoom = req.body.queryResult.parameters.chatroom;
-  var message = helper.handleMessage(req.body);
+  let chatRoom = req.body.queryResult.parameters.chatroom;
+  let message = helper.handleMessage(req.body);
   console.log('Sending the message: ' + message);
   sendMessage(message, 'Chun-Han', chatRoom);
 
@@ -123,31 +116,17 @@ app.post('/chat', function(req, res) {
 });
 
 var sub;
-
 //message collection
 var m;
 var chatName;
-
-/*function saveMessage(m) {
-  m.save(function(err) {
-    if (err) {
-      console.log(err);
-      res.status(400).send("Bad Request");
-    }
-    else {
-      console.log('successfully posted to db');
-      callback();
-    }
-  });
-}*/
 
 function sendMessage(msg, sender, chat_token = 'test') {
   //check if chat room already exists
   ChatRoomCollection.findOne({ chat_name: chatName }, function (err, doc) {
     //doc is document for the chat room
     m = doc;
-    var time = helper.getTimestamp();
-    var msgObj = {'from': sender, 'body': msg, 'timestamp': time};
+    let time = helper.getTimestamp();
+    let msgObj = {'from': sender, 'body': msg, 'timestamp': time};
     m.messages.push(msgObj);
     m.save(function(err) {
       if (err) {
@@ -158,8 +137,8 @@ function sendMessage(msg, sender, chat_token = 'test') {
         console.log('successfully posted to db');
         //callback();
       }
-    });  });
-
+    });  
+  });
   // What's this for? (move to helper if still needed)
   /*UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
     if (err) {
@@ -167,13 +146,11 @@ function sendMessage(msg, sender, chat_token = 'test') {
       res.status(400).send("Bad Request");
     }
   });*/
-
   io.emit('chat message', { from: sender, message: msg, chatRoomName: chat_token });
 }
 
 var users = {};
 var keys = {};
-//send from client to server
 var username;
 var sign_ins = {};
 var total_sign_ins = {};
@@ -196,8 +173,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('check login', function(username) {
-    var response;
-
+    let response;
     if(username in sign_ins) {
       response = "yes";
       //io.emit('login response', response);
@@ -208,120 +184,116 @@ io.on('connection', function(socket){
     }
   });
   var callback;
-  
+
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
     console.log("chat name " + chatName);
-    var destination = '/chat?chatSelect=' + chatName;
+    let destination = '/chat?chatSelect=' + chatName;
     callback = function() {
       io.emit('redirect', destination);
     }
   });
 
   io.emit('getChatName', chatName);
-  
-  
+
   //TODO: query db for all members in chat room
   //io.emit('getMembers', memberArr)
 
   socket.on('chat message', function(data){
-    var msg = data.msg;
-    var time = data.timestamp;
-    var sent_name = data.sent_name;
-    var chat_token = data.chat_token;
+    let msg = data.msg;
+    let time = data.timestamp;
+    let sent_name = data.sent_name;
+    let chat_token = data.chat_token;
     if (sent_name !== null) {
       sendMessage(msg, sent_name, chat_token);
     }
-    var currentTime = helper.getTimestamp();
+    let currentTime = helper.getTimestamp();
   });
 
-    socket.on('entered emails', function(emails) {
-      let stripped = emails.replace(/\s/g, "");
-      let splitArr = stripped.split(',');
-      let emailArr = splitArr.filter(item => item.trim() !== '');
-      console.log(emailArr);
+  socket.on('entered emails', function(emails) {
+    let stripped = emails.replace(/\s/g, "");
+    let splitArr = stripped.split(',');
+    let emailArr = splitArr.filter(item => item.trim() !== '');
+    console.log(emailArr);
 
-      //check if chatroom exists
-      ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
-      //if this chat room does not exist yet, create it
-        if (count === 0) {
-          m = new ChatRoomCollection({ 'chat_name': chatName, 'members': [], 'messages': [] });
-          //!!!!TODO: make sure duplicate email addresses aren't entered
-          //push current user to members vector
-          //let email = helper.getEmail(token);
-          console.log("current user's email: " + helper.email);
+    //check if chatroom exists
+    ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
+    //if this chat room does not exist yet, create it
+      if (count === 0) {
+        m = new ChatRoomCollection({ 'chat_name': chatName, 'members': [], 'messages': [] });
+        //!!!!TODO: make sure duplicate email addresses aren't entered
+        //push current user to members vector
+        //let email = helper.getEmail(token);
+        console.log("current user's email: " + helper.email);
+        m.members.push(helper.email);
+        //add members
+        for (let i = 0; i < emailArr.length; i++) {
+          console.log(emailArr[i]);
+          if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
+            m.members.push(emailArr[i]);
+          }
+        }
+        //console.log("length of emailArr: " + emailArr.length);
+        if (emailArr.length > 0) {
+          console.log("sending invites to: " + emailArr);
+          helper.sendInvite(emailArr, chatName, username);
+        }
+        // add chat to current user's chat array
+        //console.log("will add chat to current user's chat array");
+        m.save(function(err) {
+          if (err) {
+            console.log(err);
+            res.status(400).send("Bad Request");
+          }
+          else {
+            console.log('successfully posted to db');
+            callback();
+          }
+        });
+      }
+      else {
+        ChatRoomCollection.findOne({ chat_name: chatName }, function (err, doc) {
+          //doc is document for the chat room
+          m = doc;
           m.members.push(helper.email);
-          //add members
-          for (var i = 0; i < emailArr.length; i++) {
-            console.log(emailArr[i]);
-            if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
-              m.members.push(emailArr[i]);
-            }
+          for (let i = 0; i < emailArr.length; ++i) {
+            ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
+              if (count === 0) {
+                m.members.push(emailArr[i]);
+              }
+            });
           }
           console.log("length of emailArr: " + emailArr.length);
-          if (emailArr.length > 0) {
+          if (emailArr.length > 0){
             console.log("sending invites to: " + emailArr);
             helper.sendInvite(emailArr, chatName, username);
           }
-          else {
-            console.log("will add chat to current user's chat array");
-          }
-m.save(function(err) {
-    if (err) {
-      console.log(err);
-      res.status(400).send("Bad Request");
-    }
-    else {
-      console.log('successfully posted to db');
-      callback();
-    }
-  });        }
-        else {
-          ChatRoomCollection.findOne({ chat_name: chatName }, function (err, doc) {
-            //doc is document for the chat room
-            m = doc;
-            m.members.push(helper.email);
-            for (var i = 0; i < emailArr.length; ++i) {
-              ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
-                if (count === 0) {
-                  m.members.push(emailArr[i]);
-                }
-              });
-            }
-            console.log("length of emailArr: " + emailArr.length);
-            if (emailArr.length > 0){
-              console.log("sending invites to: " + emailArr);
-              helper.sendInvite(emailArr, chatName, username);
+          m.save(function(err) {
+            if (err) {
+              console.log(err);
+              res.status(400).send("Bad Request");
             }
             else {
-              console.log("will add chat to current user's chat array");
+              console.log('successfully posted to db');
+              callback();
             }
-m.save(function(err) {
-    if (err) {
-      console.log(err);
-      res.status(400).send("Bad Request");
-    }
-    else {
-      console.log('successfully posted to db');
-      callback();
-    }
-  });        });
+          });
+        });
       }
     });
   });
 
   socket.on('id token', function(id_token) {
-    var destination = '/chatSelect?name=';
-
+    let destination = '/chatSelect?name=';
     client.verifyIdToken(
-    id_token,
-    "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
-    function(e, login) {
-      var payload = login.getPayload();
-      var userid = payload.sub;
-      var name = payload.name;
-    });
-
+      id_token,
+      "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",
+      function(e, login) {
+        let payload = login.getPayload();
+        let userid = payload.sub;
+        let name = payload.name;
+      }
+    );
     username = helper.getName(id_token);
     //sign_ins[username] = "logged_in";
     if(!(username in sign_ins)) {

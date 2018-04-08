@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<header>
   <head>
     <meta name="google-signin-scope" content="profile email">
     <meta name="google-signin-client_id" content="533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com">
@@ -11,36 +10,30 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <title>ChenChat sign in</title>
   </head>
-  <script>
-    var profile;
-    var id_token;
-    function onSignIn(googleUser) {
-      // Useful data for your client-side scripts:
-      profile = googleUser.getBasicProfile();
-      // The ID token you need to pass to your backend:
-      id_token = googleUser.getAuthResponse().id_token;
-      //console.log("ID Token: " + id_token);
-      var socket = io();
-      //window.location.replace("/contacts");
-      socket.emit('id token', id_token);
-      socket.on('redirect', function(destination) {
-        window.location.href = destination;
-      });
-    };
-
-    function helppg() {
-      window.location.href = '/help';
-    }
-
-  </script>
-  <h1 class="title">Welcome to ChenChat!</h1>
-  <button class="help-button" onclick="helppg();"> Help </button>
-  </header>
-  <img id="c-chat-img" src="images/chenchat_blue_background.jpg" style="height:320px !important; width:400px !important; margin-left: 35.0% !important; margin-right: 26.0% !important;">
   <body>
-  <h2>Hey, friend! Welcome to ChenChat.  Start by clicking the sign in button below, and enter your Google username and password in the pop-up window.
-</h2>
-  <br><br>
+    <script>
+      function onSignIn(googleUser) {
+        // The ID token you need to pass to your backend:
+        let id_token = googleUser.getAuthResponse().id_token;
+        //console.log("ID Token: " + id_token);
+        let socket = io();
+        //window.location.replace("/contacts");
+        socket.emit('id token', id_token);
+        socket.on('redirect', function(destination) {
+          window.location.href = destination;
+        });
+      };
+
+      function helppg() {
+        window.location.href = '/help';
+      }
+    </script>
+    <h1 class="title">Welcome to ChenChat!</h1>
+    <button class="help-button" onclick="helppg();"> Help </button>
+    <img id="c-chat-img" src="images/chenchat_blue_background.jpg" style="height:320px !important; width:400px !important; margin-left: 35.0% !important; margin-right: 26.0% !important;">
+    <h2>Hey, friend! Welcome to ChenChat.  Start by clicking the sign in button below, and enter your Google username and password in the pop-up window.
+    </h2>
+    <br><br>
     <div class="g-signin2" data-width="300" data-height="100" data-onsuccess="onSignIn" data-theme="dark"></div>
   </body>
 </html>
