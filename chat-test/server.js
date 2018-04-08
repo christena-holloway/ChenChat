@@ -54,12 +54,10 @@ app.get('/', function(req, res){
 });
 
 app.get("/chatSelect", function(req, res){
-  // res.sendFile(__dirname + '/chatroom.html');
-
   // find all chatrooms for username's email
   let userChatRooms = helper.getChatsForUser(helper.email);
   console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
-  
+
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 });
 
