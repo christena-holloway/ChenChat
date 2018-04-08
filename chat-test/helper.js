@@ -34,30 +34,30 @@ module.exports = {
   email: "temp",
   
 	handleMessage: function(data) {
-		var result = data.queryResult;
-		var action = result.action;
-	  var parameters = result.parameters;
-	  var chatRoom = parameters.chatroom;
-	  var msg = '';
+		let result = data.queryResult;
+		let action = result.action;
+	  let parameters = result.parameters;
+	  let chatRoom = parameters.chatroom;
+	  let msg = '';
 
 	  console.log("Action is " + action);
 	  console.log("Chat room is " + chatRoom);
 
 	  if (action === 'sendHelp') {
-	    var state = parameters.state;
-	    var location = parameters.location;
+	    let state = parameters.state;
+	    let location = parameters.location;
 	    msg += 'I need help now. My location is: ' + location + '.';
 	  }
 	  else if (action === 'switchMode') {
-	    var mode = parameters.mode;
+	    let mode = parameters.mode;
 	    msg += 'I need help ' + mode + '!';
 	  }
 	  else if (action === 'reportState') {
-	    var state = parameters.state;
+	    let state = parameters.state;
 	    msg += 'I ' + state + '!';
 	  }
 	  else if (action === 'whereIsMy') {
-	    var object = parameters.object;
+	    let object = parameters.object;
 	    msg += 'Where is my ' + object + '?';
 	  }
 	  else if (action === 'sendCustomMessage') {
@@ -77,11 +77,11 @@ module.exports = {
 	  return msg;
 	},
 
-  // run only if there is something in the email array!
+  // run only if there is something in the email array! (handled in server?)
 	sendInvite: function(emailArr, chatName, username) {
-		var emailString = emailArr.join();
+		let emailString = emailArr.join();
 	  // Setup email data.
-	  var mailOptions = {
+	  let mailOptions = {
 	    bcc: emailString,
 	    subject: username + ' invited to the chatroom "' + chatName + '" on ChenChat!',
 	    data: {  // data to view template, you can access as - user.name
@@ -105,7 +105,7 @@ module.exports = {
       UserCollection.count({ email: emailArr[i] }, function(err, count) {
         // if user is not in db
         if (count === 0) {
-          var u = new UserCollection({ 'userID': '', 'fullName': '', 'email': emailArr[i], 'chats': [] });
+          let u = new UserCollection({ 'userID': '', 'fullName': '', 'email': emailArr[i], 'chats': [] });
           //append new chat to chats array
           u.chats.push(chatName);
           saveUserToDB(u);
@@ -133,14 +133,14 @@ module.exports = {
   },
 
 	getTimestamp: function() {
-		var now = moment();
-	  var time = now.format('YYYY-MM-DD hh:mm A');
+		let now = moment();
+	  let time = now.format('YYYY-MM-DD hh:mm A');
 	  return time;
 	},
 
 	getUID: function(id_token) {
-		var decoded = jwtDecode(id_token);
-	  var sub = decoded.sub;
+		let decoded = jwtDecode(id_token);
+	  let sub = decoded.sub;
 	  return sub;
 	},
 
