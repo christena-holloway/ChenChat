@@ -108,7 +108,7 @@ module.exports = {
           let u = new UserCollection({ 'userID': '', 'fullName': '', 'email': emailArr[i], 'chats': [] });
           //append new chat to chats array
           u.chats.push(chatName);
-          saveUserToDB(u);
+          this.saveUserToDB(u);
         }
         else {
           // update chats array in user's doc
@@ -125,7 +125,7 @@ module.exports = {
               res.status(400).send("Bad Request");
             }
             user.chats.push(chatName);
-            saveUserToDB(user);
+            this.saveUserToDB(user);
           });
         }
       });
@@ -168,23 +168,24 @@ module.exports = {
 	  UserCollection.count({ userID: sub }, function(err, count) {
 	    if (count === 0) {
 	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': email, 'chats': [] });
-	      saveUserToDB(u);
+	      this.saveUserToDB(u);
 	    }
 	    else {
 	      console.log("user is already in db");
 	    }
 	  });
-	}
-};
+	},
 
-function saveUserToDB(userColl) {
-  userColl.save(function(err) {
-    if (err) {
-      console.log(err);
-      res.status(400).send("Bad Request");
-    }
-    else {
-      console.log("successfully posted user info to db");
-    }
-  });
-}
+	saveUserToDB: function(userColl) {
+	  userColl.save(function(err) {
+	    if (err) {
+	      console.log(err);
+	      res.status(400).send("Bad Request");
+	    }
+	    else {
+	      console.log("successfully posted user info to db");
+	    }
+	  });
+	}
+
+};
