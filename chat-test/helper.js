@@ -99,7 +99,7 @@ module.exports = {
 	  });
     
     // add user to db if they're not already in
-    //console.log("EMAILARR: " + emailArr);
+    console.log("EMAILARR: " + emailArr);
     emailArr.push(this.email);
     for (let i = 0; i < emailArr.length; i++) {
       UserCollection.count({ email: emailArr[i] }, function(err, count) {
@@ -108,7 +108,7 @@ module.exports = {
           let u = new UserCollection({ 'userID': '', 'fullName': '', 'email': emailArr[i], 'chats': [] });
           //append new chat to chats array
           u.chats.push(chatName);
-          saveUserToDB(u);
+          this.saveUserToDB(u);
         }
         else {
           // update chats array in user's doc
@@ -119,13 +119,13 @@ module.exports = {
             in this chat room (maybe just do when displaying 
             rooms on chatSelect*/
             let user = doc;
-            //console.log("USER DOC IS: " + user);
+            console.log("USER DOC IS: " + user);
             if (err) {
               console.log(err);
               res.status(400).send("Bad Request");
             }
             user.chats.push(chatName);
-            saveUserToDB(user);
+            this.saveUserToDB(user);
           });
         }
       });
@@ -168,23 +168,24 @@ module.exports = {
 	  UserCollection.count({ userID: sub }, function(err, count) {
 	    if (count === 0) {
 	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': email, 'chats': [] });
-	      saveUserToDB(u);
+	      this.saveUserToDB(u);
 	    }
 	    else {
 	      console.log("user is already in db");
 	    }
 	  });
-	}
-};
+	},
 
-function saveUserToDB(userColl) {
-  userColl.save(function(err) {
-    if (err) {
-      console.log(err);
-      res.status(400).send("Bad Request");
-    }
-    else {
-      console.log("successfully posted user info to db");
-    }
-  });
-}
+	saveUserToDB: function(userColl) {
+	  userColl.save(function(err) {
+	    if (err) {
+	      console.log(err);
+	      res.status(400).send("Bad Request");
+	    }
+	    else {
+	      console.log("successfully posted user info to db");
+	    }
+	  });
+	}
+
+};
