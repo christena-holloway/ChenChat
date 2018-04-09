@@ -102,7 +102,7 @@ $(function () {
     return false;
   });
   $('form.mem-form').submit(function() {
-      addMembers();
+      window.location.href = '#close';
     return false;
   });
   socket.on('chat message', function(data) {
