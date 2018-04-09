@@ -60,11 +60,45 @@
       socket.emit('chatNameForGoogleMessage', chat_name);
       console.log("END OF ONLOAD");
     }
+}
 
     //check if the current user is the creator of the chatroom
     socket.emit('creator check', {user: username, chatroomName: chat_name});
+
+    function addNewMembers() {
+  console.log('Enter addMembers function');
+  let emails = document.getElementById("chat_mems").value;
+  if (emails == null) {
+    window.location.href = '#close';
   }
-  </script>
+
+  let stripped = emails.replace(/\s/g, "");
+  let splitArr = stripped.split(',');
+  let emailArr = splitArr.filter(item => item.trim() !== '');
+
+
+  let itemFound = false;
+  for (let i = 0; i < emailArr.length; i++) {
+    $('#members li').each( function() {
+      if ( $(this).text() === emailArr[i] ) {
+        itemFound = true;
+      }
+    });
+
+    if (!itemFound) {
+      let memlist = $('<li>').append(emailArr[i]);
+      memlist = memlist.append($('<br>'));
+      $('#members').append(memlist);
+    }
+  }
+
+  socket.emit('chat name', chat_name);
+  socket.emit('entered emails', emails);
+
+  window.location.href = '#close';
+}
+
+    </script>
 
     <div class="grid-container">
       <header>
