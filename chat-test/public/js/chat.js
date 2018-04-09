@@ -40,7 +40,7 @@ function openMod() {
 function addMembers() {
   let emails = document.getElementById("chat_mems").value;
   if (emails == null) {
-    openMod();
+    window.location.href = '#close';
   }
 
   let stripped = emails.replace(/\s/g, "");
@@ -96,13 +96,13 @@ socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
 $(function () {
   let now = moment();
   let time = now.format('YYYY-MM-DD hh:mm A');
-  $('form.flex-msg-form').submit(function() {
+  $('.flex-msg-form').submit(function() {
       socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
       $('#m').val('');
     return false;
   });
-  $('form.mem-form').submit(function() {
-      window.location.href = '#close';
+  $('.mem-form').submit(function() {
+      addMembers();
     return false;
   });
   socket.on('chat message', function(data) {
