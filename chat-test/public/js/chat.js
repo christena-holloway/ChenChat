@@ -97,12 +97,14 @@ $(function () {
   let now = moment();
   let time = now.format('YYYY-MM-DD hh:mm A');
   $('.flex-msg-form').submit(function() {
+      console.log('emitting message')
       socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
       $('#m').val('');
     return false;
   });
   $('.mem-form').submit(function() {
-      addMembers();
+    console.log('adding members')
+    addMembers();
     return false;
   });
   socket.on('chat message', function(data) {
