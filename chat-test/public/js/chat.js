@@ -47,12 +47,22 @@ function addNewMembers() {
   let splitArr = stripped.split(',');
   let emailArr = splitArr.filter(item => item.trim() !== '');
 
-  for (i = 0; i < emailArr.length; i++) {
-    let memlist = $('<li>').append(emailArr[i]);
-    memlist = memlist.append($('<br>'));
-    $('#members').append(memlist);
+  
+  let itemFound = false;
+  for (let i = 0; i < emailArr.length; i++) {
+    $('#members li').each( function() {
+      if ( $(this).text() === emailArr[i] ) {
+        itemFound = true;
+      }
+    });
+    
+    if (!itemFound) {
+      let memlist = $('<li>').append(emailArr[i]);
+      memlist = memlist.append($('<br>'));
+      $('#members').append(memlist);
+    }
   }
-
+  
   socket.emit('chat name', chat_name);
   socket.emit('entered emails', emails);
 
