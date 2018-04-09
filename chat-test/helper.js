@@ -5,6 +5,7 @@ var mailer = require('express-mailer');
 var moment = require('moment');
 var mongoose = require('mongoose');
 
+
 app.set('view engine', 'pug');
 app.engine('html', require('ejs').renderFile);
 
@@ -43,6 +44,8 @@ function saveUserToDB(userColl) {
 
 
 module.exports = {
+  userCol: UserCollection, 
+
   email: "temp",
 
 	handleMessage: function(data) {
@@ -190,13 +193,15 @@ module.exports = {
 
 
 
-  /*getUserEmail: function(username) {
-    UserCollection.find({fullName:username}, "email", function(err, result) {
+  getFullNameFromEmail: function(emailAddress, io) {
+    let return_name;
+    UserCollection.findOne({"email":emailAddress}, "fullName", function(err, result) {
       console.log("RESULT FROM EMAIL FIND: " + result);
+      return_name = result.fullName;
     });
 
-    return "test email";
-  },*/
+    return return_name;
+  },
 
 	getChatsForUser: function(userEmail) {
 		console.log("User's email is: " + userEmail);

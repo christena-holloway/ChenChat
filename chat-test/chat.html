@@ -29,7 +29,6 @@
         socket.emit('check login', username);
 
         socket.emit('get email', username);
-
         let chatRoom = url.searchParams.get("chatSelect");
 
         document.getElementById('chat_name').innerHTML = chatRoom;
@@ -43,19 +42,15 @@
           let whole = listElt.append($('<small>').text(messageArray[i].timestamp));
           $('#messages').append(whole);
         }
-
+        //console.log('YO MY EMAIL IS: ' + my_email);
         var memberArray = <%- JSON.stringify(members) %>
 
         for (i = 0; i < memberArray.length; i++) {
           //var listElt = $('<li>').text(memberArray[i]);
           //$('#members').append(listElt);
-          var listElt;
-          if(is_creator == "true" &&  my_email != memberArray[i]) {
-            listElt = $("<li><p>" + memberArray[i] + "</p> <button onclick=deleteUser(\'"+ memberArray[i] +"\')>DELETE</button></li>");
-          }
-          else {
-            listElt = $("<li><p>" + memberArray[i] + "</p></li>");
-          }
+
+          var listElt = $("<li><p>" + memberArray[i] + "</p> <button onclick=deleteUser(\'"+ memberArray[i] +"\')>DELETE</button></li>");
+
 
           $('#members').append(listElt);
           updateScroll();
@@ -85,7 +80,7 @@
         <a href="/" class="signOut" onclick="signOut();"> Log out </a>
       </header>
       <!-- TODO: Add this button to the header like the back/sign out button -->
-      
+
       <div id="openModal" class="modalDialog">
         <div>
           <a href="#close" title="Close" class="close">X</a>

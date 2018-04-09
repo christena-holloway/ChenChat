@@ -205,7 +205,19 @@ io.on('connection', function(socket){
 
 
   socket.on('get email', function(data) {
-    let local_email = helper.getUserEmail(data);
+    helper.userCol.findOne({"fullName":data}, "email", function(err, result) {
+      console.log("RESULT FROM EMAIL FIND: " + result);
+      socket.emit('set email');
+    });
+  });
+
+  socket.on('chatroom delete user', function(data) {
+    ///console.log("HEY OH: " + fullname);
+    //socket.emit('got full name from email', helper.getFullNameFromEmail(data));
+    helper.userCol.findOne({"email":data}, "fullName", function(err, result) {
+      console.log("RESULT FROM FULLNAME FIND: " + result);
+      return_name = result.fullName;
+    });
   });
 
   socket.on('creator check', function(data) {

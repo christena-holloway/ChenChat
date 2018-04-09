@@ -132,7 +132,19 @@ $(document).ready(function () {
 });
 
 function deleteUser(emailAddress) {
-  socket.emit('chatroom delete user', emailAddress);
-
-  alert(emailAddress.toString() + ', You been deleted from this chatroom ');
+  if(is_creator == "true") {
+    socket.emit('chatroom delete user', emailAddress);
+    alert(emailAddress.toString() + ', You been deleted from this chatroom ');
+  }
+  else {
+    alert("You are not the creator of this chatroom and cannot delete users.");
+  }
 }
+
+socket.on('got full name from email', function(fullname) {
+  console.log("HEY OH " + fullname);
+});
+
+socket.on('set email', function(data) {
+  my_email = data;
+});
