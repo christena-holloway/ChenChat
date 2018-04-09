@@ -36,7 +36,7 @@ function openMod() {
   window.location.href = '#openModal';
 }
 
-function addMembers() {
+function addNewMembers() {
   console.log('Enter addMembers function');
   let emails = document.getElementById("chat_mems").value;
   if (emails == null) {
@@ -97,10 +97,10 @@ $(function () {
   let time = now.format('YYYY-MM-DD hh:mm A');
   $('#mememail').submit(function() {
     console.log('adding members');
-    addMembers();
+    addNewMembers();
     return false;
   });
-  $('.flex-msg-form').submit(function() {
+  $('#flex-msg-form').submit(function() {
       console.log('emitting message');
       socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
       $('#m').val('');
