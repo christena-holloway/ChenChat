@@ -220,12 +220,13 @@ io.on('connection', function(socket){
       if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
         ChatRoomCollection.update(conditions, { $addToSet: { members: emailArr[i] } }, options, callback);
         //add chat to each user's chat array
-        helper.updateUserChatsArray(chatName, emailArr[i]);    
+        helper.updateUserChatsArray(chatName, emailArr[i]);
+        helper.addUsersWithEmail(chatName, emailArr[i]);
       }
     }
     //send invites
     if (emailArr.length > 0) {
-      helper.sendInvite(emailArr, chatName, username);
+      helper.sendInvite(emailArr, chatName, username);      
     }
   });
 
