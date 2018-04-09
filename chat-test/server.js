@@ -27,7 +27,7 @@ var client = new auth.OAuth2("533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps
 var conString = "mongodb://chenchat:VAKGwo9UuAhre2Ue@cluster0-shard-00-00-1ynwh.mongodb.net:27017,cluster0-shard-00-01-1ynwh.mongodb.net:27017,cluster0-shard-00-02-1ynwh.mongodb.net:27017/userData?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
 
 //comment/uncomment to show mongoose debug info (everything inserted into db) in the console
-//mongoose.set("debug", true);
+mongoose.set("debug", true);
 
 //not sure if we need this
 mongoose.Promise = Promise;
@@ -55,10 +55,12 @@ app.get('/', function(req, res){
 
 app.get("/chatSelect", function(req, res){
   // find all chatrooms for username's email
-  let userChatRooms = helper.getChatsForUser(helper.email);
-  console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
-
-  res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
+  // TODO: add these back in (commented out bc bug)
+  //let userChatRooms = helper.getChatsForUser(helper.email);
+  //console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
+  
+  //res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
+    res.sendFile(__dirname + '/chatSelect.html');
 });
 
 app.get("/help", function(req, res) {
@@ -220,12 +222,15 @@ io.on('connection', function(socket){
             m.members.push(emailArr[i]);
           }
         }
-        //console.log("length of emailArr: " + emailArr.length);
+
         if (emailArr.length > 0) {
           //console.log("sending invites to: " + emailArr);
           helper.sendInvite(emailArr, chatName, username);
         }
         // add chat to current user's chat array
+        helper.updateUserChatsArray(chatName, username);
+        
+        
         //console.log("will add chat to current user's chat array");
         m.save(function(err) {
           if (err) {
@@ -255,6 +260,8 @@ io.on('connection', function(socket){
             //console.log("sending invites to: " + emailArr);
             helper.sendInvite(emailArr, chatName, username);
           }
+          helper.updateUserChatsArray(chatName, username);
+          
           m.save(function(err) {
             if (err) {
               console.log(err);

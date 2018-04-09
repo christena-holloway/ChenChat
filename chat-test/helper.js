@@ -88,6 +88,16 @@ module.exports = {
 
 	  return msg;
 	},
+  
+  updateUserChatsArray: function(chatName) {
+    console.log("updating user's chats");
+    UserCollection.findOneAndUpdate({ email: this.email },
+      { $addToSet: { chats: chatName } },
+      function(err, data) {
+        console.log(err);
+      }
+    );
+  },
 
   // run only if there is something in the email array! (handled in server?)
 	sendInvite: function(emailArr, chatName, username) {
@@ -190,12 +200,13 @@ module.exports = {
 
 	getChatsForUser: function(userEmail) {
 		console.log("User's email is: " + userEmail);
-		UserCollection.findOne({ email: userEmail }, 'chats', function (err, doc) {
+		UserCollection.findOne({ 'email': userEmail }, 'chats', function (err, doc) {
 			if(doc.chats) {
 				console.log("User's chats are: " + doc.chats);
 				return doc.chats;
 			}
 			else {
+        console.log("user's chats don't exist");
 				return [];
 			}
 		});
