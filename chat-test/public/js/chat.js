@@ -37,6 +37,7 @@ function openMod() {
 }
 
 function addMembers() {
+  console.log('Enter addMembers function');
   let emails = document.getElementById("chat_mems").value;
   if (emails == null) {
     window.location.href = '#close';
