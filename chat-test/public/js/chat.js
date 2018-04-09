@@ -6,6 +6,7 @@ var is_creator = "false";
 var urlString = window.location.href;
 var url = new URL(urlString);
 var username = url.searchParams.get("name");
+
 var my_email = "";
 
 socket.on('creator check receive', function(response) {
@@ -15,6 +16,9 @@ socket.on('creator check receive', function(response) {
   }
 });
 
+var input = document.getElementById("addMembers");
+
+
 socket.on('login response', function(response) {
   if (response == "no") {
     window.location.href = '/';
@@ -23,8 +27,6 @@ socket.on('login response', function(response) {
 
 $(function () {
   socket.on('getMembers', function(memberArr) {
-    console.log("members in chat.js: " + memberArr);
-
     for (let i = 0; i < memberArr.length; i++) {
       $('#members').append(memberArr[i]);
 
@@ -40,7 +42,6 @@ function updateScroll() {
 function signOut() {
   let auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut().then(function () {
-    console.log('User signed out.');
     document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://chenchat2.azurewebsites.net";
   });
 }
@@ -50,20 +51,33 @@ function openMod() {
   window.location.href = '#openModal';
 }
 
-function addMembers() {
 
+function addNewMembers() {
+  console.log('Enter addMembers function');
   let emails = document.getElementById("chat_mems").value;
+  if (emails == null) {
+    window.location.href = '#close';
+  }
 
   let stripped = emails.replace(/\s/g, "");
   let splitArr = stripped.split(',');
   let emailArr = splitArr.filter(item => item.trim() !== '');
 
-  for (i = 0; i < emailArr.length; i++) {
-    let memlist = $('<li>').append(emailArr[i]);
-    memlist = memlist.append($('<br>'));
-    $('#members').append(memlist);
-  }
 
+  let itemFound = false;
+  for (let i = 0; i < emailArr.length; i++) {
+    $('#members li').each( function() {
+      if ( $(this).text() === emailArr[i] ) {
+        itemFound = true;
+      }
+    });
+
+    if (!itemFound) {
+      let memlist = $('<li>').append(emailArr[i]);
+      memlist = memlist.append($('<br>'));
+      $('#members').append(memlist);
+    }
+  }
 
   socket.emit('chat name', chat_name);
   socket.emit('entered emails', emails);
@@ -100,7 +114,6 @@ socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
     window.location.href = "/";
   }
   else {
-    console.log('Redirecting  to chat room page');
     window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
   }
 });
@@ -108,7 +121,13 @@ socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
 $(function () {
   let now = moment();
   let time = now.format('YYYY-MM-DD hh:mm A');
-  $('form').submit(function() {
+  $('#mememail').submit(function() {
+    console.log('adding members');
+    addNewMembers();
+    return false;
+  });
+  $('#flex-msg-form').submit(function() {
+      console.log('emitting message');
       socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
       $('#m').val('');
     return false;

@@ -80,7 +80,7 @@
           <h2>Add New Members</h2>
           <form id="mememail" class="mem-form" name="mememail" enctype="application/json">
           <input type="email" placeholder="Gmail addresses (separated by commas)" id="chat_mems" name="members" autocomplete="off" multiple/><br><br><br>
-          <input id="selectRoom" type="button" onclick="addMembers(); this.form.reset();" value="Submit" />
+          <input id="addMembers" type="submit" onclick="addNewMembers(); this.form.reset();" value="Submit"/>
         </form>
         </div>
       </div>
@@ -100,7 +100,7 @@
       </div>
 
       <div class="msg-box">
-        <form class="flex-msg-form" method="post" action="/" enctype="application/json">
+        <form id="flex-msg-form" class="flex-msg-form" method="post" action="/" enctype="application/json">
           <input id="m" name="message" autocomplete="off" />
           <button id="send-button" disabled>Send</button>
         </form>
