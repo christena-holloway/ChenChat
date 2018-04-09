@@ -28,7 +28,7 @@
       else {
         socket.emit('check login', username);
 
-        socket.emit('get email', username);
+
         let chatRoom = url.searchParams.get("chatSelect");
 
         document.getElementById('chat_name').innerHTML = chatRoom;
@@ -42,10 +42,11 @@
           let whole = listElt.append($('<small>').text(messageArray[i].timestamp));
           $('#messages').append(whole);
         }
-        //console.log('YO MY EMAIL IS: ' + my_email);
-        var memberArray = <%- JSON.stringify(members) %>
 
-        for (i = 0; i < memberArray.length; i++) {
+        var memberArray = <%- JSON.stringify(members) %>
+        socket.emit('get email', {username:username, memberArray:memberArray});
+        //console.log('YO MY EMAIL IS: ' + my_email);
+        /*for (i = 0; i < memberArray.length; i++) {
           //var listElt = $('<li>').text(memberArray[i]);
           //$('#members').append(listElt);
 
@@ -53,18 +54,10 @@
 
 
           $('#members').append(listElt);
-          updateScroll();
-          // send chat room name to send message via google home
-          socket.emit('chatNameForGoogleMessage', chat_name);
-
-
-        updateScroll();
-        // send chat room name to send message via google home
-        socket.emit('chatNameForGoogleMessage', chat_name);
-
-
-
-      }
+      }*/
+      updateScroll();
+      // send chat room name to send message via google home
+      socket.emit('chatNameForGoogleMessage', chat_name);
       console.log("END OF ONLOAD");
     }
 

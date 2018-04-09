@@ -141,10 +141,22 @@ function deleteUser(emailAddress) {
   }
 }
 
-socket.on('got full name from email', function(fullname) {
-  console.log("HEY OH " + fullname);
-});
 
 socket.on('set email', function(data) {
-  my_email = data;
+  my_email = data.email;
+  for (i = 0; i < data.memberArray.length; i++) {
+      //var listElt = $('<li>').text(memberArray[i]);
+      //$('#members').append(listElt);
+      var listElt;
+      if(is_creator == "true" && my_email != data.memberArray[i]) {
+        listElt = $("<li><p>" + data.memberArray[i] + "</p> <button onclick=deleteUser(\'"+ data.memberArray[i] +"\')>DELETE</button></li>");
+      }
+      else {
+        listElt = $("<li><p>" + data.memberArray[i] + "</p></li>");
+      }
+
+      $('#members').append(listElt);
+  }
+
+
 });
