@@ -119,39 +119,24 @@ module.exports = {
 	      return;
 	    }
 	  });
+  },
+
+  // add user to db IF THEY'RE NOT ALREADY IN
+  addUsersWithEmail: function(chatName, emailAddr) {
+    let conditions = { email: emailAddr };
+    let update = { $addToSet: { chats: chatName } };
+    let options = { upsert: true };
     
-    // add user to db IF THEY'RE NOT ALREADY IN
-    console.log("EMAILARR: " + emailArr);
-    emailArr.push(email);
-    for (let i = 0; i < emailArr.length; i++) {
-      UserCollection.count({ email: emailArr[i] }, function(err, count) {
-        // if user is not in db
-        if (count === 0) {
-          let u = new UserCollection({ 'userID': '', 'fullName': '', 'email': emailArr[i], 'chats': [] });
-          //append new chat to chats array
-          u.chats.push(chatName);
-          saveUserToDB(u);
-        }
-        else {
-          // update chats array in user's doc
-          console.log("user is already in db");
-          // find user's doc
-          UserCollection.findOne({ 'email': emailArr[i] }, function (err, doc) {
-            /*probably need to account for user already being 
-            in this chat room (maybe just do when displaying 
-            rooms on chatSelect*/
-            let user = doc;
-            console.log("USER DOC IS: " + user);
-            if (err) {
-              console.log(err);
-              res.status(400).send("Bad Request");
-            }
-            user.chats.push(chatName);
-            saveUserToDB(user);
-          });
-        }
-      });
+    function callback(err, numAffected) {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        console.log(numAffected + " changed");
+      }
     }
+    
+    UserCollection.update(conditions, update, options, callback);
   },
 
 	getTimestamp: function() {
