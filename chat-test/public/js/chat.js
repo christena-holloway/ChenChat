@@ -95,7 +95,7 @@ socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
 $(function () {
   let now = moment();
   let time = now.format('YYYY-MM-DD hh:mm A');
-  $('.mem-form').submit(function() {
+  $('#mememail').submit(function() {
     console.log('adding members');
     addMembers();
     return false;

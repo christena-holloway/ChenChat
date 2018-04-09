@@ -152,7 +152,7 @@ header {
 
 .close:hover { background: #E38968; }
 
-input[type=button] {
+input[type=submit] {
   width: 20%;
   color: white;
   font-size: 15px;
