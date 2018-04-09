@@ -3,6 +3,7 @@ var chat_name;  //where is value of this coming from?
 var urlString = window.location.href;
 var url = new URL(urlString);
 var username = url.searchParams.get("name");
+var input = document.getElementById("addMembers");
 
 socket.on('login response', function(response) {
   if (response == "no") {
@@ -12,7 +13,6 @@ socket.on('login response', function(response) {
 
 $(function () {
   socket.on('getMembers', function(memberArr) {
-    console.log("members in chat.js: " + memberArr);
     for (let i = 0; i < memberArr.length; i++) {
       $('#members').append(memberArr[i]);
     }
@@ -27,7 +27,6 @@ function updateScroll() {
 function signOut() {
   let auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut().then(function () {
-    console.log('User signed out.');
     document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://chenchat2.azurewebsites.net";
   });
 }
@@ -38,6 +37,7 @@ function openMod() {
 }
 
 function addMembers() {
+  console.log('Enter addMembers function');
   let emails = document.getElementById("chat_mems").value;
   if (emails == null) {
     window.location.href = '#close';
@@ -88,7 +88,6 @@ socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
     window.location.href = "/";
   }
   else {
-    console.log('Redirecting  to chat room page');
     window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
   }
 });
@@ -96,15 +95,15 @@ socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
 $(function () {
   let now = moment();
   let time = now.format('YYYY-MM-DD hh:mm A');
-  $('.flex-msg-form').submit(function() {
-      console.log('emitting message')
-      socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
-      $('#m').val('');
+  $('.mem-form').submit(function() {
+    console.log('adding members');
+    addMembers();
     return false;
   });
-  $('.mem-form').submit(function() {
-    console.log('adding members')
-    addMembers();
+  $('.flex-msg-form').submit(function() {
+      console.log('emitting message');
+      socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
+      $('#m').val('');
     return false;
   });
   socket.on('chat message', function(data) {
