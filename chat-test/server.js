@@ -71,7 +71,7 @@ function getChats(callback) {
       console.log("User's chats are: " + doc.chats.length);
       console.log("type of doc" + typeof doc);
       console.log("type of doc.chats" + typeof doc.chats[0]);
-      
+
       for (let i = 0; i < doc.chats.length; i++) {
         results.push(doc.chats[i]);
       }
@@ -247,9 +247,11 @@ io.on('connection', function(socket){
   socket.on('chatroom delete user', function(data) {
     ///console.log("HEY OH: " + fullname);
     //socket.emit('got full name from email', helper.getFullNameFromEmail(data));
-    helper.userCol.findOne({"email":data}, "fullName", function(err, result) {
+    helper.userCol.findOne({"email":data.emailAddress}, "fullName", function(err, result) {
       console.log("RESULT FROM FULLNAME FIND: " + result);
-      return_name = result.fullName;
+      let return_name = result.fullName;
+      ChatRoomCollection.update({'chat_name': data.chat_name}, { $pull: { members: { $in: [ return_name ] } } });
+      socket.emit('deleted user', {user_to_delete:return_name, chat_name:data.chat_name});
     });
   });
 

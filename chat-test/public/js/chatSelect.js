@@ -27,19 +27,25 @@ function chatRedirect() {
   else {
 
     var inChatName = document.getElementById("chat_id").value;
-    //var emails = document.getElementById("chat_mems").value;
+    if(inChatName == "") {
+       var x = document.getElementsByClassName("blank-error");
+       x[0].style.display = "inline";
+    }
+    else {
+      //var emails = document.getElementById("chat_mems").value;
 
-    var emailNames = document.getElementById("chat_mems").value;
-    console.log("emails in chatSelect" + emailNames);
+      var emailNames = document.getElementById("chat_mems").value;
+      console.log("emails in chatSelect" + emailNames);
 
-    //console.log("VALUE IN: " + inChatName);
-    let socket = io();
-    socket.emit('chat name', inChatName);
-    socket.emit('entered emails', {emails: emailNames, creator:username});
-    //window.location.replace("/chat");//+ input_vals[0];
-    socket.on('redirect', function(destination) {
-      window.location.href = destination + "&name=" + username;
-    });
+      //console.log("VALUE IN: " + inChatName);
+      let socket = io();
+      socket.emit('chat name', inChatName);
+      socket.emit('entered emails', {emails: emailNames, creator:username});
+      //window.location.replace("/chat");//+ input_vals[0];
+      socket.on('redirect', function(destination) {
+        window.location.href = destination + "&name=" + username;
+      });
+    }
   }
 }
 

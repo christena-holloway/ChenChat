@@ -33,7 +33,8 @@
 
         document.getElementById('chat_name').innerHTML = chatRoom;
         chat_name = chatRoom;
-
+        //check if the current user is the creator of the chatroom
+        socket.emit('creator check', {user: username, chatroomName: chat_name});
         let messageArray =  <%- JSON.stringify(messages) %>
         //console.log("array of messages: " + array);
         for (let i = 0; i < messageArray.length; i++) {
@@ -62,8 +63,7 @@
     }
 }
 
-    //check if the current user is the creator of the chatroom
-    socket.emit('creator check', {user: username, chatroomName: chat_name});
+
 
     function addNewMembers() {
   console.log('Enter addMembers function');
