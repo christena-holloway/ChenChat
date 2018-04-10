@@ -249,7 +249,7 @@ io.on('connection', function(socket){
     let options = { upsert: true }
 
     //add current user if not already in
-    ChatRoomCollection.update(conditions, { $addToSet: { members: email, creator: data.creator } }, options, callback);
+    ChatRoomCollection.update(conditions, { $addToSet: { members: helper.email, creator: data.creator } }, options, callback);
 
     // add chat to current user's chat array
     helper.updateUserChatsArray(chatName, username);
