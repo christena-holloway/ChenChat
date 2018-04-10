@@ -186,36 +186,5 @@ module.exports = {
 	      console.log("user is already in db");
 	    }
 	  });
-	},
-
-
-
-  getFullNameFromEmail: function(emailAddress, io) {
-    let return_name;
-    UserCollection.findOne({"email":emailAddress}, "fullName", function(err, result) {
-      console.log("RESULT FROM EMAIL FIND: " + result);
-      return_name = result.fullName;
-    });
-
-    return return_name;
-  },
-
-	getChatsForUser: function(userEmail) {
-		console.log("User's email is: " + userEmail);
-
-		UserCollection.findOne({ 'email': userEmail }, 'chats', function (err, doc) {
-
-			if(doc.chats) {
-
-				console.log("User's chats are: " + doc.chats);
-				return doc.chats;
-			}
-			else {
-        console.log("user's chats don't exist");
-				return [];
-			}
-		});
-
 	}
-
 };
