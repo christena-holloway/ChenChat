@@ -54,18 +54,47 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+var userChatRooms = [];
+
+function renderChatSelect(res) {
+  console.log("AFTER GET CHATS FOR USER");
+  console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
+  res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
+}
+
+function getChats(callback) {
+  let userEmail = helper.email;
+  console.log("User's email is: " + userEmail);
+  let results = []
+  helper.UserCollection.findOne({ 'email': userEmail }).lean().exec(function (err, doc) {
+    if(doc.chats) {
+      console.log("User's chats are: " + doc.chats.length);
+      console.log("type of doc" + typeof doc);
+      console.log("type of doc.chats" + typeof doc.chats[0]);
+      
+      for (let i = 0; i < doc.chats.length; i++) {
+        results.push(doc.chats[i]);
+      }
+      console.log(results);
+      userChatRooms = results;
+      callback();
+      //return results;
+    }
+    else {
+      console.log("user's chats don't exist");
+      userChatRooms = results;
+      callback();
+    }
+  });
+}
+
 app.get("/chatSelect", function(req, res){
   // res.sendFile(__dirname + '/chatroom.html');
-
-  // find all chatrooms for username's email
-
-  //let userChatRooms = helper.getChatsForUser(helper.email);
-  //console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
-
-  //res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
-  res.sendFile(__dirname + '/chatSelect.html');
-
-
+  getChats(function() {
+    console.log("AFTER GET CHATS FOR USER");
+    console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
+    res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
+  });
 });
 
 app.get("/help", function(req, res) {
