@@ -250,7 +250,7 @@ io.on('connection', function(socket){
     helper.userCol.findOne({"email":data.emailAddress}, "fullName", function(err, result) {
       console.log("RESULT FROM FULLNAME FIND: " + result);
       let return_name = result.fullName;
-
+      ChatRoomCollection.update({'chat_name': data.chat_name}, { $pull: { members: { $in: [ return_name ] } } });
       socket.emit('deleted user', {user_to_delete:return_name, chat_name:data.chat_name});
     });
   });
