@@ -27,7 +27,10 @@
       }
       else {
         socket.emit('check login', username);
+
+
         let chatRoom = url.searchParams.get("chatSelect");
+
         document.getElementById('chat_name').innerHTML = chatRoom;
         chat_name = chatRoom;
 
@@ -39,23 +42,64 @@
           let whole = listElt.append($('<small>').text(messageArray[i].timestamp));
           $('#messages').append(whole);
         }
-        
-        var memberArray = <%- JSON.stringify(members) %>
-        console.log("MEMBER ARRAY SIZE: " + memberArray.length);
-        for (let i = 0; i < memberArray.length; i++) {
-          let listElt = $('<li>').text(memberArray[i]);
-          console.log("list elt: " + listElt);
-          $('#members').append(listElt);
-          updateScroll();
-          // send chat room name to send message via google home
-          socket.emit('chatNameForGoogleMessage', chat_name);
 
-        }
-      }
+        var memberArray = <%- JSON.stringify(members) %>
+        socket.emit('get email', {username:username, memberArray:memberArray});
+        //console.log('YO MY EMAIL IS: ' + my_email);
+        /*for (i = 0; i < memberArray.length; i++) {
+          //var listElt = $('<li>').text(memberArray[i]);
+          //$('#members').append(listElt);
+
+          var listElt = $("<li><p>" + memberArray[i] + "</p> <button onclick=deleteUser(\'"+ memberArray[i] +"\')>DELETE</button></li>");
+
+
+          $('#members').append(listElt);
+      }*/
+      updateScroll();
+      // send chat room name to send message via google home
+      socket.emit('chatNameForGoogleMessage', chat_name);
       console.log("END OF ONLOAD");
     }
+}
+
+    //check if the current user is the creator of the chatroom
+    socket.emit('creator check', {user: username, chatroomName: chat_name});
+
+    function addNewMembers() {
+  console.log('Enter addMembers function');
+  let emails = document.getElementById("chat_mems").value;
+  if (emails == null) {
+    window.location.href = '#close';
+  }
+
+  let stripped = emails.replace(/\s/g, "");
+  let splitArr = stripped.split(',');
+  let emailArr = splitArr.filter(item => item.trim() !== '');
+
+
+  let itemFound = false;
+  for (let i = 0; i < emailArr.length; i++) {
+    $('#members li').each( function() {
+      if ( $(this).text() === emailArr[i] ) {
+        itemFound = true;
+      }
+    });
+
+    if (!itemFound) {
+      let memlist = $('<li>').append(emailArr[i]);
+      memlist = memlist.append($('<br>'));
+      $('#members').append(memlist);
+    }
+  }
+
+  socket.emit('chat name', chat_name);
+  socket.emit('entered emails', emails);
+
+  window.location.href = '#close';
+}
 
     </script>
+
     <div class="grid-container">
       <header>
         <h1 class="title" id="chat_name"> </h1>
@@ -63,13 +107,14 @@
         <a href="/" class="signOut" onclick="signOut();"> Log out </a>
       </header>
       <!-- TODO: Add this button to the header like the back/sign out button -->
+
       <div id="openModal" class="modalDialog">
         <div>
           <a href="#close" title="Close" class="close">X</a>
           <h2>Add New Members</h2>
           <form id="mememail" class="mem-form" name="mememail" enctype="application/json">
           <input type="email" placeholder="Gmail addresses (separated by commas)" id="chat_mems" name="members" autocomplete="off" multiple/><br><br><br>
-          <input id="selectRoom" type="button" onclick="addMembers(); this.form.reset();" value="Submit" />
+          <input id="addMembers" type="submit" onclick="addNewMembers(); this.form.reset();" value="Submit"/>
         </form>
         </div>
       </div>
@@ -78,17 +123,18 @@
         <ul id="messages">
         </ul>
       </div>
+
       <div class="member-list">
         <button type="button" class="btn-plus" onclick="openMod();">
-          <span class="glyphicon glyphicon-plus"></span> 
-          Add 
+          <span class="glyphicon glyphicon-plus"></span>
+          Add
         </button>
         <ul id="members">
         </ul>
       </div>
-    
+
       <div class="msg-box">
-        <form class="flex-msg-form" method="post" action="/" enctype="application/json">
+        <form id="flex-msg-form" class="flex-msg-form" method="post" action="/" enctype="application/json">
           <input id="m" name="message" autocomplete="off" />
           <button id="send-button" disabled>Send</button>
         </form>

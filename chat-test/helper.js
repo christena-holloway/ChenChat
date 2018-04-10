@@ -5,6 +5,7 @@ var mailer = require('express-mailer');
 var moment = require('moment');
 var mongoose = require('mongoose');
 
+
 app.set('view engine', 'pug');
 app.engine('html', require('ejs').renderFile);
 
@@ -43,8 +44,10 @@ function saveUserToDB(userColl) {
 
 
 module.exports = {
+  userCol: UserCollection,
+
   email: "temp",
-  
+
 	handleMessage: function(data) {
 		let result = data.queryResult;
 		let action = result.action;
@@ -88,7 +91,7 @@ module.exports = {
 
 	  return msg;
 	},
-  
+
   updateUserChatsArray: function(chatName) {
     console.log("updating user's chats");
     UserCollection.findOneAndUpdate({ email: this.email },
@@ -119,39 +122,26 @@ module.exports = {
 	      return;
 	    }
 	  });
-    
-    // add user to db IF THEY'RE NOT ALREADY IN
-    console.log("EMAILARR: " + emailArr);
-    emailArr.push(email);
-    for (let i = 0; i < emailArr.length; i++) {
-      UserCollection.count({ email: emailArr[i] }, function(err, count) {
-        // if user is not in db
-        if (count === 0) {
-          let u = new UserCollection({ 'userID': '', 'fullName': '', 'email': emailArr[i], 'chats': [] });
-          //append new chat to chats array
-          u.chats.push(chatName);
-          saveUserToDB(u);
-        }
-        else {
-          // update chats array in user's doc
-          console.log("user is already in db");
-          // find user's doc
-          UserCollection.findOne({ 'email': emailArr[i] }, function (err, doc) {
-            /*probably need to account for user already being 
-            in this chat room (maybe just do when displaying 
-            rooms on chatSelect*/
-            let user = doc;
-            console.log("USER DOC IS: " + user);
-            if (err) {
-              console.log(err);
-              res.status(400).send("Bad Request");
-            }
-            user.chats.push(chatName);
-            saveUserToDB(user);
-          });
-        }
-      });
+
+  },
+
+  // add user to db IF THEY'RE NOT ALREADY IN
+  addUsersWithEmail: function(chatName, emailAddr) {
+    let conditions = { email: emailAddr };
+    let update = { $addToSet: { chats: chatName } };
+    let options = { upsert: true };
+
+    function callback(err, numAffected) {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        console.log(numAffected + " changed");
+      }
+
     }
+
+    UserCollection.update(conditions, update, options, callback);
   },
 
 	getTimestamp: function() {
@@ -198,10 +188,25 @@ module.exports = {
 	  });
 	},
 
+
+
+  getFullNameFromEmail: function(emailAddress, io) {
+    let return_name;
+    UserCollection.findOne({"email":emailAddress}, "fullName", function(err, result) {
+      console.log("RESULT FROM EMAIL FIND: " + result);
+      return_name = result.fullName;
+    });
+
+    return return_name;
+  },
+
 	getChatsForUser: function(userEmail) {
 		console.log("User's email is: " + userEmail);
+
 		UserCollection.findOne({ 'email': userEmail }, 'chats', function (err, doc) {
+
 			if(doc.chats) {
+
 				console.log("User's chats are: " + doc.chats);
 				return doc.chats;
 			}
@@ -210,6 +215,7 @@ module.exports = {
 				return [];
 			}
 		});
+
 	}
 
 };

@@ -35,6 +35,7 @@ mongoose.Promise = Promise;
 //define chatroom and user schemas
 var chatRoomSchema = new mongoose.Schema({
     chat_name: String,
+    creator: String,
     members: [],
     messages: []
 }, {collection: "ChatRoom"});
@@ -55,12 +56,14 @@ app.get('/', function(req, res){
 
 app.get("/chatSelect", function(req, res){
   // find all chatrooms for username's email
-  // TODO: add these back in (commented out bc bug)
+
   //let userChatRooms = helper.getChatsForUser(helper.email);
   //console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
-  
+
   //res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
-    res.sendFile(__dirname + '/chatSelect.html');
+
+  res.sendFile(__dirname + '/chatSelect.html');
+
 });
 
 app.get("/help", function(req, res) {
@@ -68,8 +71,10 @@ app.get("/help", function(req, res) {
 });
 
 app.get("/chat", function(req, res) {
+
   let result_array1 = [];
   let ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
+
 
   ChatRoom2.findOne( { 'chat_name': chatName }, 'messages members', function(err, doc) {
     result_array1 = doc;
@@ -126,7 +131,7 @@ function sendMessage(msg, sender, chat_token = 'test') {
         console.log('successfully posted to db');
         //callback();
       }
-    });  
+    });
   });
   // What's this for? (move to helper if still needed)
   /*UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
@@ -185,6 +190,7 @@ io.on('connection', function(socket){
 
   io.emit('getChatName', chatName);
 
+
   //TODO: query db for all members in chat room
   //io.emit('getMembers', memberArr)
 
@@ -199,82 +205,67 @@ io.on('connection', function(socket){
     let currentTime = helper.getTimestamp();
   });
 
-  socket.on('entered emails', function(emails) {
+
+  socket.on('get email', function(data) {
+    helper.userCol.findOne({"fullName":data.username}, "email", function(err, result) {
+      console.log("RESULT FROM EMAIL FIND: " + result);
+      socket.emit('set email', {email:result.email, memberArray:data.memberArray});
+    });
+  });
+
+  socket.on('chatroom delete user', function(data) {
+    ///console.log("HEY OH: " + fullname);
+    //socket.emit('got full name from email', helper.getFullNameFromEmail(data));
+    helper.userCol.findOne({"email":data}, "fullName", function(err, result) {
+      console.log("RESULT FROM FULLNAME FIND: " + result);
+      return_name = result.fullName;
+    });
+  });
+
+  socket.on('creator check', function(data) {
+    console.log('I AM DOING THE CREATOR CHECK');
+    var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
+    var response = "false";
+    function callback() {
+      socket.emit('creator check receive', response);
+    }
+
+    ChatRoom2.findOne( { 'chat_name': data.chatroomName, 'creator': data.user }, 'creator', function(err, doc) {
+      if(doc != null ) {
+        response = "true";
+      }
+      callback();
+    });
+  });
+
+  socket.on('entered emails', function(data) {
+    let emails = data.emails;
     let stripped = emails.replace(/\s/g, "");
     let splitArr = stripped.split(',');
     let emailArr = splitArr.filter(item => item.trim() !== '');
-    //console.log(emailArr);
+    let conditions = { chat_name: chatName };
+    let options = { upsert: true }
 
-    //check if chatroom exists
-    ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
-    //if this chat room does not exist yet, create it
-      if (count === 0) {
-        m = new ChatRoomCollection({ 'chat_name': chatName, 'members': [], 'messages': [] });
-        //!!!!TODO: make sure duplicate email addresses aren't entered
-        //push current user to members vector
-        //let email = helper.getEmail(token);
-        //console.log("current user's email: " + helper.email);
-        m.members.push(helper.email);
-        //add members
-        for (let i = 0; i < emailArr.length; i++) {
-          //console.log(emailArr[i]);
-          if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
-            m.members.push(emailArr[i]);
-          }
-        }
+    //add current user if not already in
+    ChatRoomCollection.update(conditions, { $addToSet: { members: email, creator: data.creator } }, options, callback);
 
-        if (emailArr.length > 0) {
-          //console.log("sending invites to: " + emailArr);
-          helper.sendInvite(emailArr, chatName, username);
-        }
-        // add chat to current user's chat array
-        helper.updateUserChatsArray(chatName, username);
-        
-        
-        //console.log("will add chat to current user's chat array");
-        m.save(function(err) {
-          if (err) {
-            console.log(err);
-            res.status(400).send("Bad Request");
-          }
-          else {
-            console.log('successfully posted to db');
-            callback();
-          }
-        });
+    // add chat to current user's chat array
+    helper.updateUserChatsArray(chatName, username);
+
+    //add all emails if they don't exist
+    for (let i = 0; i < emailArr.length; i++) {
+      if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
+        ChatRoomCollection.update(conditions, { $addToSet: { members: emailArr[i] } }, options, callback);
+        //add chat to each user's chat array
+        helper.updateUserChatsArray(chatName, emailArr[i]);
+        helper.addUsersWithEmail(chatName, emailArr[i]);
+
       }
-      else {
-        ChatRoomCollection.findOne({ chat_name: chatName }, function (err, doc) {
-          //doc is document for the chat room
-          m = doc;
-          m.members.push(helper.email);
-          for (let i = 0; i < emailArr.length; ++i) {
-            ChatRoomCollection.count({ chat_name: chatName }, function (err, count) {
-              if (count === 0) {
-                m.members.push(emailArr[i]);
-              }
-            });
-          }
-          //console.log("length of emailArr: " + emailArr.length);
-          if (emailArr.length > 0){
-            //console.log("sending invites to: " + emailArr);
-            helper.sendInvite(emailArr, chatName, username);
-          }
-          helper.updateUserChatsArray(chatName, username);
-          
-          m.save(function(err) {
-            if (err) {
-              console.log(err);
-              res.status(400).send("Bad Request");
-            }
-            else {
-              console.log('successfully posted to db');
-              callback();
-            }
-          });
-        });
-      }
-    });
+    }
+    //send invites
+    if (emailArr.length > 0) {
+      helper.sendInvite(emailArr, chatName, username);
+    }
   });
 
   socket.on('id token', function(id_token) {

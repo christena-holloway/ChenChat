@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/chatrm.css" media="Screen" />
+    <link rel="stylesheet" type="text/css" href="css/mobilechat.css" media="handheld" />
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Select a Chat Room</title>
+  </head>
+  <body>
+  <script>
+    var urlString = window.location.href;
+    var url = new URL(urlString);
+    var username = url.searchParams.get("name");
+    // Check if user is logged in
+    if (username == null) {
+      window.location.href = "/";
+    }
+    else {
+    // URL contains the name of the chatroom
+      if(window.location.href.indexOf("chatroom=") > -1) {
+        var chatRoom = url.searchParams.get("chatroom");
+        console.log("Chatroom from url param is " + chatRoom);
+
+        window.onload = function() {
+          document.getElementById("chat_id").value = chatRoom;
+          document.getElementById("selectRoom").click();
+        }
+      }
+    }
+
+    function chatRedirect() {
+      // var input_vals = $(this).serialize();
+      if (username == null) {
+        window.location.href = "/";
+      }
+      else {
+        var inChatName = document.getElementById("chat_id").value;
+        var emailNames = document.getElementById("chat_mems").value;
+        //console.log("VALUE IN: " + inChatName);
+        var socket = io();
+        socket.emit('chat name', inChatName);
+        socket.emit('entered emails', {emails: emailNames, creator:username});
+        //window.location.replace("/chat");//+ input_vals[0];
+        socket.on('redirect', function(destination) {
+          window.location.href = destination + "&name=" + username;
+        });
+      }
+    }
+    function signOut() {
+      //socket.emit("signing out", username);
+      var auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(function () {
+        console.log('User signed out.');
+        document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://chenchat2.azurewebsites.net";
+      });
+    }
+    function onLoad() {
+      gapi.load('auth2', function() {
+        gapi.auth2.init();
+      });
+    }
+    function helppg() {
+      window.location.href = '/help';
+    }
+  </script>
+    <div class="grid-container">
+      <header>
+        <h1 class="title"> Find Your Chat Group </h1>
+        <button class="help-button" onclick="helppg();"> Help </button>
+        <h2>Create a new group or specify a previous group to start chatting.</h2>
+        <a href="/" class="signOut" onclick="signOut();"> Sign out </a>
+      </header>
+      <div class="chat-rm">
+        <form class="chatrm-form" enctype="application/json">
+          Group Name: <input required id="chat_id" type="text" placeholder="Chat group name" autocomplete="off" /><br><br>
+          Group Members: <input type="email" placeholder="Gmail addresses, separated by commas" id="chat_mems" name="members" autocomplete="off" multiple/><br>
+          <!--<p>Please enter only Google email addresses and separate them with a comma ','</p><br><br>-->
+          <input id="selectRoom" type="button" onclick="chatRedirect();" value="Submit" />
+        </form>
+      </div>
+    </div>
+    <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+  </body>
+</html>
