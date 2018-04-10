@@ -66,7 +66,7 @@ function getChats(callback) {
   let userEmail = helper.email;
   console.log("User's email is: " + userEmail);
   let results = []
-  helper.UserCol.findOne({ 'email': userEmail }).lean().exec(function (err, doc) {
+  helper.userCol.findOne({ 'email': userEmail }).lean().exec(function (err, doc) {
     if(doc.chats) {
       console.log("User's chats are: " + doc.chats.length);
       console.log("type of doc" + typeof doc);
