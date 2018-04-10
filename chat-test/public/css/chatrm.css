@@ -11,6 +11,12 @@ h1 {
   font-weight: bold;
   text-align: center;
 }
+.blank-error {
+  display: none;
+  font-size: 18px;
+  color: red;
+  font-weight: normal;
+}
 .help-button {
   font-family: Helvetica Neue, Arial;
   font-size: 15px;

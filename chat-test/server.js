@@ -221,6 +221,7 @@ io.on('connection', function(socket){
     helper.userCol.findOne({"email":data}, "fullName", function(err, result) {
       console.log("RESULT FROM FULLNAME FIND: " + result);
       return_name = result.fullName;
+      
     });
   });
 

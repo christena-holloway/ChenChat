@@ -55,7 +55,7 @@
       </header>
       <div class="chat-rm">
         <form class="chatrm-form" enctype="application/json">
-          Group Name: <input required id="chat_id" type="text" placeholder="Chat name" autocomplete="off" /><br><br>
+          Group Name: <input required id="chat_id" type="text" placeholder="Chat name" autocomplete="off" /><br><span class="blank-error">You've Entered a Blank Chat Room</span><br>
           Group Members: <input required type="email" placeholder="Gmail addresses (separated by commas)" id="chat_mems" name="members" autocomplete="off" multiple/><br>
           <input id="selectRoom" type="button" onclick="chatRedirect();" value="Submit" />
         </form>
