@@ -40,6 +40,8 @@ function goToChatRoom(chatName) {
     let socket = io();
     socket.emit('chat name', chatName);
     socket.on('redirect', function(destination) {
+      console.log("Destination is " + destination);
+      console.log("REDIRECTING WINDOW NOW");
       window.location.href = destination + "&name=" + username;
     });
   }
@@ -66,5 +68,6 @@ function helppg() {
 
 $(".my-chat-room").click(function() {
   var room = $(".my-chat-room").text();
+  console.log("GO TO CHATROOM: " + room);
   goToChatRoom(room);
 });
