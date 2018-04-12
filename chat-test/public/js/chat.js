@@ -150,12 +150,12 @@ $(document).ready(function () {
 });
 
 function deleteUser(emailAddress) {
-  if(is_creator == "true") {
+  if(is_creator === "true") {
     socket.emit('chatroom delete user', {emailAddress:emailAddress, chat_name:chat_name});
-    alert(emailAddress.toString() + ', You been deleted from this chatroom ');
+    alert(emailAddress.toString() + ', You have been deleted from this chatroom ');
   }
   else {
-    alert("You are not the creator of this chatroom and cannot delete users.");
+    alert("You do not have permission to delete users from this chatroom.");
   }
 }
 
@@ -166,7 +166,7 @@ socket.on('set email', function(data) {
       //var listElt = $('<li>').text(memberArray[i]);
       //$('#members').append(listElt);
       var listElt;
-      if(is_creator == "true" && my_email != data.memberArray[i]) {
+      if(is_creator === "true" && my_email != data.memberArray[i]) {
         listElt = $("<li><p>" + data.memberArray[i] + "</p> <button onclick=deleteUser(\'"+ data.memberArray[i] +"\')>DELETE</button></li>");
       }
       else {
