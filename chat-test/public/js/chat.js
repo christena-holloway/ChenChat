@@ -183,8 +183,13 @@ socket.on('set email', function(data) {
 });
 
 socket.on('deleted user', function(data) {
-  if(data.user_to_delete == username && chat_name == data.chat_name) {
+  if(data.email_to_delete == my_email && chat_name == data.chat_name) {
     alert("You have been deleted from this chatroom");
     window.location.href = '/chatSelect?name=' + username;
   }
+  else {
+    window.location.reload();
+  }
+
+
 });

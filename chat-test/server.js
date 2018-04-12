@@ -41,6 +41,7 @@ var chatRoomSchema = new mongoose.Schema({
 }, {collection: "ChatRoom"});
 
 var ChatRoomCollection = mongoose.model("ChatRoom", chatRoomSchema);
+//let ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
 //connect to db
 mongoose.connect(conString, function(err){
     if (err) throw err;
@@ -247,12 +248,20 @@ io.on('connection', function(socket){
   socket.on('chatroom delete user', function(data) {
     ///console.log("HEY OH: " + fullname);
     //socket.emit('got full name from email', helper.getFullNameFromEmail(data));
-    helper.userCol.findOne({"email":data.emailAddress}, "fullName", function(err, result) {
-      console.log("RESULT FROM FULLNAME FIND: " + result);
-      let return_name = result.fullName;
-      ChatRoomCollection.update({'chat_name': data.chat_name}, { $pull: { members: { $in: [ return_name ] } } });
-      socket.emit('deleted user', {user_to_delete:return_name, chat_name:data.chat_name});
+    ChatRoomCollection.updateOne({'chat_name': data.chat_name}, { $pull: { members: { $in: [ data.emailAddress ] } } }, function(err, res) {
+      if (err) throw err;
+      console.log("1 document updated");
+      //db.close();
     });
+
+    helper.userCol.updateOne({'email': data.emailAddress}, { $pull: { chats: { $in: [ data.chat_name ] }} }, function(err, res) {
+      if (err) throw err;
+      console.log("1 document updated");
+      //db.close();
+    });
+
+
+    socket.emit('deleted user', { email_to_delete:data.emailAddress, chat_name:data.chat_name });
   });
 
   socket.on('creator check', function(data) {
