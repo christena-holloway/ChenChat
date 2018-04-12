@@ -25,7 +25,9 @@
           let chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
           console.log("User's chat rooms include: " + chatRoomsWithPermission);
           for (let i = 0; i < chatRoomsWithPermission.length; i++) {
-            let listElt = $('<li id="my-chat-room" onclick="goToChatRoom(chatRoomsWithPermission[i]);">').text(chatRoomsWithPermission[i]);
+            console.log(chatRoomsWithPermission[i]);
+            let text = chatRoomsWithPermission[i];
+            let listElt = $('<button type="button" class="my-chat-room" onclick="goToChatRoom(\''+ chatRoomsWithPermission[i] +'\');">').text(chatRoomsWithPermission[i]);
             listElt = listElt.append($('<br>'));
             $(".list-of-chats").append(listElt);
           }
@@ -40,7 +42,9 @@
           console.log("Selected chatroom: " + chatName);
           let socket = io();
           socket.emit('chat name', chatName);
+          console.log('sent chat name');
           socket.on('redirect', function(destination) {
+            console.log('redirecting...');
             window.location.href = destination + "&name=" + username;
           });
         }
