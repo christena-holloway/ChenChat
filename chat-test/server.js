@@ -128,7 +128,7 @@ app.post('/chat', function(req, res) {
   console.log(req.body.queryResult.parameters);
 
   let chatRoom = req.body.queryResult.parameters.chatroom;
-  let message = helper.handleMessage(req.body);
+  let message = handleMessage(req.body);
   console.log('Sending the message: ' + message);
   sendMessage(message, 'Chun-Han', chatRoom);
 
@@ -140,6 +140,51 @@ app.post('/chat', function(req, res) {
   };
   res.end(JSON.stringify(responseToAssistant));
 });
+
+function handleMessage(data) {
+  let result = data.queryResult;
+  let action = result.action;
+  let parameters = result.parameters;
+  let chatRoom = parameters.chatroom;
+  let msg = '';
+
+  console.log("Action is " + action);
+  console.log("Chat room is " + chatRoom);
+
+  if (action === 'sendHelp') {
+    let state = parameters.state;
+    let location = parameters.location;
+    msg += 'I need help now. My location is: ' + location + '.';
+  }
+  else if (action === 'switchMode') {
+    let mode = parameters.mode;
+    msg += 'I need help ' + mode + '!';
+  }
+  else if (action === 'reportState') {
+    let state = parameters.state;
+    msg += 'I ' + state + '!';
+  }
+  else if (action === 'whereIsMy') {
+    let object = parameters.object;
+    msg += 'Where is my ' + object + '?';
+  }
+  else if (action === 'sendCustomMessage') {
+    msg += parameters.customMessage;
+  }
+  else if (action === 'changeChatRoom') {
+    console.log("Switching chat rooms");
+    // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
+    io.emit('getChatRoomFromGoogleApi', chatRoom);
+    console.log("After emitting the chatroom");
+    return "Changed to room " + chatRoom;
+  }
+  // default handler
+  else {
+    msg += 'I am trying to communicate with you but something went wrong!';
+  }
+
+  return msg;
+}
 
 var sub;
 //message collection

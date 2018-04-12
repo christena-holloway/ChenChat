@@ -2,23 +2,6 @@ var urlString = window.location.href;
 var url = new URL(urlString);
 var username = url.searchParams.get("name");
 
-// Check if user is logged in
-if (username == null) {
-  window.location.href = "/";
-}
-else {
-  // URL contains the name of the chatroom
-  if(window.location.href.indexOf("chatroom=") > -1) {
-    let chatRoom = url.searchParams.get("chatroom");
-    console.log("Chatroom from url param is " + chatRoom);
-
-    window.onload = function() {
-      document.getElementById("chat_id").value = chatRoom;
-      document.getElementById("selectRoom").click();
-    }
-  }
-}
-
 function chatRedirect() {
   // var input_vals = $(this).serialize();
   if (username == null) {
@@ -49,6 +32,19 @@ function chatRedirect() {
   }
 }
 
+function goToChatRoom(chatName) {
+  if (username == null) {
+    window.location.href = "/";
+  }
+  else {
+    let socket = io();
+    socket.emit('chat name', chatName);
+    socket.on('redirect', function(destination) {
+      window.location.href = destination + "&name=" + username;
+    });
+  }
+}
+
 function signOut() {
   //socket.emit("signing out", username);
   let auth2 = gapi.auth2.getAuthInstance();
@@ -67,3 +63,8 @@ function onLoad() {
 function helppg() {
   window.location.href = '/help';
 }
+
+$(".my-chat-room").click(function() {
+  var room = $(".my-chat-room").text();
+  goToChatRoom(room);
+});

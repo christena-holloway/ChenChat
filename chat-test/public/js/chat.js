@@ -53,7 +53,6 @@ function openMod() {
 
 
 function addNewMembers() {
-  console.log('Enter addMembers function');
   let emails = document.getElementById("chat_mems").value;
   if (emails == null) {
     window.location.href = '#close';
@@ -124,12 +123,10 @@ $(function () {
   let now = moment();
   let time = now.format('YYYY-MM-DD hh:mm A');
   $('#mememail').submit(function() {
-    console.log('adding members');
     addNewMembers();
     return false;
   });
   $('#flex-msg-form').submit(function() {
-      console.log('emitting message');
       socket.emit('chat message', { msg: $('#m').val(), timestamp: time, chat_token: chat_name, sent_name: username });
       $('#m').val('');
     return false;
@@ -153,12 +150,12 @@ $(document).ready(function () {
 });
 
 function deleteUser(emailAddress) {
-  if(is_creator == "true") {
+  if(is_creator === "true") {
     socket.emit('chatroom delete user', {emailAddress:emailAddress, chat_name:chat_name});
-    alert(emailAddress.toString() + ', You been deleted from this chatroom ');
+    alert(emailAddress.toString() + ', You have been deleted from this chatroom ');
   }
   else {
-    alert("You are not the creator of this chatroom and cannot delete users.");
+    alert("You do not have permission to delete users from this chatroom.");
   }
 }
 
@@ -169,7 +166,7 @@ socket.on('set email', function(data) {
       //var listElt = $('<li>').text(memberArray[i]);
       //$('#members').append(listElt);
       var listElt;
-      if(is_creator == "true" && my_email != data.memberArray[i]) {
+      if(is_creator === "true" && my_email != data.memberArray[i]) {
         listElt = $("<li><p>" + data.memberArray[i] + "</p> <button onclick=deleteUser(\'"+ data.memberArray[i] +"\')>DELETE</button></li>");
       }
       else {

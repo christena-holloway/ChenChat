@@ -189,6 +189,7 @@ input[type=email]:focus {
 .list-of-chats {
   overflow-y: scroll;
   list-style-type: none;
+  font: 28px Helvetica Neue, Arial;
 }
 
 /* Use a media query to add a breakpoint at 800px: */
