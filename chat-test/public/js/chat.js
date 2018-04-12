@@ -111,9 +111,11 @@ function doCheck() {
 
 socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
   if (username == null) {
+    console.log("Trying to change rooms but use name is null");
     window.location.href = "/";
   }
   else {
+    console.log("relocating to new chatroom: " + chatRoom);
     window.location.href = '/chatSelect?chatroom=' + chatRoom + '&name=' + username;
   }
 });
