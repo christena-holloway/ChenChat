@@ -4,6 +4,7 @@ var jwtDecode = require('jwt-decode');
 var mailer = require('express-mailer');
 var moment = require('moment');
 var mongoose = require('mongoose');
+var io = require('socket.io').listen(http);
 
 
 app.set('view engine', 'pug');

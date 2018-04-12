@@ -20,83 +20,83 @@
   </head>
   <body>
     <script>
-    window.onload = function() {
-      console.log("BEGIN OF ONLOAD");
-      if (username == null) {
-        window.location.href = "/";
+      window.onload = function() {
+        console.log("BEGIN OF ONLOAD");
+        if (username == null) {
+          window.location.href = "/";
+        }
+        else {
+          socket.emit('check login', username);
+
+
+          let chatRoom = url.searchParams.get("chatSelect");
+
+          document.getElementById('chat_name').innerHTML = chatRoom;
+          chat_name = chatRoom;
+          //check if the current user is the creator of the chatroom
+          socket.emit('creator check', {user: username, chatroomName: chat_name});
+          let messageArray =  <%- JSON.stringify(messages) %>
+          //console.log("array of messages: " + array);
+          for (let i = 0; i < messageArray.length; i++) {
+            let listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
+            listElt = listElt.append($('<br>'));
+            let whole = listElt.append($('<small>').text(messageArray[i].timestamp));
+            $('#messages').append(whole);
+          }
+
+          var memberArray = <%- JSON.stringify(members) %>
+          socket.emit('get email', {username:username, memberArray:memberArray});
+          //console.log('YO MY EMAIL IS: ' + my_email);
+          /*for (i = 0; i < memberArray.length; i++) {
+            //var listElt = $('<li>').text(memberArray[i]);
+            //$('#members').append(listElt);
+
+            var listElt = $("<li><p>" + memberArray[i] + "</p> <button onclick=deleteUser(\'"+ memberArray[i] +"\')>DELETE</button></li>");
+
+
+            $('#members').append(listElt);
+        }*/
+          updateScroll();
+          // send chat room name to send message via google home
+          socket.emit('chatNameForGoogleMessage', chat_name);
+          console.log("END OF ONLOAD");
+        }
       }
-      else {
-        socket.emit('check login', username);
 
 
-        let chatRoom = url.searchParams.get("chatSelect");
 
-        document.getElementById('chat_name').innerHTML = chatRoom;
-        chat_name = chatRoom;
-        //check if the current user is the creator of the chatroom
-        socket.emit('creator check', {user: username, chatroomName: chat_name});
-        let messageArray =  <%- JSON.stringify(messages) %>
-        //console.log("array of messages: " + array);
-        for (let i = 0; i < messageArray.length; i++) {
-          let listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
-          listElt = listElt.append($('<br>'));
-          let whole = listElt.append($('<small>').text(messageArray[i].timestamp));
-          $('#messages').append(whole);
+      function addNewMembers() {
+        console.log('Enter addMembers function');
+        let emails = document.getElementById("chat_mems").value;
+        if (emails == null) {
+          window.location.href = '#close';
         }
 
-        var memberArray = <%- JSON.stringify(members) %>
-        socket.emit('get email', {username:username, memberArray:memberArray});
-        //console.log('YO MY EMAIL IS: ' + my_email);
-        /*for (i = 0; i < memberArray.length; i++) {
-          //var listElt = $('<li>').text(memberArray[i]);
-          //$('#members').append(listElt);
-
-          var listElt = $("<li><p>" + memberArray[i] + "</p> <button onclick=deleteUser(\'"+ memberArray[i] +"\')>DELETE</button></li>");
+        let stripped = emails.replace(/\s/g, "");
+        let splitArr = stripped.split(',');
+        let emailArr = splitArr.filter(item => item.trim() !== '');
 
 
-          $('#members').append(listElt);
-      }*/
-      updateScroll();
-      // send chat room name to send message via google home
-      socket.emit('chatNameForGoogleMessage', chat_name);
-      console.log("END OF ONLOAD");
-    }
-}
+        let itemFound = false;
+        for (let i = 0; i < emailArr.length; i++) {
+          $('#members li').each( function() {
+            if ( $(this).text() === emailArr[i] ) {
+              itemFound = true;
+            }
+          });
 
+          if (!itemFound) {
+            let memlist = $('<li>').append(emailArr[i]);
+            memlist = memlist.append($('<br>'));
+            $('#members').append(memlist);
+          }
+        }
 
+        socket.emit('chat name', chat_name);
+        socket.emit('entered emails', emails);
 
-    function addNewMembers() {
-  console.log('Enter addMembers function');
-  let emails = document.getElementById("chat_mems").value;
-  if (emails == null) {
-    window.location.href = '#close';
-  }
-
-  let stripped = emails.replace(/\s/g, "");
-  let splitArr = stripped.split(',');
-  let emailArr = splitArr.filter(item => item.trim() !== '');
-
-
-  let itemFound = false;
-  for (let i = 0; i < emailArr.length; i++) {
-    $('#members li').each( function() {
-      if ( $(this).text() === emailArr[i] ) {
-        itemFound = true;
+        window.location.href = '#close';
       }
-    });
-
-    if (!itemFound) {
-      let memlist = $('<li>').append(emailArr[i]);
-      memlist = memlist.append($('<br>'));
-      $('#members').append(memlist);
-    }
-  }
-
-  socket.emit('chat name', chat_name);
-  socket.emit('entered emails', emails);
-
-  window.location.href = '#close';
-}
 
     </script>
 
