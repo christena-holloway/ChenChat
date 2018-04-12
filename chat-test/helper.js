@@ -5,7 +5,7 @@ var mailer = require('express-mailer');
 var moment = require('moment');
 var mongoose = require('mongoose');
 var http = require('http').Server(app);
-var io = require('socket.io').listen(http);
+var ioHelper = require('socket.io').listen(http);
 
 
 app.set('view engine', 'pug');
@@ -83,7 +83,7 @@ module.exports = {
 	  else if (action === 'changeChatRoom') {
 	    console.log("Switching chat rooms");
 	    // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
-	    io.emit('getChatRoomFromGoogleApi', chatRoom);
+	    ioHelper.emit('getChatRoomFromGoogleApi', chatRoom);
 	    console.log("After emitting the chatroom");
 	    return "Changed to room " + chatRoom;
 	  }
