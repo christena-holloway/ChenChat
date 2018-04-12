@@ -173,7 +173,7 @@ function handleMessage(data) {
   else if (action === 'changeChatRoom') {
     console.log("Switching chat rooms");
     // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
-    ioHelper.emit('getChatRoomFromGoogleApi', chatRoom);
+    io.emit('getChatRoomFromGoogleApi', chatRoom);
     console.log("After emitting the chatroom");
     return "Changed to room " + chatRoom;
   }
