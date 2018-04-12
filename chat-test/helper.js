@@ -84,6 +84,7 @@ module.exports = {
 	    console.log("Switching chat rooms");
 	    // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
 	    io.emit('getChatRoomFromGoogleApi', chatRoom);
+	    console.log("After emitting the chatroom");
 	    return "Changed to room " + chatRoom;
 	  }
 	  // default handler
