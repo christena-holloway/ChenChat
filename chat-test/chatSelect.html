@@ -32,11 +32,12 @@
           
           // Query db for chatrooms user has access to
           let chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
-          console.log("User's chat rooms include: " + chatRoomsWithPermission);
           for (let i = 0; i < chatRoomsWithPermission.length; i++) {
-            console.log(chatRoomsWithPermission[i]);
             let text = chatRoomsWithPermission[i];
-            let listElt = $('<button type="button" class="my-chat-room" onclick="goToChatRoom(\''+ chatRoomsWithPermission[i] +'\');">').text(chatRoomsWithPermission[i]);
+            text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            console.log(text);
+
+            let listElt = $('<button type="button" class="my-chat-room" onclick="goToChatRoom(\''+ text +'\');">').text(chatRoomsWithPermission[i]);
             listElt = listElt.append($('<br>'));
             $(".list-of-chats").append(listElt);
           }
@@ -48,12 +49,9 @@
           window.location.href = "/";
         }
         else {
-          console.log("Selected chatroom: " + chatName);
           let socket = io();
           socket.emit('chat name', chatName);
-          console.log('sent chat name');
           socket.on('redirect', function(destination) {
-            console.log('redirecting...');
             window.location.href = destination + "&name=" + username;
           });
         }
