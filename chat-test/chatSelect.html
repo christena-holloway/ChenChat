@@ -21,6 +21,15 @@
           window.location.href = "/";
         }
         else {
+          // URL contains the name of the chatroom
+          if(window.location.href.indexOf("chatroom=") > -1) {
+            let chatRoom = url.searchParams.get("chatroom");
+            console.log("Chatroom from url param is " + chatRoom);
+
+            document.getElementById("chat_id").value = chatRoom;
+            document.getElementById("selectRoom").click();
+          }
+          
           // Query db for chatrooms user has access to
           let chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
           for (let i = 0; i < chatRoomsWithPermission.length; i++) {

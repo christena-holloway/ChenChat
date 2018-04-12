@@ -2,23 +2,6 @@ var urlString = window.location.href;
 var url = new URL(urlString);
 var username = url.searchParams.get("name");
 
-window.onload = function() {
-  // Check if user is logged in
-  if (username == null) {
-    window.location.href = "/";
-  }
-  else {
-    // URL contains the name of the chatroom
-    if(window.location.href.indexOf("chatroom=") > -1) {
-      let chatRoom = url.searchParams.get("chatroom");
-      console.log("Chatroom from url param is " + chatRoom);
-
-      document.getElementById("chat_id").value = chatRoom;
-      document.getElementById("selectRoom").click();
-    }
-  }
-}
-
 function chatRedirect() {
   // var input_vals = $(this).serialize();
   if (username == null) {
