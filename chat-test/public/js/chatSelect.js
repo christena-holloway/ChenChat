@@ -32,6 +32,19 @@ function chatRedirect() {
   }
 }
 
+function goToChatRoom(chatName) {
+  if (username == null) {
+    window.location.href = "/";
+  }
+  else {
+    let socket = io();
+    socket.emit('chat name', chatName);
+    socket.on('redirect', function(destination) {
+      window.location.href = destination + "&name=" + username;
+    });
+  }
+}
+
 function signOut() {
   //socket.emit("signing out", username);
   let auth2 = gapi.auth2.getAuthInstance();
@@ -50,3 +63,8 @@ function onLoad() {
 function helppg() {
   window.location.href = '/help';
 }
+
+$(".my-chat-room").click(function() {
+  var room = $(".my-chat-room").text();
+  goToChatRoom(room);
+});

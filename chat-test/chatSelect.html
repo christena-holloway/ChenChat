@@ -37,25 +37,14 @@
             text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
             console.log(text);
 
-            let listElt = $('<button type="button" class="my-chat-room" onclick="goToChatRoom(\''+ text +'\');">').text(chatRoomsWithPermission[i]);
+            let listElt = $('<button type="button" class="my-chat-room">').text(chatRoomsWithPermission[i]);
             listElt = listElt.append($('<br>'));
             $(".list-of-chats").append(listElt);
           }
         }
       }
 
-      function goToChatRoom(chatName) {
-        if (username == null) {
-          window.location.href = "/";
-        }
-        else {
-          let socket = io();
-          socket.emit('chat name', chatName);
-          socket.on('redirect', function(destination) {
-            window.location.href = destination + "&name=" + username;
-          });
-        }
-      }
+      
     </script>
     <div class="grid-container">
       <header>
