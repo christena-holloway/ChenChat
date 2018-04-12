@@ -71,7 +71,7 @@ function getChats(callback) {
       console.log("User's chats are: " + doc.chats.length);
       console.log("type of doc" + typeof doc);
       console.log("type of doc.chats" + typeof doc.chats[0]);
-      
+
       for (let i = 0; i < doc.chats.length; i++) {
         results.push(doc.chats[i]);
       }
@@ -127,7 +127,7 @@ app.post('/chat', function(req, res) {
   console.log(req.body.queryResult.parameters);
 
   let chatRoom = req.body.queryResult.parameters.chatroom;
-  let message = helper.handleMessage(req.body);
+  let message = handleMessage(req.body);
   console.log('Sending the message: ' + message);
   sendMessage(message, 'Chun-Han', chatRoom);
 
@@ -139,6 +139,51 @@ app.post('/chat', function(req, res) {
   };
   res.end(JSON.stringify(responseToAssistant));
 });
+
+function handleMessage(data) {
+  let result = data.queryResult;
+  let action = result.action;
+  let parameters = result.parameters;
+  let chatRoom = parameters.chatroom;
+  let msg = '';
+
+  console.log("Action is " + action);
+  console.log("Chat room is " + chatRoom);
+
+  if (action === 'sendHelp') {
+    let state = parameters.state;
+    let location = parameters.location;
+    msg += 'I need help now. My location is: ' + location + '.';
+  }
+  else if (action === 'switchMode') {
+    let mode = parameters.mode;
+    msg += 'I need help ' + mode + '!';
+  }
+  else if (action === 'reportState') {
+    let state = parameters.state;
+    msg += 'I ' + state + '!';
+  }
+  else if (action === 'whereIsMy') {
+    let object = parameters.object;
+    msg += 'Where is my ' + object + '?';
+  }
+  else if (action === 'sendCustomMessage') {
+    msg += parameters.customMessage;
+  }
+  else if (action === 'changeChatRoom') {
+    console.log("Switching chat rooms");
+    // var chatRoom = jsonMessage.queryResult.parameters.chatroom;
+    io.emit('getChatRoomFromGoogleApi', chatRoom);
+    console.log("After emitting the chatroom");
+    return "Changed to room " + chatRoom;
+  }
+  // default handler
+  else {
+    msg += 'I am trying to communicate with you but something went wrong!';
+  }
+
+  return msg;
+}
 
 var sub;
 //message collection
@@ -247,9 +292,11 @@ io.on('connection', function(socket){
   socket.on('chatroom delete user', function(data) {
     ///console.log("HEY OH: " + fullname);
     //socket.emit('got full name from email', helper.getFullNameFromEmail(data));
-    helper.userCol.findOne({"email":data}, "fullName", function(err, result) {
+    helper.userCol.findOne({"email":data.emailAddress}, "fullName", function(err, result) {
       console.log("RESULT FROM FULLNAME FIND: " + result);
-      return_name = result.fullName;
+      let return_name = result.fullName;
+      ChatRoomCollection.update({'chat_name': data.chat_name}, { $pull: { members: { $in: [ return_name ] } } });
+      socket.emit('deleted user', {user_to_delete:return_name, chat_name:data.chat_name});
     });
   });
 

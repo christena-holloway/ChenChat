@@ -110,10 +110,12 @@ function doCheck() {
 
 socket.on('getChatRoomFromGoogleApi', function(chatRoom) {
   if (username == null) {
+    console.log("Trying to change rooms but use name is null");
     window.location.href = "/";
   }
   else {
-    window.location.href = '/chatroom?chatroom=' + chatRoom + '&name=' + username;
+    console.log("relocating to new chatroom: " + chatRoom);
+    window.location.href = '/chatSelect?chatroom=' + chatRoom + '&name=' + username;
   }
 });
 
@@ -149,7 +151,7 @@ $(document).ready(function () {
 
 function deleteUser(emailAddress) {
   if(is_creator == "true") {
-    socket.emit('chatroom delete user', emailAddress);
+    socket.emit('chatroom delete user', {emailAddress:emailAddress, chat_name:chat_name});
     alert(emailAddress.toString() + ', You been deleted from this chatroom ');
   }
   else {
@@ -175,4 +177,11 @@ socket.on('set email', function(data) {
   }
 
 
+});
+
+socket.on('deleted user', function(data) {
+  if(data.user_to_delete == username && chat_name == data.chat_name) {
+    alert("You have been deleted from this chatroom");
+    window.location.href = '/chatSelect?name=' + username;
+  }
 });
