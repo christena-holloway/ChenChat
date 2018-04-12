@@ -92,9 +92,9 @@ module.exports = {
 	  return msg;
 	},
 
-  updateUserChatsArray: function(chatName) {
+  updateUserChatsArray: function(chatName, inEmail) {
     console.log("updating user's chats");
-    UserCollection.findOneAndUpdate({ email: this.email },
+    UserCollection.findOneAndUpdate({ email: inEmail },
       { $addToSet: { chats: chatName } },
       function(err, data) {
         console.log(err);
@@ -114,7 +114,6 @@ module.exports = {
 	      sender: username
 	    }
 	  };
-
 	  // Send email
 	  app.mailer.send('email', mailOptions, function (err, message) {
 	    if (err) {
@@ -122,10 +121,9 @@ module.exports = {
 	      return;
 	    }
 	  });
-
   },
 
-  // add user to db IF THEY'RE NOT ALREADY IN
+  // add user to db
   addUsersWithEmail: function(chatName, emailAddr) {
     let conditions = { email: emailAddr };
     let update = { $addToSet: { chats: chatName } };
@@ -140,7 +138,6 @@ module.exports = {
       }
 
     }
-
     UserCollection.update(conditions, update, options, callback);
   },
 
@@ -173,10 +170,7 @@ module.exports = {
 		let sub = this.getUID(token);
 	  let name = this.getName(token);
 	  //might wanna change email back to local variable? (global rn to add current user to chat members)
-	  email = this.getEmail(token);
-    this.email = email;
-    //console.log("This.EMAIL: " + this.email);
-    //console.log("EMAIL: " + email);
+	  let email = this.getEmail(token);
 	  UserCollection.count({ userID: sub }, function(err, count) {
 	    if (count === 0) {
 	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': email, 'chats': [] });

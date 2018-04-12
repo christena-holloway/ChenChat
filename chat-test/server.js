@@ -283,7 +283,7 @@ io.on('connection', function(socket){
     ChatRoomCollection.update(conditions, { $addToSet: { members: helper.email, creator: data.creator } }, options, callback);
 
     // add chat to current user's chat array
-    helper.updateUserChatsArray(chatName, username);
+    helper.updateUserChatsArray(chatName, helper.email);
 
     //add all emails if they don't exist
     for (let i = 0; i < emailArr.length; i++) {

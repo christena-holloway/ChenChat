@@ -25,6 +25,8 @@ function chatRedirect() {
     window.location.href = "/";
   }
   else {
+    //emit current user's email address
+    socket.emit('current user email', inEmail);
 
     var inChatName = document.getElementById("chat_id").value;
     if(inChatName == "") {
@@ -35,6 +37,7 @@ function chatRedirect() {
       //var emails = document.getElementById("chat_mems").value;
 
       var emailNames = document.getElementById("chat_mems").value;
+      
       console.log("emails in chatSelect" + emailNames);
 
       //console.log("VALUE IN: " + inChatName);
