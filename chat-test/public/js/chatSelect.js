@@ -66,8 +66,8 @@ function helppg() {
   window.location.href = '/help';
 }
 
-$(".my-chat-room").click(function() {
-  var room = $(".my-chat-room").text();
+$(".list-of-chats button").click(function() {
+  var room = $(this).text();
   console.log("GO TO CHATROOM: " + room);
   goToChatRoom(room);
 });
