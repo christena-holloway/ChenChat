@@ -115,6 +115,7 @@ form input[type=button] {
     color: darken($blue, 7%);
   }
 }
+form input[type=button]
 label {
     color: #555;
     display: inline-block;
@@ -189,7 +190,29 @@ input[type=email]:focus {
 .list-of-chats {
   overflow-y: scroll;
   list-style-type: none;
-  font: 28px Helvetica Neue, Arial;
+}
+
+button {
+  font-size: 14px;
+  font-family: Helvetica Neue, Arial;
+  background-color: #EDB6A0;
+  border: 1px solid white;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 40px;
+  height: 50px;
+  width: 100px;
+}
+button:hover {
+  background: #E38968;
+  background-image: -webkit-linear-gradient(top, #E38968, #F2CABB);
+  background-image: -moz-linear-gradient(top, #E38968, #F2CABB);
+  background-image: -ms-linear-gradient(top, #E38968, #F2CABB);
+  background-image: -o-linear-gradient(top, #E38968, #F2CABB);
+  background-image: linear-gradient(to bottom, #E38968, #F2CABB);
+  text-decoration: none;
 }
 
 /* Use a media query to add a breakpoint at 800px: */
