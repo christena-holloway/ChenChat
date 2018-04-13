@@ -33,6 +33,7 @@ function chatRedirect() {
 }
 
 function goToChatRoom(chatName) {
+
   if (username == null) {
     window.location.href = "/";
   }
@@ -41,7 +42,6 @@ function goToChatRoom(chatName) {
     socket.emit('chat name', chatName);
     socket.on('redirect', function(destination) {
       console.log("Destination is " + destination);
-      console.log("REDIRECTING WINDOW NOW");
       window.location.href = destination + "&name=" + username;
     });
   }
@@ -66,8 +66,12 @@ function helppg() {
   window.location.href = '/help';
 }
 
-$(".list-of-chats button").click(function() {
-  var room = $(this).text();
-  console.log("GO TO CHATROOM: " + room);
-  goToChatRoom(room);
+$(document).ready(function () {
+  console.log("Welcome to the chat select page");
+  $("body").on("click", "#my-chat-room", function() {
+    console.log("BUTTON CLICKED");
+    var room = $(this).text();
+    console.log("GO TO CHATROOM: " + room);
+    goToChatRoom(room);
+  });
 });

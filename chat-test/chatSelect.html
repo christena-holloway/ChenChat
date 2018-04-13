@@ -37,7 +37,7 @@
             text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
             console.log(text);
 
-            let listElt = $('<button type="button" class="my-chat-room">').text(chatRoomsWithPermission[i]);
+            let listElt = $('<button type="button" id="my-chat-room">').text(chatRoomsWithPermission[i]);
             listElt = listElt.append($('<br>'));
             $(".list-of-chats").append(listElt);
           }
