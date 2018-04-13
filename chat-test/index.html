@@ -19,6 +19,13 @@
         let socket = io();
         //window.location.replace("/contacts");
         socket.emit('id token', id_token);
+        console.log("HERE");
+        let profile = googleUser.getBasicProfile();
+        currentUserEmail = profile.getEmail();
+        
+        let new_socket = io('/emails');
+        new_socket.emit('chat select user email', currentUserEmail);
+
         socket.on('redirect', function(destination) {
           window.location.href = destination;
         });

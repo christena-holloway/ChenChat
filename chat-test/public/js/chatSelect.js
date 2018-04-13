@@ -25,6 +25,8 @@ function chatRedirect() {
     window.location.href = "/";
   }
   else {
+    //find current user's email address
+    
     //emit current user's email address
     socket.emit('current user email', inEmail);
 
@@ -34,7 +36,12 @@ function chatRedirect() {
        x[0].style.display = "inline";
     }
     else {
-      //var emails = document.getElementById("chat_mems").value;
+      let currentUserEmail = 'temp';
+      if (auth2.isSignedIn.get()) {
+        let profile = auth2.currentUser.get().getBasicProfile();
+        currentUserEmail = profile.getEmail();
+        //socket.emit('chat select user email', currentUserEmail);
+      }
 
       var emailNames = document.getElementById("chat_mems").value;
       
@@ -43,7 +50,7 @@ function chatRedirect() {
       //console.log("VALUE IN: " + inChatName);
       let socket = io();
       socket.emit('chat name', inChatName);
-      socket.emit('entered emails', {emails: emailNames, creator:username});
+      socket.emit('entered emails', {emails: emailNames, creator:username, currentEmail: currentUserEmail});
       //window.location.replace("/chat");//+ input_vals[0];
       socket.on('redirect', function(destination) {
         window.location.href = destination + "&name=" + username;

@@ -5,7 +5,6 @@ var mailer = require('express-mailer');
 var moment = require('moment');
 var mongoose = require('mongoose');
 
-
 app.set('view engine', 'pug');
 app.engine('html', require('ejs').renderFile);
 

@@ -58,12 +58,22 @@ var userChatRooms = [];
 
 function renderChatSelect(res) {
   console.log("AFTER GET CHATS FOR USER");
-  console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
+  //console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 }
 
 function getChats(callback) {
-  let userEmail = helper.email;
+  //FIXME: don't use global email variable
+  let userEmail = 'temp';
+  
+  let nsp = io.of('/emails');
+  nsp.on('connection', function(socket) {
+    socket.on('chat select user email', function(currentUserEmail) {
+      userEmail = currentUserEmail;
+    });
+  });
+  
+  //let userEmail = helper.email;
   console.log("User's email is: " + userEmail);
   let results = []
   helper.userCol.findOne({ 'email': userEmail }).lean().exec(function (err, doc) {
@@ -92,7 +102,6 @@ app.get("/chatSelect", function(req, res){
   // res.sendFile(__dirname + '/chatroom.html');
   getChats(function() {
     console.log("AFTER GET CHATS FOR USER");
-    console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
     res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
   });
 });
@@ -164,13 +173,6 @@ function sendMessage(msg, sender, chat_token = 'test') {
       }
     });
   });
-  // What's this for? (move to helper if still needed)
-  /*UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
-    if (err) {
-      console.log(err);
-      res.status(400).send("Bad Request");
-    }
-  });*/
   io.emit('chat message', { from: sender, message: msg, chatRoomName: chat_token });
 }
 
@@ -278,18 +280,22 @@ io.on('connection', function(socket){
     let emailArr = splitArr.filter(item => item.trim() !== '');
     let conditions = { chat_name: chatName };
     let options = { upsert: true }
+    
+    let currentEmail = data.currentEmail;
 
     //add current user if not already in
-    ChatRoomCollection.update(conditions, { $addToSet: { members: helper.email, creator: data.creator } }, options, callback);
+    // FIXME: don't use global variable
+    ChatRoomCollection.update(conditions, { $addToSet: { members: currentEmail, creator: data.creator } }, options, callback);
 
-    // add chat to current user's chat array
-    helper.updateUserChatsArray(chatName, helper.email);
+    // FIXME: don't use global variable
+    helper.updateUserChatsArray(chatName, current);
 
     //add all emails if they don't exist
     for (let i = 0; i < emailArr.length; i++) {
       if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
         ChatRoomCollection.update(conditions, { $addToSet: { members: emailArr[i] } }, options, callback);
         //add chat to each user's chat array
+        //should be good
         helper.updateUserChatsArray(chatName, emailArr[i]);
         helper.addUsersWithEmail(chatName, emailArr[i]);
 
