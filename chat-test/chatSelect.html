@@ -19,6 +19,15 @@
       let currentUserEmail = 'temp'
 
       window.onload = function() {
+        gapi.load('auth2', function() {
+          gapi.auth2.init();
+        });
+        /*let profile = auth2.currentUser.get().getBasicProfile();
+        currentUserEmail = profile.getEmail();
+        console.log(currentUserEmail);
+        let new_socket = io.connect('/emails');
+        new_socket.emit('chat select user email', currentUserEmail);*/
+        
         if (username == null) {
           window.location.href = "/";
         }

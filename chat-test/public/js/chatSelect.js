@@ -37,11 +37,6 @@ function chatRedirect() {
     }
     else {
       let currentUserEmail = 'temp';
-      if (auth2.isSignedIn.get()) {
-        let profile = auth2.currentUser.get().getBasicProfile();
-        currentUserEmail = profile.getEmail();
-        //socket.emit('chat select user email', currentUserEmail);
-      }
 
       var emailNames = document.getElementById("chat_mems").value;
       

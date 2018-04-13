@@ -66,14 +66,20 @@ function getChats(callback) {
   //FIXME: don't use global email variable
   let userEmail = 'temp';
   
-  let nsp = io.of('/emails');
-  nsp.on('connection', function(socket) {
+  /*io.on('connection', function(socket) {
+    socket.on('id token', function(id_token) {
+      console.log(id_token);
+      userEmail = currentUserEmail;
+    });
+  });*/
+  //var nsp = 
+  io.of('/emails').on('connection', function(socket) {
+    console.log("in nsp connection");
     socket.on('chat select user email', function(currentUserEmail) {
       userEmail = currentUserEmail;
     });
   });
   
-  //let userEmail = helper.email;
   console.log("User's email is: " + userEmail);
   let results = []
   helper.userCol.findOne({ 'email': userEmail }).lean().exec(function (err, doc) {

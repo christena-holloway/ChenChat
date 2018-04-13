@@ -5,7 +5,7 @@
     <meta name="google-signin-client_id" content="533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/indexstyle.css" />
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <title>ChenChat sign in</title>
@@ -13,23 +13,27 @@
   <body>
     <script>
       function onSignIn(googleUser) {
+        //let profile = auth2.currentUser.get().getBasicProfile();
+        //let currentUserEmail = profile.getEmail();
         // The ID token you need to pass to your backend:
         let id_token = googleUser.getAuthResponse().id_token;
         //console.log("ID Token: " + id_token);
         let socket = io();
         //window.location.replace("/contacts");
         socket.emit('id token', id_token);
-        console.log("HERE");
         let profile = googleUser.getBasicProfile();
-        currentUserEmail = profile.getEmail();
-        
-        let new_socket = io('/emails');
+        let currentUserEmail = profile.getEmail();
+        console.log(currentUserEmail);
+
+        let new_socket = io.connect('/emails');
         new_socket.emit('chat select user email', currentUserEmail);
 
         socket.on('redirect', function(destination) {
           window.location.href = destination;
         });
       };
+      
+      
 
       function helppg() {
         window.location.href = '/help';
