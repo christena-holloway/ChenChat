@@ -33,14 +33,15 @@ function chatRedirect() {
 }
 
 function goToChatRoom(chatName) {
-
+  console.log("HERE");
   if (username == null) {
     window.location.href = "/";
   }
   else {
+    console.log("About to redirect to chat page");
     let socket = io();
     socket.emit('chat name', chatName);
-    socket.on('redirect', function(destination) {
+    socket.on('go to chat', function(destination) {
       console.log("Destination is " + destination);
       window.location.href = destination + "&name=" + username;
     });
@@ -69,7 +70,6 @@ function helppg() {
 $(document).ready(function () {
   console.log("Welcome to the chat select page");
   $("body").on("click", "#my-chat-room", function() {
-    console.log("BUTTON CLICKED");
     var room = $(this).text();
     console.log("GO TO CHATROOM: " + room);
     goToChatRoom(room);

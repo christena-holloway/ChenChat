@@ -68,7 +68,7 @@ function getChats(callback) {
   console.log("User's email is: " + userEmail);
   let results = []
   helper.userCol.findOne({ 'email': userEmail }).lean().exec(function (err, doc) {
-    if(doc.chats) {
+    if(!(doc.chats == null)) {
       console.log("User's chats are: " + doc.chats.length);
       console.log("type of doc" + typeof doc);
       console.log("type of doc.chats" + typeof doc.chats[0]);
@@ -107,11 +107,20 @@ app.get("/chat", function(req, res) {
   let result_array1 = [];
   let ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
 
-
+  console.log("FINDING NEW CHAT ROOM");
   ChatRoom2.findOne( { 'chat_name': chatName }, 'messages members', function(err, doc) {
     result_array1 = doc;
+    let messagesArray = [];
+    let membersArray = [];
+
     console.log("result array: " + result_array1);
-    res.render(__dirname + '/chat.html', { messages: result_array1.messages, members: result_array1.members });
+    if(!(result_array1.messages == null)) {
+      messagesArray = result_array1.messages;
+    }
+    if(!(result_array1.members == null)) {
+      membersArray = result_array1.members;
+    }
+    res.render(__dirname + '/chat.html', { messages: messagesArray, members: membersArray });
   });
 });
 
@@ -258,11 +267,13 @@ io.on('connection', function(socket){
 
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
-    //console.log("chat name " + chatName);
+    console.log("chat name " + chatName);
     let destination = '/chat?chatSelect=' + chatName;
     callback = function() {
+      console.log("EMITTING SOCKET REDIRECT");
       io.emit('redirect', destination);
     }
+    io.emit('go to chat', destination);
   });
 
   io.emit('getChatName', chatName);
@@ -331,7 +342,9 @@ io.on('connection', function(socket){
     let splitArr = stripped.split(',');
     let emailArr = splitArr.filter(item => item.trim() !== '');
     let conditions = { chat_name: chatName };
-    let options = { upsert: true }
+    let options = { upsert: true };
+
+    console.log("UPDATING CHAT ROOM COLLECTION TO ADD ROOM");
 
     //add current user if not already in
     ChatRoomCollection.update(conditions, { $addToSet: { members: helper.email, creator: data.creator } }, options, callback);
