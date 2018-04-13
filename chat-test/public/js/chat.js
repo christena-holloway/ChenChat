@@ -136,7 +136,14 @@ $(function () {
     let msg = data.message;
     let chatRoomName = data.chatRoomName;
     if (chat_name == chatRoomName) {
-      let listElt = $('<li>').text(sender + ": " + msg);
+      let listElt;
+      if(sender == username) {
+        listElt = $("<li><span style='float:right'>" + sender + ": " + msg + "</span></li>");
+      }
+      else {
+        listElt = $('<li>').text(sender + ": " + msg);
+      }
+      //let listElt = $('<li>').text(sender + ": " + msg);
       listElt = listElt.append($('<br>'));
       let whole = listElt.append($('<small>').text(time));
       $('#messages').append(whole);

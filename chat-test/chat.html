@@ -38,8 +38,18 @@
           let messageArray =  <%- JSON.stringify(messages) %>
           //console.log("array of messages: " + array);
           for (let i = 0; i < messageArray.length; i++) {
-            let listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
+            let listElt;
+            if(messageArray[i].from == username) {
+              listElt = $("<li><span style='float:right'>" + messageArray[i].from + ": " + messageArray[i].body + "</span></li>");
+            }
+            else {
+              listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
+            }
+            //let listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
             listElt = listElt.append($('<br>'));
+            //let whole;
+
+
             let whole = listElt.append($('<small>').text(messageArray[i].timestamp));
             $('#messages').append(whole);
           }
@@ -128,7 +138,7 @@
         <h3 id="help-title"> Example voice commands </h3>
         <br>
         <div class="help-content">
-          <p id="start-info"> 
+          <p id="start-info">
             TO START: Say "hey Google" or "ok Google" to Google Home. Then say "Talk to C Chat"
           </p>
           <br>
