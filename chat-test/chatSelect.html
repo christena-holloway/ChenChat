@@ -42,11 +42,17 @@
           
           // Query db for chatrooms user has access to
           let chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
+          let templist = [];
+          let rowin = -1;
+          let listElt = [];
+          chatRoomsWithPermission.sort();
           for (let i = 0; i < chatRoomsWithPermission.length; i++) {
-
-            let listElt = $('<button type="button" id="my-chat-room">').text(chatRoomsWithPermission[i]);
-            listElt = listElt.append($('<br>'));
-            $(".list-of-chats").append(listElt);
+            if (Math.floor(i/5) != rowin) {
+              listElt = $('<ul id=row' + rowin + ' class=row' + rowin + '>');
+            }
+            listElt=listElt.append($('<button type="button" id="my-chat-room">').text(chatRoomsWithPermission[i]));
+            rowin = Math.floor(i/5);
+            $(".my-chatrooms").append(listElt);
           }
         }
       }
@@ -69,8 +75,6 @@
 
         <div class="my-chatrooms">
           <h3 id="my-chats-title"> Your Chat Groups</h3>
-          <ul class="list-of-chats">
-          </ul>
         </div>
       </div>
     </div>
