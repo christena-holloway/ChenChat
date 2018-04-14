@@ -379,8 +379,8 @@ io.on('connection', function(socket){
     let stripped = emails.replace(/\s/g, "");
     let splitArr = stripped.split(',');
     let emailArr = splitArr.filter(item => item.trim() !== '');
-    let newChatName = data.chatName;
-    let conditions = { chat_name: newChatName };
+    //let newChatName = data.chatName;
+    let conditions = { chat_name: chatName };
     let options = { upsert: true };
 
     let currentEmail = data.currentEmail;
@@ -391,21 +391,21 @@ io.on('connection', function(socket){
     ChatRoomCollection.update(conditions, { $addToSet: { members: currentEmail, creator: data.creator } }, options, callback);
 
     // add chat to current user's chat array
-    helper.updateUserChatsArray(newChatName, currentEmail);
+    helper.updateUserChatsArray(chatName, currentEmail);
 
     //add all emails if they don't exist
     for (let i = 0; i < emailArr.length; i++) {
       if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
         ChatRoomCollection.update(conditions, { $addToSet: { members: emailArr[i] } }, options, callback);
         //add chat to each user's chat array
-        helper.updateUserChatsArray(newChatName, emailArr[i]);
-        helper.addUsersWithEmail(newChatName, emailArr[i]);
+        helper.updateUserChatsArray(chatName, emailArr[i]);
+        helper.addUsersWithEmail(chatName, emailArr[i]);
 
       }
     }
     //send invites
     if (emailArr.length > 0) {
-      helper.sendInvite(emailArr, newChatName, username);
+      helper.sendInvite(emailArr, chatName, username);
     }
   });
 
