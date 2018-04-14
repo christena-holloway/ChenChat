@@ -268,6 +268,12 @@ io.on('connection', function(socket){
   socket.on('chat name', function(inChatName) {
     chatName = inChatName;
     console.log("chat name " + chatName);
+    
+    //check if current user has access to chatRoom
+    
+    
+    
+    
     let destination = '/chat?chatSelect=' + chatName;
     callback = function() {
       console.log("EMITTING SOCKET REDIRECT");
