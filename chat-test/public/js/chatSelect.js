@@ -1,6 +1,24 @@
 var urlString = window.location.href;
 var url = new URL(urlString);
 var username = url.searchParams.get("name");
+var currentUserEmail;
+
+var socket = io();
+
+socket.on('set email', function(data) {
+  currentUserEmail = data.email;
+  socket.emit('get user chats', currentUserEmail);
+
+});
+
+socket.on('receive user chats', function(chatRoomsWithPermission) {
+  console.log("User's chat rooms include: " + chatRoomsWithPermission);
+  for (let i = 0; i < chatRoomsWithPermission.length; i++) {
+    let listElt = $('<li id="my-chat-room" onclick="goToChatRoom(chatRoomsWithPermission[i]);">').text(chatRoomsWithPermission[i]);
+    listElt = listElt.append($('<br>'));
+    $(".list-of-chats").append(listElt);
+  }
+});
 
 // Check if user is logged in
 if (username == null) {
@@ -26,9 +44,9 @@ function chatRedirect() {
   }
   else {
     //find current user's email address
-    
+
     //emit current user's email address
-    socket.emit('current user email', inEmail);
+    socket.emit('current user email', currentUserEmail);
 
     var inChatName = document.getElementById("chat_id").value;
     if(inChatName == "") {
@@ -36,10 +54,10 @@ function chatRedirect() {
        x[0].style.display = "inline";
     }
     else {
-      let currentUserEmail = 'temp';
+      //let currentUserEmail = 'temp';
 
       var emailNames = document.getElementById("chat_mems").value;
-      
+
       console.log("emails in chatSelect" + emailNames);
 
       //console.log("VALUE IN: " + inChatName);

@@ -16,7 +16,7 @@
   </head>
   <body>
     <script>
-      let currentUserEmail = 'temp'
+      //let currentUserEmail = 'temp';
 
       window.onload = function() {
         gapi.load('auth2', function() {
@@ -27,19 +27,22 @@
         console.log(currentUserEmail);
         let new_socket = io.connect('/emails');
         new_socket.emit('chat select user email', currentUserEmail);*/
-        
+
         if (username == null) {
           window.location.href = "/";
         }
-        else {        
+        else {
           // Query db for chatrooms user has access to
-          let chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
+          /*let chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
           console.log("User's chat rooms include: " + chatRoomsWithPermission);
           for (let i = 0; i < chatRoomsWithPermission.length; i++) {
             let listElt = $('<li id="my-chat-room" onclick="goToChatRoom(chatRoomsWithPermission[i]);">').text(chatRoomsWithPermission[i]);
             listElt = listElt.append($('<br>'));
             $(".list-of-chats").append(listElt);
-          }
+          }*/
+
+          let temp = [];
+          socket.emit('get email', {username:username, memberArray:temp})
         }
       }
 

@@ -46,6 +46,7 @@
 
         var memberArray = <%- JSON.stringify(members) %>
         socket.emit('get email', {username:username, memberArray:memberArray});
+        
         //console.log('YO MY EMAIL IS: ' + my_email);
         /*for (i = 0; i < memberArray.length; i++) {
           //var listElt = $('<li>').text(memberArray[i]);
@@ -128,7 +129,7 @@ function addNewMembers() {
         <h3 id="help-title"> Example voice commands </h3>
         <br>
         <div class="help-content">
-          <p id="start-info"> 
+          <p id="start-info">
             TO START: Say "hey Google" or "ok Google" to Google Home. Then say "Talk to C Chat"
           </p>
           <br>

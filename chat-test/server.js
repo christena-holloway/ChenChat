@@ -62,28 +62,30 @@ function renderChatSelect(res) {
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 }
 
-function getChats(callback) {
+function getChats(userEmail) {
   //FIXME: don't use global email variable
-  let userEmail = 'temp';
-  
+  //let userEmail = 'temp';
+
+
   /*io.on('connection', function(socket) {
     socket.on('id token', function(id_token) {
       console.log(id_token);
       userEmail = currentUserEmail;
     });
   });*/
-  //var nsp = 
-  io.of('/emails').on('connection', function(socket) {
+  //var nsp =
+  /*io.of('/emails').on('connection', function(socket) {
     console.log("in nsp connection");
     socket.on('chat select user email', function(currentUserEmail) {
       userEmail = currentUserEmail;
     });
-  });
-  
+  });*/
+
   console.log("User's email is: " + userEmail);
-  let results = []
-  helper.userCol.findOne({ 'email': userEmail }).lean().exec(function (err, doc) {
-    if(doc.chats) {
+  let results = [];
+  //helper.userCol.findOne({ 'email': userEmail }).lean().exec(function (err, doc) {
+  helper.userCol.findOne({ 'email': userEmail }, "chats", function (err, doc) {
+    if(!(doc.chats == null)) {
       console.log("User's chats are: " + doc.chats.length);
       console.log("type of doc" + typeof doc);
       console.log("type of doc.chats" + typeof doc.chats[0]);
@@ -93,23 +95,25 @@ function getChats(callback) {
       }
       console.log(results);
       userChatRooms = results;
-      callback();
-      //return results;
+      //callback();
+      return results;
     }
     else {
       console.log("user's chats don't exist");
       userChatRooms = results;
-      callback();
+      //callback();
+      return results
     }
+
   });
 }
-
 app.get("/chatSelect", function(req, res){
   // res.sendFile(__dirname + '/chatroom.html');
-  getChats(function() {
-    console.log("AFTER GET CHATS FOR USER");
-    res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
-  });
+  //getChats(function() {
+    //console.log("AFTER GET CHATS FOR USER");
+  //res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
+  res.sendFile(__dirname + '/chatSelect.html');
+  //});
 });
 
 app.get("/help", function(req, res) {
@@ -244,6 +248,36 @@ io.on('connection', function(socket){
     let currentTime = helper.getTimestamp();
   });
 
+  socket.on('get user chats', function(data) {
+      console.log("EMAIL IS: " + data);
+      let results = [];
+      helper.userCol.findOne({ 'email': data }, "chats", function (err, doc) {
+        if(!(doc.chats == null)) {
+          console.log("User's chats are: " + doc.chats.length);
+          console.log("type of doc" + typeof doc);
+          console.log("type of doc.chats" + typeof doc.chats[0]);
+
+          for (let i = 0; i < doc.chats.length; i++) {
+            results.push(doc.chats[i]);
+          }
+          console.log(results);
+          //userChatRooms = results;
+          //callback();
+          //return results;
+          socket.emit('receive user chats', results);
+        }
+        else {
+          console.log("user's chats don't exist");
+          //userChatRooms = results;
+          //callback();
+          //return results
+          socket.emit('receive user chats', results);
+        }
+
+      });
+      //getChats(data);
+  });
+
 
   socket.on('get email', function(data) {
     helper.userCol.findOne({"fullName":data.username}, "email", function(err, result) {
@@ -285,8 +319,8 @@ io.on('connection', function(socket){
     let splitArr = stripped.split(',');
     let emailArr = splitArr.filter(item => item.trim() !== '');
     let conditions = { chat_name: chatName };
-    let options = { upsert: true }
-    
+    let options = { upsert: true };
+
     let currentEmail = data.currentEmail;
 
     //add current user if not already in
@@ -294,7 +328,7 @@ io.on('connection', function(socket){
     ChatRoomCollection.update(conditions, { $addToSet: { members: currentEmail, creator: data.creator } }, options, callback);
 
     // FIXME: don't use global variable
-    helper.updateUserChatsArray(chatName, current);
+    helper.updateUserChatsArray(chatName, currentEmail);
 
     //add all emails if they don't exist
     for (let i = 0; i < emailArr.length; i++) {
