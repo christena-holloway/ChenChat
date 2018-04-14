@@ -193,7 +193,7 @@ input[type=email]:focus {
 }
 
 button {
-  font-size: 14px;
+  font-size: 20px;
   font-family: Helvetica Neue, Arial;
   background-color: #EDB6A0;
   border: 1px solid white;
@@ -201,9 +201,9 @@ button {
   text-decoration: none;
   text-align: center;
   vertical-align: middle;
-  line-height: 40px;
-  height: 50px;
-  width: 100px;
+  line-height: 25px;
+  height: 70px;
+  width: 180px;
 }
 button:hover {
   background: #E38968;

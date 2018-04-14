@@ -119,11 +119,17 @@ async function fetchAsync () {
 $(document).ready(function () {
   socket.on('receive user chats', function(chatRoomsWithPermission) {
     console.log("User's chat rooms include: " + chatRoomsWithPermission);
+    let templist = [];
+    let rowin = -1;
+    let listElt = [];
+    chatRoomsWithPermission.sort();
     for (let i = 0; i < chatRoomsWithPermission.length; i++) {
-
-      let listElt = $('<button type="button" id="my-chat-room">').text(chatRoomsWithPermission[i]);
-      listElt = listElt.append($('<br>'));
-      $(".list-of-chats").append(listElt);
+      if (Math.floor(i/5) != rowin) {
+        listElt = $('<ul id=row' + rowin + ' class=row' + rowin + '>');
+      }
+      listElt=listElt.append($('<button type="button" id="my-chat-room">').text(chatRoomsWithPermission[i]));
+      rowin = Math.floor(i/5);
+      $(".my-chatrooms").append(listElt);
     }
   });
 
