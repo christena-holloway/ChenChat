@@ -2,6 +2,19 @@ var urlString = window.location.href;
 var url = new URL(urlString);
 var username = url.searchParams.get("name");
 
+var currentUserEmail;
+
+var socket = io();
+
+socket.on('set email', function(data) {
+  currentUserEmail = data.email;
+  console.log('GETTING CHATS');
+  socket.emit('get user chats', currentUserEmail);
+
+});
+
+
+
 function chatRedirect() {
   // var input_vals = $(this).serialize();
   if (username == null) {
@@ -20,21 +33,21 @@ function chatRedirect() {
       var emailNames = document.getElementById("chat_mems").value;
       console.log("emails in chatSelect" + emailNames);
 
-      let auth2 = gapi.auth2.getAuthInstance();
+      /*let auth2 = gapi.auth2.getAuthInstance();
     let profile = auth2.currentUser.get().getBasicProfile();
     let currentEmail = profile.getEmail();
-    /*fetchAsync()
+    fetchAsync()
       .then(data => {
         currentEmail = data.emailAddress;
         console.log("CURRENT EMAIL: " + currentEmail);
       }
       )
       .catch(reason => console.log(reason.message))*/
-      
-      
-      let socket = io();
-      socket.emit('chat name', { email: currentEmail, chatName: inChatName});      
-      socket.emit('entered emails', {emails: emailNames, creator:username});
+
+
+      //let socket = io();
+      socket.emit('chat name', { email: currentUserEmail, chatName: inChatName});
+      socket.emit('entered emails', {emails: emailNames, creator:username, currentEmail: currentUserEmail});
       //window.location.replace("/chat");//+ input_vals[0];
       socket.on('redirect', function(destination) {
         window.location.href = destination + "&name=" + username;
@@ -50,22 +63,22 @@ function goToChatRoom(chatName) {
   }
   else {
     console.log("About to redirect to chat page");
-    
-      let auth2 = gapi.auth2.getAuthInstance();
+
+      /*let auth2 = gapi.auth2.getAuthInstance();
 
     let profile = auth2.currentUser.get().getBasicProfile();
     let currentEmail = profile.getEmail();
-    /*fetchAsync()
+    fetchAsync()
       .then(data => {
         currentEmail = data.emailAddress;
         console.log("CURRENT EMAIL: " + currentEmail);
       }
       )
       .catch(reason => console.log(reason.message))*/
-    
-    
-    let socket = io();
-    socket.emit('chat name', { email: currentEmail, chatName: chatName});
+
+
+    //let socket = io();
+    socket.emit('chat name', { email: currentUserEmail, chatName: chatName});
     socket.on('go to chat', function(destination) {
       console.log("Destination is " + destination);
       window.location.href = destination + "&name=" + username;
@@ -104,10 +117,28 @@ async function fetchAsync () {
 }
 
 $(document).ready(function () {
+  socket.on('receive user chats', function(chatRoomsWithPermission) {
+    console.log("User's chat rooms include: " + chatRoomsWithPermission);
+    let templist = [];
+    let rowin = -1;
+    let listElt = [];
+    chatRoomsWithPermission.sort();
+    for (let i = 0; i < chatRoomsWithPermission.length; i++) {
+      if (Math.floor(i/5) != rowin) {
+        listElt = $('<ul id=row' + rowin + ' class=row' + rowin + '>');
+      }
+      listElt=listElt.append($('<button type="button" id="my-chat-room">').text(chatRoomsWithPermission[i]));
+      rowin = Math.floor(i/5);
+      $(".my-chatrooms").append(listElt);
+    }
+  });
+
   console.log("Welcome to the chat select page");
   $("body").on("click", "#my-chat-room", function() {
     var room = $(this).text();
     console.log("GO TO CHATROOM: " + room);
     goToChatRoom(room);
   });
+
+
 });

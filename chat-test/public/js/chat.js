@@ -143,10 +143,10 @@ socket.on('set email', function(data) {
       //$('#members').append(listElt);
       var listElt;
       if(is_creator === "true" && my_email != data.memberArray[i]) {
-        listElt = $("<li><p>" + data.memberArray[i] + "</p> <button onclick=deleteUser(\'"+ data.memberArray[i] +"\')>DELETE</button></li>");
+        listElt = $("<li class='member-delete-flex' ><span id='member-email' >" + data.memberArray[i] + "</span> <button id='delete-btn' style='background-image: url(../images/button_x.jpg);' onclick=deleteUser(\'"+ data.memberArray[i] +"\')> __ </button></li>");
       }
       else {
-        listElt = $("<li><p>" + data.memberArray[i] + "</p></li>");
+        listElt = $("<li><span id='member-email' >" + data.memberArray[i] + "</span></li>");
       }
 
       $('#members').append(listElt);

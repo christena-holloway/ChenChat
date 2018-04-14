@@ -64,7 +64,7 @@ function renderChatSelect(res) {
 }
 
 function getChats(callback) {
-  let userEmail = helper.email;
+  /*let userEmail = helper.email;
   console.log("User's email is: " + userEmail);
   let results = []
   helper.userCol.findOne({ 'email': userEmail }).lean().exec(function (err, doc) {
@@ -86,16 +86,17 @@ function getChats(callback) {
       userChatRooms = results;
       callback();
     }
-  });
+  });*/
 }
 
 app.get("/chatSelect", function(req, res){
   // res.sendFile(__dirname + '/chatroom.html');
-  getChats(function() {
-    console.log("AFTER GET CHATS FOR USER");
-    console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
-    res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
-  });
+  //getChats(function() {
+    //console.log("AFTER GET CHATS FOR USER");
+  let myChatRooms = [];
+  res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
+  //res.sendFile(__dirname + '/chatSelect.html');
+//});
 });
 
 app.get("/help", function(req, res) {
@@ -270,12 +271,12 @@ io.on('connection', function(socket){
     let currentEmail = data.email;
     console.log("chat name " + chatName);
     console.log("current email: " + currentEmail);
-    
+
     //check if current user has access to chatRoom
-    
-    
-    
-    
+
+
+
+
     let destination = '/chat?chatSelect=' + chatName;
     callback = function() {
       console.log("EMITTING SOCKET REDIRECT");
@@ -301,6 +302,35 @@ io.on('connection', function(socket){
     let currentTime = helper.getTimestamp();
   });
 
+  socket.on('get user chats', function(data) {
+      console.log("EMAIL IS: " + data);
+      let results = [];
+      helper.userCol.findOne({ 'email': data }, "chats", function (err, doc) {
+        if(!(doc.chats == null)) {
+          console.log("User's chats are: " + doc.chats.length);
+          console.log("type of doc" + typeof doc);
+          console.log("type of doc.chats" + typeof doc.chats[0]);
+
+          for (let i = 0; i < doc.chats.length; i++) {
+            results.push(doc.chats[i]);
+          }
+          console.log(results);
+          //userChatRooms = results;
+          //callback();
+          //return results;
+          socket.emit('receive user chats', results);
+        }
+        else {
+          console.log("user's chats don't exist");
+          //userChatRooms = results;
+          //callback();
+          //return results
+          socket.emit('receive user chats', results);
+        }
+
+      });
+      //getChats(data);
+});
 
   socket.on('get email', function(data) {
     helper.userCol.findOne({"fullName":data.username}, "email", function(err, result) {
@@ -349,14 +379,21 @@ io.on('connection', function(socket){
     let stripped = emails.replace(/\s/g, "");
     let splitArr = stripped.split(',');
     let emailArr = splitArr.filter(item => item.trim() !== '');
+    //let newChatName = data.chatName;
     let conditions = { chat_name: chatName };
     let options = { upsert: true };
+    let currentEmail = data.currentEmail;
 
-    //add current user if not already in
-    ChatRoomCollection.update(conditions, { $addToSet: { members: helper.email, creator: data.creator } }, options, callback);
+    console.log("UPDATING CHAT ROOM COLLECTION TO ADD ROOM");
+    // currentEmail will be empty if user is adding members to chat room from
+    // chat page
+    if (currentEmail != '') {
+      //add current user if not already in
+      ChatRoomCollection.update(conditions, { $addToSet: { members: currentEmail, creator: data.creator } }, options, callback);
 
-    // add chat to current user's chat array
-    helper.updateUserChatsArray(chatName, username);
+      // add chat to current user's chat array
+      helper.updateUserChatsArray(chatName, currentEmail);
+    }
 
     //add all emails if they don't exist
     for (let i = 0; i < emailArr.length; i++) {
