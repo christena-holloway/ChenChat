@@ -76,16 +76,15 @@
 
 
       function addNewMembers() {
-        console.log('Enter addMembers function');
-        let emails = document.getElementById("chat_mems").value;
-        if (emails == null) {
+        let emails = document.getElementById("chat_members").value;
+        if (emails == '') {
           window.location.href = '#close';
+          return;
         }
 
         let stripped = emails.replace(/\s/g, "");
         let splitArr = stripped.split(',');
         let emailArr = splitArr.filter(item => item.trim() !== '');
-
 
         let itemFound = false;
         for (let i = 0; i < emailArr.length; i++) {
@@ -102,10 +101,9 @@
           }
         }
 
-        socket.emit('chat name', chat_name);
-        socket.emit('entered emails', emails);
-
+        socket.emit('entered emails', {emails: emails, creator: username});
         window.location.href = '#close';
+        return;
       }
 
     </script>
@@ -123,8 +121,8 @@
           <a href="#close" title="Close" class="close">X</a>
           <h2>Add New Members</h2>
           <form id="mememail" class="mem-form" name="mememail" enctype="application/json">
-          <input type="email" placeholder="Gmail addresses (separated by commas)" id="chat_mems" name="members" autocomplete="off" multiple/><br><br><br>
-          <input id="addMembers" type="submit" onclick="addNewMembers(); this.form.reset();" value="Submit"/>
+          <input type="email" placeholder="Gmail addresses (separated by commas)" id="chat_members" name="members" autocomplete="off" multiple/><br><br><br>
+          <input id="addMembers" type="submit" value="Submit"/>
         </form>
         </div>
       </div>

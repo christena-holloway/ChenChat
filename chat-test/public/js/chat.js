@@ -48,40 +48,8 @@ function signOut() {
 
 function openMod() {
   // display text box for email address input
+  console.log('openMod');
   window.location.href = '#openModal';
-}
-
-
-function addNewMembers() {
-  let emails = document.getElementById("chat_mems").value;
-  if (emails == null) {
-    window.location.href = '#close';
-  }
-
-  let stripped = emails.replace(/\s/g, "");
-  let splitArr = stripped.split(',');
-  let emailArr = splitArr.filter(item => item.trim() !== '');
-
-
-  let itemFound = false;
-  for (let i = 0; i < emailArr.length; i++) {
-    $('#members li').each( function() {
-      if ( $(this).text() === emailArr[i] ) {
-        itemFound = true;
-      }
-    });
-
-    if (!itemFound) {
-      let memlist = $('<li>').append(emailArr[i]);
-      memlist = memlist.append($('<br>'));
-      $('#members').append(memlist);
-    }
-  }
-
-  socket.emit('chat name', chat_name);
-  socket.emit('entered emails', emails);
-
-  window.location.href = '#close';
 }
 
 function onLoad() {
@@ -124,6 +92,7 @@ $(function () {
   let time = now.format('YYYY-MM-DD hh:mm A');
   $('#mememail').submit(function() {
     addNewMembers();
+     $(this).closest('form').find("input[type=email], textarea").val("");
     return false;
   });
   $('#flex-msg-form').submit(function() {

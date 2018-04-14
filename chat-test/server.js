@@ -352,8 +352,6 @@ io.on('connection', function(socket){
     let conditions = { chat_name: chatName };
     let options = { upsert: true };
 
-    console.log("UPDATING CHAT ROOM COLLECTION TO ADD ROOM");
-
     //add current user if not already in
     ChatRoomCollection.update(conditions, { $addToSet: { members: helper.email, creator: data.creator } }, options, callback);
 
