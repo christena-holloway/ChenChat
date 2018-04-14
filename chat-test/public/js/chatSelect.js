@@ -20,9 +20,20 @@ function chatRedirect() {
       var emailNames = document.getElementById("chat_mems").value;
       console.log("emails in chatSelect" + emailNames);
 
-      //console.log("VALUE IN: " + inChatName);
+      let auth2 = gapi.auth2.getAuthInstance();
+    let profile = auth2.currentUser.get().getBasicProfile();
+    let currentEmail = profile.getEmail();
+    /*fetchAsync()
+      .then(data => {
+        currentEmail = data.emailAddress;
+        console.log("CURRENT EMAIL: " + currentEmail);
+      }
+      )
+      .catch(reason => console.log(reason.message))*/
+      
+      
       let socket = io();
-      socket.emit('chat name', inChatName);
+      socket.emit('chat name', { email: currentEmail, chatName: inChatName});      
       socket.emit('entered emails', {emails: emailNames, creator:username});
       //window.location.replace("/chat");//+ input_vals[0];
       socket.on('redirect', function(destination) {
@@ -39,8 +50,22 @@ function goToChatRoom(chatName) {
   }
   else {
     console.log("About to redirect to chat page");
+    
+      let auth2 = gapi.auth2.getAuthInstance();
+
+    let profile = auth2.currentUser.get().getBasicProfile();
+    let currentEmail = profile.getEmail();
+    /*fetchAsync()
+      .then(data => {
+        currentEmail = data.emailAddress;
+        console.log("CURRENT EMAIL: " + currentEmail);
+      }
+      )
+      .catch(reason => console.log(reason.message))*/
+    
+    
     let socket = io();
-    socket.emit('chat name', chatName);
+    socket.emit('chat name', { email: currentEmail, chatName: chatName});
     socket.on('go to chat', function(destination) {
       console.log("Destination is " + destination);
       window.location.href = destination + "&name=" + username;
@@ -59,12 +84,23 @@ function signOut() {
 
 function onLoad() {
   gapi.load('auth2', function() {
-    gapi.auth2.init();
+    gapi.auth2.init({
+      client_id: '533576696991-or04363ojdojrnule3qicgqmm7vmcahf',
+    });
   });
 }
 
 function helppg() {
   window.location.href = '/help';
+}
+
+async function fetchAsync () {
+  // await response of fetch call
+  let response = await fetch('https://www.googleapis.com/plus/v1/people/me');
+  // only proceed once promise is resolved
+  let data = await response.json();
+  // only proceed once second promise is resolved
+  return data;
 }
 
 $(document).ready(function () {

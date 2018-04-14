@@ -265,9 +265,11 @@ io.on('connection', function(socket){
   });
   var callback;
 
-  socket.on('chat name', function(inChatName) {
-    chatName = inChatName;
+  socket.on('chat name', function(data) {
+    chatName = data.chatName;
+    let currentEmail = data.email;
     console.log("chat name " + chatName);
+    console.log("current email: " + currentEmail);
     
     //check if current user has access to chatRoom
     

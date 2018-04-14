@@ -16,7 +16,17 @@
   </head>
   <body>
     <script>
+    function init() {
+      gapi.load('auth2', function() { 
+      gapi.auth2.init({
+      client_id: '533576696991-or04363ojdojrnule3qicgqmm7vmcahf'
+
+  });});
+    }
       window.onload = function() {
+      
+      
+    
         if (username == null) {
           window.location.href = "/";
         }
