@@ -379,6 +379,7 @@ io.on('connection', function(socket){
     let stripped = emails.replace(/\s/g, "");
     let splitArr = stripped.split(',');
     let emailArr = splitArr.filter(item => item.trim() !== '');
+    let chatName = data.chatName;
     let conditions = { chat_name: chatName };
     let options = { upsert: true };
 
