@@ -16,13 +16,6 @@
   </head>
   <body>
     <script>
-    /*function init() {
-      gapi.load('auth2', function() {
-      gapi.auth2.init({
-      client_id: '533576696991-or04363ojdojrnule3qicgqmm7vmcahf'
-
-  });});
-}*/
     window.onload = function() {
       gapi.load('auth2', function() {
         gapi.auth2.init();
@@ -40,19 +33,9 @@
             document.getElementById("selectRoom").click();
           }
 
-          // Query db for chatrooms user has access to
-
-          /*let chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
-          for (let i = 0; i < chatRoomsWithPermission.length; i++) {
-
-            let listElt = $('<button type="button" id="my-chat-room">').text(chatRoomsWithPermission[i]);
-            listElt = listElt.append($('<br>'));
-            $(".list-of-chats").append(listElt);
-          }*/
-
           let temp = [];
           socket.emit('get email', {username:username, memberArray:temp})
-
+          
         }
       }
 
@@ -68,6 +51,12 @@
       <div class="chat-rm">
         <form class="chatrm-form" enctype="application/json">
           Group Name: <input required id="chat_id" type="text" placeholder="Chat name" autocomplete="off" /><br><span class="blank-error">You've Entered a Blank Chat Room</span><br>
+          <div id="popover">
+            <a href="#" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover"></a>
+          </div>
+          
+          
+          <span class="not-authorized">You are not Authorized to Enter this Existing Chat Room</span>
           Group Members: <input required type="email" placeholder="Gmail addresses (separated by commas)" id="chat_mems" name="members" autocomplete="off" multiple/><br>
           <input id="selectRoom" type="button" onclick="chatRedirect();" value="Submit" />
         </form>
@@ -75,6 +64,7 @@
         <div class="my-chatrooms">
           <h3 id="my-chats-title"> Your Chat Groups</h3>
         </div>
+        
       </div>
     </div>
     <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>

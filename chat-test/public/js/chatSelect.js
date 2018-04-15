@@ -13,8 +13,6 @@ socket.on('set email', function(data) {
 
 });
 
-
-
 function chatRedirect() {
   // var input_vals = $(this).serialize();
   if (username == null) {
@@ -22,10 +20,19 @@ function chatRedirect() {
   }
   else {
 
+  
+  socket.on('user not authorized', function() {
+    //let x = document.getElementsByClassName("not-authorized");
+    //x[0].style.display = "inline";
+    alert("You are not authorized to access this group");
+  });
+  
+  
     var inChatName = document.getElementById("chat_id").value;
     if(inChatName == "") {
-       var x = document.getElementsByClassName("blank-error");
-       x[0].style.display = "inline";
+       //var x = document.getElementsByClassName("blank-error");
+       //x[0].style.display = "inline";
+       alert("Group name is required");
     }
     else {
       //var emails = document.getElementById("chat_mems").value;

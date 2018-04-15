@@ -273,11 +273,11 @@ io.on('connection', function(socket){
     console.log("current email: " + currentEmail);
 
     //check if current user has access to chatRoom
-
-
-
-
+    let chatsArr = [];
+    
     let destination = '/chat?chatSelect=' + chatName;
+
+    //let destination = '/chat?chatSelect=' + chatName;
     callback = function() {
       console.log("EMITTING SOCKET REDIRECT");
       io.emit('redirect', destination);
@@ -383,17 +383,60 @@ io.on('connection', function(socket){
     let conditions = { chat_name: chatName };
     let options = { upsert: true };
     let currentEmail = data.currentEmail;
+    
+    
+        //check if chat exists
+    ChatRoomCollection.findOne({ 'chat_name': chatName }, function(err, doc) {
+      if (err) {
+        console.log(err);
+      }
+      // if the chat doesn't exist, user can create it
+      else if (doc === null) {
+        console.log("chat doesn't exist");
+            // currentEmail will be empty if user is adding members to chat room from
+        // chat page
+        if (currentEmail != '') {
+          //add current user if not already in
+          ChatRoomCollection.update(conditions, { $addToSet: { members: currentEmail, creator: data.creator } }, options, callback);
+
+          // add chat to current user's chat array
+          helper.updateUserChatsArray(chatName, currentEmail);
+        }
+        destination = '/chat?chatSelect=' + chatName;
+        
+        io.emit('redirect', destination);
+        //io.emit('go to chat', destination);        
+      }
+      //if does exist, check if user is in it
+      else {
+        console.log("chat does exist");
+        helper.userCol.findOne({ 'email': currentEmail }, 'chats', function(err, doc) {
+          if(!(doc.chats === null)) {
+            chatsArr = doc.chats;
+          }
+          //if chatName is in the user's chat array, good to go
+          console.log("DOC IN ELSE: " + chatsArr);
+          console.log("INDEX OF: " + chatsArr.indexOf(chatName));
+          if (chatsArr.indexOf(chatName) !== -1) {
+            console.log("user is authorized to access this chat");
+            destination = '/chat?chatSelect=' + chatName;
+            callback = function() {
+              console.log("EMITTING SOCKET REDIRECT");
+              io.emit('redirect', destination);
+            }
+            io.emit('redirect', destination);
+            io.emit('go to chat', destination);
+          }
+          //if user is not authorized, don't proceed and send message to client to show error
+          else {
+            console.log("current user not in existing chat");
+            io.emit('user not authorized');
+          }
+        });
+      }
+    });
 
     console.log("UPDATING CHAT ROOM COLLECTION TO ADD ROOM");
-    // currentEmail will be empty if user is adding members to chat room from
-    // chat page
-    if (currentEmail != '') {
-      //add current user if not already in
-      ChatRoomCollection.update(conditions, { $addToSet: { members: currentEmail, creator: data.creator } }, options, callback);
-
-      // add chat to current user's chat array
-      helper.updateUserChatsArray(chatName, currentEmail);
-    }
 
     //add all emails if they don't exist
     for (let i = 0; i < emailArr.length; i++) {
@@ -402,7 +445,6 @@ io.on('connection', function(socket){
         //add chat to each user's chat array
         helper.updateUserChatsArray(chatName, emailArr[i]);
         helper.addUsersWithEmail(chatName, emailArr[i]);
-
       }
     }
     //send invites
