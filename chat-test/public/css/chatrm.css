@@ -192,6 +192,10 @@ input[type=email]:focus {
   list-style-type: none;
 }
 
+#my-chat-room {
+  font-size: 22px;
+}
+
 button {
   font-size: 20px;
   font-family: Helvetica Neue, Arial;
