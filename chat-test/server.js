@@ -203,7 +203,7 @@ var chatName;
 
 function sendMessage(msg, sender, chat_token = 'test') {
   //check if chat room already exists
-  ChatRoomCollection.findOne({ chat_name: chatName }, function (err, doc) {
+  ChatRoomCollection.findOne({ chat_name: chat_token }, function (err, doc) {
     //doc is document for the chat room
     m = doc;
     let time = helper.getTimestamp();
@@ -407,7 +407,7 @@ io.on('connection', function(socket){
     }
     //send invites
     if (emailArr.length > 0) {
-      helper.sendInvite(emailArr, newChatName, username);
+      helper.sendInvite(emailArr, newChatName, data.creator);
     }
   });
 
