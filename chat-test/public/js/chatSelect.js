@@ -47,7 +47,7 @@ function chatRedirect() {
 
       //let socket = io();
       socket.emit('chat name', { email: currentUserEmail, chatName: inChatName});
-      socket.emit('entered emails', {emails: emailNames, creator:username, currentEmail: currentUserEmail});
+      socket.emit('entered emails', {emails: emailNames, creator:username, currentEmail: currentUserEmail, chatName: inChatName});
       //window.location.replace("/chat");//+ input_vals[0];
       socket.on('redirect', function(destination) {
         window.location.href = destination + "&name=" + username;
