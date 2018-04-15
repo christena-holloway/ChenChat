@@ -100,8 +100,7 @@
             $('#members').append(memlist);
           }
         }
-        socket.emit('chat name', {chatName: chat_name});
-        socket.emit('entered emails', {emails: emails, creator: username});
+        socket.emit('entered emails', {emails: emails, chatName: chat_name});
         window.location.href = '#close';
         return;
       }
