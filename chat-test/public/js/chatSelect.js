@@ -78,12 +78,15 @@ function helppg() {
 
 function handleSubmit() {
   var inChatName = document.getElementById("chat_id").value;
+  console.log(inChatName);
   console.log(typeof(inChatName));
+  console.log(inChatName.length);
+  console.log(typeof(inChatName.length));
+  x = inChatName.length;
   if(inChatName == "") {
      openMissingMod();
   }
-  else if(inChatName.length > 29) {
-    console.log('chat length too long');
+  else if(x > 29) {
     openLongMod();
   }
   else {
@@ -93,6 +96,7 @@ function handleSubmit() {
       authorized = false;
     });
     if (authorized) {
+      alert(1);
       chatRedirect();
     }
   }  
