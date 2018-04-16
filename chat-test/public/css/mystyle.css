@@ -241,10 +241,6 @@ input[type=email]:focus {
   font-weight: bold;
 }
 
-.help-list {
-/**/
-}
-
 .member-list {
   font-size: 17px;
   border-left: 1px solid #eee;
