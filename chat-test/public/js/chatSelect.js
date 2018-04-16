@@ -57,7 +57,6 @@ function signOut() {
   //socket.emit("signing out", username);
   let auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut().then(function () {
-    console.log('User signed out.');
     document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://chenchat2.azurewebsites.net";
   });
 }
@@ -78,16 +77,11 @@ function helppg() {
 
 function handleSubmit() {
   var inChatName = document.getElementById("chat_id").value;
-  console.log(inChatName);
-  console.log(typeof(inChatName));
-  console.log(inChatName.length);
-  console.log(typeof(inChatName.length));
   x = inChatName.length;
   if(inChatName == "") {
      openMissingMod();
   }
   else if(x > 29) {
-    console.log('more than 29 chars');
     openLongMod();
   }
   else {
@@ -97,7 +91,6 @@ function handleSubmit() {
       authorized = false;
     });
     if (authorized) {
-      alert(1);
       chatRedirect();
     }
   }  
@@ -112,7 +105,6 @@ function openTakenMod() {
 }
 
 function openLongMod() {
-  console.log('opening long mod');
   window.location.href = "#longModal";
 }
 
