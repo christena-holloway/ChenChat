@@ -78,11 +78,13 @@ function helppg() {
 
 function handleSubmit() {
   var inChatName = document.getElementById("chat_id").value;
+  console.log(typeof(inChatName));
   if(inChatName == "") {
      openMissingMod();
   }
   else if(inChatName.length > 29) {
-      openLongMod();
+    console.log('chat length too long');
+    openLongMod();
   }
   else {
     let authorized = true;
@@ -105,6 +107,7 @@ function openTakenMod() {
 }
 
 function openLongMod() {
+  console.log('opening long mod');
   window.location.href = "#longModal";
 }
 
