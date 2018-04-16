@@ -16,13 +16,6 @@
   </head>
   <body>
     <script>
-    /*function init() {
-      gapi.load('auth2', function() {
-      gapi.auth2.init({
-      client_id: '533576696991-or04363ojdojrnule3qicgqmm7vmcahf'
-
-  });});
-}*/
     window.onload = function() {
       gapi.load('auth2', function() {
         gapi.auth2.init();
@@ -39,20 +32,8 @@
             document.getElementById("chat_id").value = chatRoom;
             document.getElementById("selectRoom").click();
           }
-
-          // Query db for chatrooms user has access to
-
-          /*let chatRoomsWithPermission =  <%- JSON.stringify(myChatRooms) %>
-          for (let i = 0; i < chatRoomsWithPermission.length; i++) {
-
-            let listElt = $('<button type="button" id="my-chat-room">').text(chatRoomsWithPermission[i]);
-            listElt = listElt.append($('<br>'));
-            $(".list-of-chats").append(listElt);
-          }*/
-
           let temp = [];
           socket.emit('get email', {username:username, memberArray:temp})
-
         }
       }
 
