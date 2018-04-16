@@ -87,6 +87,7 @@ function handleSubmit() {
      openMissingMod();
   }
   else if(x > 29) {
+    console.log('more than 29 chars');
     openLongMod();
   }
   else {
