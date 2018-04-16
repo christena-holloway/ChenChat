@@ -41,7 +41,6 @@ function saveUserToDB(userColl) {
   });
 }
 
-
 module.exports = {
   userCol: UserCollection,
 
@@ -54,7 +53,6 @@ module.exports = {
       }
     );
   },
-
   // run only if there is something in the email array! (handled in server?)
 	sendInvite: function(emailArr, chatName, username) {
 		let emailString = emailArr.join();
@@ -67,7 +65,6 @@ module.exports = {
 	      sender: username
 	    }
 	  };
-
 	  // Send email
 	  app.mailer.send('email', mailOptions, function (err, message) {
 	    if (err) {
@@ -75,7 +72,6 @@ module.exports = {
 	      return;
 	    }
 	  });
-
   },
 
   // add user to db IF THEY'RE NOT ALREADY IN
@@ -91,9 +87,7 @@ module.exports = {
       else {
         console.log(numAffected + " changed");
       }
-
     }
-
     UserCollection.update(conditions, update, options, callback);
   },
 
@@ -125,8 +119,7 @@ module.exports = {
 	sendUserInfo: function(token) {
 		let sub = this.getUID(token);
 	  let name = this.getName(token);
-	  //might wanna change email back to local variable? (global rn to add current user to chat members)
-	  email = this.getEmail(token);
+	  let email = this.getEmail(token);
 	  UserCollection.count({ userID: sub }, function(err, count) {
 	    if (count === 0) {
 	      var u = new UserCollection({ 'userID': sub, 'fullName': name, 'email': email, 'chats': [] });

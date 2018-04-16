@@ -36,7 +36,6 @@
           //check if the current user is the creator of the chatroom
           socket.emit('creator check', {user: username, chatroomName: chat_name});
           let messageArray =  <%- JSON.stringify(messages) %>
-          //console.log("array of messages: " + array);
           for (let i = 0; i < messageArray.length; i++) {
             let listElt;
             if(messageArray[i].from == username) {
@@ -45,10 +44,7 @@
             else {
               listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
             }
-            //let listElt = $('<li>').text(messageArray[i].from + ": " + messageArray[i].body);
             listElt = listElt.append($('<br>'));
-            //let whole;
-
 
             let whole = listElt.append($('<small>').text(messageArray[i].timestamp));
             $('#messages').append(whole);
@@ -56,25 +52,13 @@
 
           var memberArray = <%- JSON.stringify(members) %>
           socket.emit('get email', {username:username, memberArray:memberArray});
-          //console.log('YO MY EMAIL IS: ' + my_email);
-          /*for (i = 0; i < memberArray.length; i++) {
-            //var listElt = $('<li>').text(memberArray[i]);
-            //$('#members').append(listElt);
-
-            var listElt = $("<li><p>" + memberArray[i] + "</p> <button onclick=deleteUser(\'"+ memberArray[i] +"\')>DELETE</button></li>");
-
-
-            $('#members').append(listElt);
-        }*/
           updateScroll();
           // send chat room name to send message via google home
           socket.emit('chatNameForGoogleMessage', chat_name);
           console.log("END OF ONLOAD");
         }
       }
-
-
-
+      
       function addNewMembers() {
         let emails = document.getElementById("chat_members").value;
         if (emails == '') {

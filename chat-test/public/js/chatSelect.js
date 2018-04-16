@@ -13,8 +13,6 @@ socket.on('set email', function(data) {
 
 });
 
-
-
 function chatRedirect() {
   // var input_vals = $(this).serialize();
   if (username == null) {
@@ -28,27 +26,11 @@ function chatRedirect() {
        x[0].style.display = "inline";
     }
     else {
-      //var emails = document.getElementById("chat_mems").value;
-
       var emailNames = document.getElementById("chat_mems").value;
       console.log("emails in chatSelect" + emailNames);
 
-      /*let auth2 = gapi.auth2.getAuthInstance();
-    let profile = auth2.currentUser.get().getBasicProfile();
-    let currentEmail = profile.getEmail();
-    fetchAsync()
-      .then(data => {
-        currentEmail = data.emailAddress;
-        console.log("CURRENT EMAIL: " + currentEmail);
-      }
-      )
-      .catch(reason => console.log(reason.message))*/
-
-
-      //let socket = io();
       socket.emit('chat name', { email: currentUserEmail, chatName: inChatName});
       socket.emit('entered emails', {emails: emailNames, creator:username, currentEmail: currentUserEmail, chatName: inChatName});
-      //window.location.replace("/chat");//+ input_vals[0];
       socket.on('redirect', function(destination) {
         window.location.href = destination + "&name=" + username;
       });
@@ -63,21 +45,6 @@ function goToChatRoom(chatName) {
   }
   else {
     console.log("About to redirect to chat page");
-
-      /*let auth2 = gapi.auth2.getAuthInstance();
-
-    let profile = auth2.currentUser.get().getBasicProfile();
-    let currentEmail = profile.getEmail();
-    fetchAsync()
-      .then(data => {
-        currentEmail = data.emailAddress;
-        console.log("CURRENT EMAIL: " + currentEmail);
-      }
-      )
-      .catch(reason => console.log(reason.message))*/
-
-
-    //let socket = io();
     socket.emit('chat name', { email: currentUserEmail, chatName: chatName});
     socket.on('go to chat', function(destination) {
       console.log("Destination is " + destination);
@@ -105,6 +72,33 @@ function onLoad() {
 
 function helppg() {
   window.location.href = '/help';
+}
+
+
+
+function handleSubmit() {
+  var inChatName = document.getElementById("chat_id").value;
+  if(inChatName == "") {
+     openMissingMod();
+  }
+  else {
+    let authorized = true;
+    socket.on('user not authorized', function() {
+      openTakenMod();
+      authorized = false;
+    });
+    if (authorized) {
+      chatRedirect();
+    }
+  }  
+}
+
+function openMissingMod() {
+  window.location.href = "#missingModal";
+}
+
+function openTakenMod() {
+  window.location.href = "#takenModal";
 }
 
 async function fetchAsync () {

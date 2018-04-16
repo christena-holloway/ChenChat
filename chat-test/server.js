@@ -41,7 +41,6 @@ var chatRoomSchema = new mongoose.Schema({
 }, {collection: "ChatRoom"});
 
 var ChatRoomCollection = mongoose.model("ChatRoom", chatRoomSchema);
-//let ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
 //connect to db
 mongoose.connect(conString, function(err){
     if (err) throw err;
@@ -50,7 +49,6 @@ mongoose.connect(conString, function(err){
     console.log(mongoose.connection.port);
 });
 
-//GET METHODS (so that we don't get "cannot GET" errors
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
@@ -62,40 +60,9 @@ function renderChatSelect(res) {
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 }
 
-function getChats(callback) {
-  /*let userEmail = helper.email;
-  console.log("User's email is: " + userEmail);
-  let results = []
-  helper.userCol.findOne({ 'email': userEmail }).lean().exec(function (err, doc) {
-    if(!(doc.chats == null)) {
-      console.log("User's chats are: " + doc.chats.length);
-      console.log("type of doc" + typeof doc);
-      console.log("type of doc.chats" + typeof doc.chats[0]);
-
-      for (let i = 0; i < doc.chats.length; i++) {
-        results.push(doc.chats[i]);
-      }
-      console.log(results);
-      userChatRooms = results;
-      callback();
-      //return results;
-    }
-    else {
-      console.log("user's chats don't exist");
-      userChatRooms = results;
-      callback();
-    }
-  });*/
-}
-
 app.get("/chatSelect", function(req, res){
-  // res.sendFile(__dirname + '/chatroom.html');
-  //getChats(function() {
-    //console.log("AFTER GET CHATS FOR USER");
   let myChatRooms = [];
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
-  //res.sendFile(__dirname + '/chatSelect.html');
-//});
 });
 
 app.get("/help", function(req, res) {
@@ -219,13 +186,6 @@ function sendMessage(msg, sender, chat_token = 'test') {
       }
     });
   });
-  // What's this for? (move to helper if still needed)
-  /*UserCollection.findOne({ 'userID': sub }, 'fullName', function (err, user) {
-    if (err) {
-      console.log(err);
-      res.status(400).send("Bad Request");
-    }
-  });*/
   io.emit('chat message', { from: sender, message: msg, chatRoomName: chat_token });
 }
 
@@ -256,11 +216,9 @@ io.on('connection', function(socket){
     let response;
     if(username in sign_ins) {
       response = "yes";
-      //io.emit('login response', response);
     }
     else {
       response = "no";
-      //io.emit('login response', response);
     }
   });
   var callback;
@@ -280,10 +238,6 @@ io.on('connection', function(socket){
   });
 
   io.emit('getChatName', chatName);
-
-
-  //TODO: query db for all members in chat room
-  //io.emit('getMembers', memberArr)
 
   socket.on('chat message', function(data){
     let msg = data.msg;
@@ -309,22 +263,15 @@ io.on('connection', function(socket){
             results.push(doc.chats[i]);
           }
           console.log(results);
-          //userChatRooms = results;
-          //callback();
-          //return results;
           socket.emit('receive user chats', results);
         }
         else {
           console.log("user's chats don't exist");
-          //userChatRooms = results;
-          //callback();
-          //return results
           socket.emit('receive user chats', results);
         }
 
       });
-      //getChats(data);
-});
+  });
 
   socket.on('get email', function(data) {
     helper.userCol.findOne({"fullName": data.username}, "email", function(err, result) {
@@ -334,20 +281,15 @@ io.on('connection', function(socket){
   });
 
   socket.on('chatroom delete user', function(data) {
-    ///console.log("HEY OH: " + fullname);
-    //socket.emit('got full name from email', helper.getFullNameFromEmail(data));
     ChatRoomCollection.updateOne({'chat_name': data.chat_name}, { $pull: { members: { $in: [ data.emailAddress ] } } }, function(err, res) {
       if (err) throw err;
       console.log("1 document updated");
-      //db.close();
     });
 
     helper.userCol.updateOne({'email': data.emailAddress}, { $pull: { chats: { $in: [ data.chat_name ] }} }, function(err, res) {
       if (err) throw err;
       console.log("1 document updated");
-      //db.close();
     });
-
 
     socket.emit('deleted user', { email_to_delete:data.emailAddress, chat_name:data.chat_name });
   });
@@ -387,8 +329,7 @@ io.on('connection', function(socket){
       // if the chat doesn't exist, user can create it
       else if (doc === null) {
         console.log("chat doesn't exist");
-            // currentEmail will be empty if user is adding members to chat room from
-        // chat page
+            // currentEmail will be empty if user is adding members to chat room from chat page
         if (currentEmail != '') {
           //add current user if not already in
           ChatRoomCollection.update(conditions, { $addToSet: { members: currentEmail, creator: data.creator } }, options, callback);
@@ -430,7 +371,6 @@ io.on('connection', function(socket){
       }
     });
 
-
     //add all emails if they don't exist
     for (let i = 0; i < emailArr.length; i++) {
       if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
@@ -438,7 +378,6 @@ io.on('connection', function(socket){
         //add chat to each user's chat array
         helper.updateUserChatsArray(newChatName, emailArr[i]);
         helper.addUsersWithEmail(newChatName, emailArr[i]);
-
       }
     }
     //send invites
@@ -450,8 +389,7 @@ io.on('connection', function(socket){
   socket.on('id token', function(id_token) {
     let destination = '/chatSelect?name=';
     client.verifyIdToken(
-      id_token,
-      "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",
+      id_token,      "533576696991-or04363ojdojrnule3qicgqmm7vmcahf.apps.googleusercontent.com",
       function(e, login) {
         let payload = login.getPayload();
         let userid = payload.sub;
@@ -459,7 +397,6 @@ io.on('connection', function(socket){
       }
     );
     username = helper.getName(id_token);
-    //sign_ins[username] = "logged_in";
     if(!(username in sign_ins)) {
       sign_ins[username] = 0;
     }
