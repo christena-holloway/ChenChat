@@ -25,6 +25,8 @@
         }
         else {
           // URL contains the name of the chatroom
+
+          //test comment
           if(window.location.href.indexOf("chatroom=") > -1) {
             let chatRoom = url.searchParams.get("chatroom");
             console.log("Chatroom from url param is " + chatRoom);
@@ -36,25 +38,25 @@
           socket.emit('get email', {username:username, memberArray:temp})
         }
       }
-      
+
     </script>
-    
-    
+
+
     <div id="missingModal" class="modalDialog">
       <div>
         <a href="#close" title="Close" class="close">X</a>
         Please enter a chat name
       </div>
     </div>
-    
+
     <div id="takenModal" class="modalDialog">
       <div>
         <a href="#close" title="Close" class="close">X</a>
         This chat group already exists. Please try a different name.
       </div>
     </div>
-    
-    
+
+
     <div class="grid-container">
       <header>
         <h1 class="title"> Find Your Chat Group </h1>
