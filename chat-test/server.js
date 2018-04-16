@@ -59,7 +59,6 @@ var userChatRooms = [];
 
 function renderChatSelect(res) {
   console.log("AFTER GET CHATS FOR USER");
-  console.log("Chatrooms for user " + helper.email + " are: " + userChatRooms);
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 }
 
