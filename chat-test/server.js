@@ -333,7 +333,7 @@ io.on('connection', function(socket){
 });
 
   socket.on('get email', function(data) {
-    helper.userCol.findOne({"fullName":data.username}, "email", function(err, result) {
+    helper.userCol.findOne({"fullName": data.username}, "email", function(err, result) {
       console.log("RESULT FROM EMAIL FIND: " + result);
       socket.emit('set email', {email:result.email, memberArray:data.memberArray});
     });
