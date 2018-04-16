@@ -27,7 +27,7 @@
           // URL contains the name of the chatroom
           if(window.location.href.indexOf("chatroom=") > -1) {
             let chatRoom = url.searchParams.get("chatroom");
-            console.log("Chatroom from url param is " + chatRoom);
+            //console.log("Chatroom from url param is " + chatRoom);
 
             document.getElementById("chat_id").value = chatRoom;
             document.getElementById("selectRoom").click();
@@ -36,10 +36,7 @@
           socket.emit('get email', {username:username, memberArray:temp})
         }
       }
-      
-    </script>
-    
-    
+    </script>    
     <div id="missingModal" class="modalDialog">
       <div>
         <a href="#close" title="Close" class="close">X</a>
@@ -50,10 +47,16 @@
     <div id="takenModal" class="modalDialog">
       <div>
         <a href="#close" title="Close" class="close">X</a>
-        This chat group already exists. Please try a different name.
+        This chat group already exists. Please try a different name. 
       </div>
     </div>
     
+    <div id="emailModal" class="modalDialog">
+      <div>
+        <a href="#close" title="Close" class="close">X</a>
+        You have entered an invalid email address. Please try again.
+      </div>
+    </div>
     
     <div class="grid-container">
       <header>
@@ -64,7 +67,7 @@
       </header>
       <div class="chat-rm">
         <form id="chat-select-form" class="chatrm-form" enctype="application/json">
-          Group Name: <input name="chatname" required id="chat_id" type="text" placeholder="Chat name" autocomplete="off" /><br><span class="blank-error">You've Entered a Blank Chat Room</span><br>
+          Group Name: <input name="chatname" required id="chat_id" type="text" placeholder="Chat name" autocomplete="off" /><br><br>
           Group Members: <input required type="email" placeholder="Gmail addresses (separated by commas)" id="chat_mems" name="members" autocomplete="off" multiple/><br>
           <input id="selectRoom" type="button" onclick="handleSubmit();" value="Submit" />
         </form>

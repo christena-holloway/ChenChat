@@ -56,7 +56,7 @@ app.get('/', function(req, res){
 var userChatRooms = [];
 
 function renderChatSelect(res) {
-  console.log("AFTER GET CHATS FOR USER");
+  //console.log("AFTER GET CHATS FOR USER");
   res.render(__dirname + '/chatSelect.html', { myChatRooms: userChatRooms });
 }
 
@@ -74,13 +74,13 @@ app.get("/chat", function(req, res) {
   let result_array1 = [];
   let ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
 
-  console.log("FINDING NEW CHAT ROOM");
+  //console.log("FINDING NEW CHAT ROOM");
   ChatRoom2.findOne( { 'chat_name': chatName }, 'messages members', function(err, doc) {
     result_array1 = doc;
     let messagesArray = [];
     let membersArray = [];
 
-    console.log("result array: " + result_array1);
+    //console.log("result array: " + result_array1);
     if(!(result_array1.messages == null)) {
       messagesArray = result_array1.messages;
     }
@@ -205,7 +205,7 @@ io.on('connection', function(socket){
       delete users[keys[socket.id]];
       delete keys[socket.id];
     }
-    console.log(users);
+    //console.log(users);
   });
 
   socket.on('signing out', function(username) {
@@ -226,12 +226,12 @@ io.on('connection', function(socket){
   socket.on('chat name', function(data) {
     chatName = data.chatName;
     let currentEmail = data.email;
-    console.log("chat name " + chatName);
-    console.log("current email: " + currentEmail);
+    //console.log("chat name " + chatName);
+    //console.log("current email: " + currentEmail);
 
     let destination = '/chat?chatSelect=' + chatName;
     callback = function() {
-      console.log("EMITTING SOCKET REDIRECT");
+      //console.log("EMITTING SOCKET REDIRECT");
       io.emit('redirect', destination);
     }
     io.emit('go to chat', destination);
@@ -251,22 +251,18 @@ io.on('connection', function(socket){
   });
 
   socket.on('get user chats', function(data) {
-      console.log("EMAIL IS: " + data);
+      //console.log("EMAIL IS: " + data);
       let results = [];
       helper.userCol.findOne({ 'email': data }, "chats", function (err, doc) {
         if(!(doc.chats == null)) {
-          console.log("User's chats are: " + doc.chats.length);
-          console.log("type of doc" + typeof doc);
-          console.log("type of doc.chats" + typeof doc.chats[0]);
+          //console.log("User's chats are: " + doc.chats.length);
 
           for (let i = 0; i < doc.chats.length; i++) {
             results.push(doc.chats[i]);
           }
-          console.log(results);
           socket.emit('receive user chats', results);
         }
         else {
-          console.log("user's chats don't exist");
           socket.emit('receive user chats', results);
         }
 
@@ -275,7 +271,6 @@ io.on('connection', function(socket){
 
   socket.on('get email', function(data) {
     helper.userCol.findOne({"fullName": data.username}, "email", function(err, result) {
-      console.log("RESULT FROM EMAIL FIND: " + result);
       socket.emit('set email', {email:result.email, memberArray:data.memberArray});
     });
   });
@@ -283,19 +278,16 @@ io.on('connection', function(socket){
   socket.on('chatroom delete user', function(data) {
     ChatRoomCollection.updateOne({'chat_name': data.chat_name}, { $pull: { members: { $in: [ data.emailAddress ] } } }, function(err, res) {
       if (err) throw err;
-      console.log("1 document updated");
     });
 
     helper.userCol.updateOne({'email': data.emailAddress}, { $pull: { chats: { $in: [ data.chat_name ] }} }, function(err, res) {
       if (err) throw err;
-      console.log("1 document updated");
     });
 
     socket.emit('deleted user', { email_to_delete:data.emailAddress, chat_name:data.chat_name });
   });
 
   socket.on('creator check', function(data) {
-    console.log('I AM DOING THE CREATOR CHECK');
     var ChatRoom2 = mongoose.model("ChatRoom", chatRoomSchema);
     var response = "false";
     function callback() {
@@ -328,7 +320,7 @@ io.on('connection', function(socket){
       }
       // if the chat doesn't exist, user can create it
       else if (doc === null) {
-        console.log("chat doesn't exist");
+        //console.log("chat doesn't exist");
             // currentEmail will be empty if user is adding members to chat room from chat page
         if (currentEmail != '') {
           //add current user if not already in
@@ -344,19 +336,15 @@ io.on('connection', function(socket){
       }
       //if does exist, check if user is in it
       else {
-        console.log("chat does exist");
+        //console.log("chat does exist");
         helper.userCol.findOne({ 'email': currentEmail }, 'chats', function(err, doc) {
           if(!(doc.chats === null)) {
             chatsArr = doc.chats;
           }
           //if chatName is in the user's chat array, good to go
-          console.log("DOC IN ELSE: " + chatsArr);
-          console.log("INDEX OF: " + chatsArr.indexOf(newChatName));
           if (chatsArr.indexOf(newChatName) !== -1) {
-            console.log("user is authorized to access this chat");
             destination = '/chat?chatSelect=' + newChatName;
             callback = function() {
-              console.log("EMITTING SOCKET REDIRECT");
               io.emit('redirect', destination);
             }
             io.emit('redirect', destination);
@@ -371,18 +359,30 @@ io.on('connection', function(socket){
       }
     });
 
-    //add all emails if they don't exist
+    let validAddrs = true;
     for (let i = 0; i < emailArr.length; i++) {
-      if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
-        ChatRoomCollection.update(conditions, { $addToSet: { members: emailArr[i] } }, options, callback);
-        //add chat to each user's chat array
-        helper.updateUserChatsArray(newChatName, emailArr[i]);
-        helper.addUsersWithEmail(newChatName, emailArr[i]);
+      if (emailArr[i] !== "" && !(validator.validate(emailArr[i]))) {
+        console.log("invalid email address");
+        validAddrs = false;
+        io.emit('invalid email address');
       }
     }
-    //send invites
-    if (emailArr.length > 0) {
-      helper.sendInvite(emailArr, newChatName, data.creator);
+    
+    if (validAddrs) {
+      console.log('email address is valid');
+      //add all emails if they don't exist
+      for (let i = 0; i < emailArr.length; i++) {
+        if (emailArr[i] !== "" && validator.validate(emailArr[i])) {
+          ChatRoomCollection.update(conditions, { $addToSet: { members: emailArr[i] } }, options, callback);
+          //add chat to each user's chat array
+          helper.updateUserChatsArray(newChatName, emailArr[i]);
+          helper.addUsersWithEmail(newChatName, emailArr[i]);
+        }
+      }
+      //send invites
+      if (emailArr.length > 0) {
+        helper.sendInvite(emailArr, newChatName, data.creator);
+      }
     }
   });
 

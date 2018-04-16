@@ -19,7 +19,6 @@ function chatRedirect() {
     window.location.href = "/";
   }
   else {
-
     var inChatName = document.getElementById("chat_id").value;
     if(inChatName == "") {
        var x = document.getElementsByClassName("blank-error");
@@ -78,8 +77,8 @@ function helppg() {
 
 function handleSubmit() {
   var inChatName = document.getElementById("chat_id").value;
-  if(inChatName == "") {
-     openMissingMod();
+  if (inChatName == "") {
+    openMissingMod();
   }
   else {
     let authorized = true;
@@ -88,9 +87,41 @@ function handleSubmit() {
       authorized = false;
     });
     if (authorized) {
-      chatRedirect();
+      console.log("user is authorized to access this chat");
+      
+      let enteredEmails = document.getElementById("chat_mems").value;
+      let stripped = enteredEmails.replace(/\s/g, "");
+      let splitArr = stripped.split(',');
+      let emailArr = splitArr.filter(item => item.trim() !== '');
+      
+      let constraints = {
+        from: {
+          email: true
+        }
+      }
+      
+      let valid = true;
+      for (let i = 0; i < emailArr.length; i++) {
+        
+        
+        console.log(validate({ from: emailArr[i] }, constraints));
+        if (!(validate({ from: emailArr[i] }, constraints))) {
+          valid = false;
+          openEmailMod();
+        }
+      }
+      
+      
+      console.log("valid? " + valid);
+      if (valid) {
+        chatRedirect();
+      }
     }
-  }  
+  }
+}
+
+function openEmailMod() {
+  window.location.href = "#emailModal";
 }
 
 function openMissingMod() {
@@ -112,7 +143,6 @@ async function fetchAsync () {
 
 $(document).ready(function () {
   socket.on('receive user chats', function(chatRoomsWithPermission) {
-    console.log("User's chat rooms include: " + chatRoomsWithPermission);
     let templist = [];
     let rowin = -1;
     let listElt = [];
@@ -127,10 +157,8 @@ $(document).ready(function () {
     }
   });
 
-  console.log("Welcome to the chat select page");
   $("body").on("click", "#my-chat-room", function() {
     var room = $(this).text();
-    console.log("GO TO CHATROOM: " + room);
     goToChatRoom(room);
   });
 

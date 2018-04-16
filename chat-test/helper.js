@@ -35,9 +35,9 @@ function saveUserToDB(userColl) {
       console.log(err);
       res.status(400).send("Bad Request");
     }
-    else {
-      console.log("successfully posted user " + userColl.fullName + " to db");
-    }
+    //else {
+      //console.log("successfully posted user " + userColl.fullName + " to db");
+    //}
   });
 }
 
@@ -45,7 +45,7 @@ module.exports = {
   userCol: UserCollection,
 
   updateUserChatsArray: function(chatName, inEmail) {
-    console.log("updating user's chats");
+    //console.log("updating user's chats");
     UserCollection.findOneAndUpdate({ email: inEmail },
       { $addToSet: { chats: chatName } },
       function(err, data) {
