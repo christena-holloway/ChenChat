@@ -81,6 +81,9 @@ function handleSubmit() {
   if(inChatName == "") {
      openMissingMod();
   }
+  else if(inChatName.length > 29) {
+      openLongMod();
+  }
   else {
     let authorized = true;
     socket.on('user not authorized', function() {
@@ -99,6 +102,10 @@ function openMissingMod() {
 
 function openTakenMod() {
   window.location.href = "#takenModal";
+}
+
+function openLongMod() {
+  window.location.href = "#longModal";
 }
 
 async function fetchAsync () {
